@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -355,7 +355,7 @@ b.q{color:var(--ink);font-weight:650;font-variant-numeric:tabular-nums;white-spa
 
 /* ---------- v3: abas, cardápio, despensa ---------- */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;justify-content:center;padding:6px 8px calc(4px + var(--safe-b));border-top:1px solid var(--line);background:var(--bg);background:color-mix(in srgb,var(--bg) 90%,transparent);-webkit-backdrop-filter:saturate(1.6) blur(18px);backdrop-filter:saturate(1.6) blur(18px)}
-.tabbar a{position:relative;flex:1;max-width:150px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:3px 0;color:var(--muted);font-size:11px;font-weight:600;text-decoration:none}
+.tabbar a{position:relative;flex:1;max-width:120px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:3px 0;color:var(--muted);font-size:11px;font-weight:600;text-decoration:none}
 .tabbar a svg{width:25px;height:25px}
 .tabbar a[aria-current=page]{color:var(--ink)}
 .tabbar .badge{top:-2px;right:calc(50% - 26px)}
@@ -441,6 +441,54 @@ button.cake-row{width:100%;border:0;border-bottom:1px solid var(--line);backgrou
 .sv{min-width:28px;text-align:center;font-size:17px;font-weight:650;align-self:center}
 .toast{display:flex;align-items:center;gap:14px}
 .toast button{flex:none;padding:0;border:0;background:none;color:var(--bg);font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- v4: calendário, mercado, despensa ---------- */
+html{touch-action:manipulation}
+.backup textarea{font-size:16px}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin:14px -10px 0}
+.cal-nav b{font-size:17px;font-weight:650}
+.cal-nav .icon-btn svg{width:10px;height:17px}
+.cal-nav .flip svg{transform:scaleX(-1)}
+.cal-today{display:block;margin:2px auto 0;font-size:14px}
+.cal-day{margin-top:18px;scroll-margin-top:12px}
+.cal-dh{display:flex;align-items:center;gap:8px;padding-bottom:6px;border-bottom:1px solid var(--line);font-size:15px;color:var(--ink2)}
+.cal-dh>span:first-child{flex:1}
+.cal-dh b{color:var(--ink);font-size:16px;font-weight:650;margin-right:4px}
+.cal-day.is-past .cal-dh{opacity:.55}
+.cal-day.is-today .cal-dh b{color:var(--ink)}
+.cal-add{width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:17px;background:var(--press);color:var(--ink)}
+.cal-add svg{width:14px;height:14px}
+.cal-day .cake-list{border-top:0}
+.cal-empty{display:block;width:100%;padding:14px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;color:var(--muted);font-size:15px}
+.mkt{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 14px 12px 16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
+.mkt .t{flex:1;min-width:0}
+.mkt b{display:block;font-size:16px;font-weight:600}
+.mkt small{display:block;margin-top:1px;color:var(--muted);font-size:14px;line-height:1.35}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px}
+.mh{padding:4px 0;color:var(--muted);font-size:12px;font-weight:600;text-align:center}
+.mcell{display:flex;flex-direction:column;align-items:center;gap:4px;min-height:58px;padding:7px 0 6px;border:0;border-radius:12px;background:var(--surface);font-size:15px}
+.mcell.out{background:none;color:var(--muted)}
+.mcell.is-today .mn{display:grid;place-items:center;width:28px;height:28px;margin-top:-4px;border-radius:14px;background:var(--ink);color:var(--bg);font-weight:650}
+.mdots{display:flex;gap:3px;align-items:center;min-height:7px}
+.mdots i{width:7px;height:7px;border-radius:50%}
+.mdots em{font-style:normal;font-size:11px;line-height:1;color:var(--muted)}
+.picks{border-top:1px solid var(--line)}
+.pick{display:flex;align-items:center;gap:12px;width:100%;min-height:60px;padding:8px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;color:var(--ink)}
+.pick:active{background:var(--press)}
+.pick .txt{flex:1;min-width:0}
+.pick b{display:block;font-size:16px;font-weight:600}
+.pick small{display:block;margin-top:1px;color:var(--muted);font-size:13px}
+.pick small.okt{color:var(--ok)}.pick small.miss{color:var(--warn)}
+.pick>svg{width:15px;height:15px;flex:none;color:var(--muted)}
+.swatch.sm{width:40px;height:40px;border-radius:11px}
+.ptools{position:sticky;top:0;z-index:4;margin:0 -20px;padding:12px 20px 10px;background:var(--bg);border-bottom:1px solid var(--line)}
+.ptools .chiprow{margin-top:10px}
+.jump{display:flex;gap:6px;overflow-x:auto;margin:10px -20px 0;padding:0 20px;scrollbar-width:none}
+.jump::-webkit-scrollbar{display:none}
+.jump button{flex:none;height:30px;padding:0 11px;border:0;border-radius:15px;background:var(--press);color:var(--ink2);font-size:13px;font-weight:600}
+.prow-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px}.prow-actions .tbtn{white-space:nowrap;flex:none}
+.psec{display:flex;align-items:baseline;justify-content:space-between;margin:24px 0 2px;font-size:15px;font-weight:650;scroll-margin-top:178px}
+.psec span{color:var(--muted);font-size:13px;font-weight:500}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 [hidden]{display:none!important}
 </style>
@@ -448,7 +496,8 @@ button.cake-row{width:100%;border:0;border-bottom:1px solid var(--line);backgrou
 <body>
 <div id="app"></div>
 <nav id="tabbar" class="tabbar" aria-label="Seções" hidden>
-  <a href="#/" data-tab="hoje"><svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5" width="17" height="15.5" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.6" fill="currentColor"/></svg>Hoje</a>
+  <a href="#/" data-tab="hoje"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Hoje</a>
+  <a href="#/calendario" data-tab="calendario"><svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5" width="17" height="15.5" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="8.5" cy="14" r="1.2" fill="currentColor"/><circle cx="12" cy="14" r="1.2" fill="currentColor"/><circle cx="15.5" cy="14" r="1.2" fill="currentColor"/><circle cx="8.5" cy="17.3" r="1.2" fill="currentColor"/></svg>Calendário</a>
   <a href="#/receitas" data-tab="receitas"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4.5h10.5a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3v-12Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M5 16.5a3 3 0 0 1 3-3h10.5M9 8.5h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Receitas</a>
   <a href="#/despensa" data-tab="despensa"><svg viewBox="0 0 24 24" fill="none"><path d="M4 9h16l-1.4 10.2a1.5 1.5 0 0 1-1.5 1.3H6.9a1.5 1.5 0 0 1-1.5-1.3L4 9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 9 11 4M15.5 9 13 4M9.5 13v4M14.5 13v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Despensa<span class="badge" hidden></span></a>
 </nav>
@@ -1472,6 +1521,7 @@ function normalize(){
   DB.prefs.oven = Object.assign({time:0, temp:0, fan:false, changedAt:0}, DB.prefs.oven || {});
   DB.timers = DB.timers || {}; DB.custom = DB.custom || []; DB.history = DB.history || [];
   DB.plan = DB.plan || []; DB.extras = DB.extras || []; DB.bought = DB.bought || [];
+  DB.market = Object.assign({to:null, undated:true}, DB.market || {});
   if(!DB.pantry){
     DB.pantry = {};
     const old = DB.prefs.pantry || [], oq = DB.prefs.qty || {};
@@ -1761,7 +1811,7 @@ function packTxt(p, q){
 function buyAmount(p, q){ const C = CAT[p], u = punit(p); if(!u) return null; if(u==='un') return Math.ceil(q - 1e-9); if(C.each) return Math.ceil(q/C.each.g - .05) * C.each.g; return roundQ(q) }
 function shopData(){
   const tot = new Map();
-  for(const pl of DB.plan){
+  for(const pl of DB.plan.filter(inMarket)){
     const c = REC(pl.rid); if(!c) continue;
     const cfg = cfgOf(c, pl), cc = calc(c, cfg);
     for(const e of needs(c, cc, topOf(c, cfg)).values()){
@@ -1916,7 +1966,7 @@ function closeSheet(silent){
    ========================================================= */
 let LAST_LIST = '';
 function parts(){ return (location.hash || '#/').replace(/^#\/?/,'').split('/').map(decodeURIComponent) }
-function tabFor(h){ return h[0]==='receitas' ? 'receitas' : h[0]==='despensa' ? 'despensa' : (!h[0] || h[0]==='ajustes') ? 'hoje' : null }
+function tabFor(h){ return h[0]==='receitas' ? 'receitas' : h[0]==='despensa' ? 'despensa' : h[0]==='calendario' ? 'calendario' : (!h[0] || h[0]==='ajustes') ? 'hoje' : null }
 function setTabbar(tab){
   const bar = $('#tabbar'), show = !!tab;
   bar.hidden = !show; document.body.classList.toggle('tabs-on', show);
@@ -1930,6 +1980,7 @@ function render(){
   if(!h[0]) return renderToday(), 'hoje';
   if(h[0]==='receitas') return (h[1] ? renderCategory(h[1]) : renderRecipes()), 'receitas';
   if(h[0]==='despensa') return renderPantry(h[1]==='comprar' ? 'buy' : 'home'), 'despensa';
+  if(h[0]==='calendario') return renderCalendar(), 'calendario';
   if(h[0]==='ajustes') return renderSettings(), 'hoje';
   if(h[0]==='nova') return renderEditor(null, 'new'), null;
   if(h[0]==='editar' && DB.custom.some(x=>x.id===h[1])) return renderEditor(h[1], 'edit'), null;
@@ -1940,7 +1991,7 @@ function render(){
 function route(){
   const h = parts();
   closeSheet(true); closeCook();
-  if(h[0] && h[0]!=='r' && !['receitas','despensa','ajustes','nova','editar','versao'].includes(h[0]) && REC(h[0])){ location.replace('#/r/' + h[0]); return }
+  if(h[0] && h[0]!=='r' && !['receitas','despensa','calendario','ajustes','nova','editar','versao'].includes(h[0]) && REC(h[0])){ location.replace('#/r/' + h[0]); return }
   const tab = render();
   if(tab==='redirect'){ location.replace('#/'); return }
   setTabbar(tab);
@@ -1954,19 +2005,20 @@ addEventListener('hashchange', route);
 /* =========================================================
    HOJE
    ========================================================= */
+function planRow(p){
+  const c = REC(p.rid), s = status(c, cfgOf(c,p));
+  return `<li><button class="cake-row" data-plan="${p.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}</b>
+    <span>${[p.meal && MEALN[p.meal], portionTxt(c,p)].filter(Boolean).join(', ')}</span><span class="${s.ok ? 'okt' : s.swapOnly ? 'swap' : 'miss'}">${esc(statusTxt(s))}</span></span>${ICON.chev}</button></li>`;
+}
 function renderToday(){
   document.title = 'Receitas';
   const t = todayIso(), plans = DB.plan.filter(p=>REC(p.rid));
   const cooking = ALL().filter(c=>resumeIdx(c)!=null);
-  const groups = new Map();
-  plans.forEach(p=>{ const k = !p.date ? 'none' : p.date < t ? 'late' : p.date; if(!groups.has(k)) groups.set(k, []); groups.get(k).push(p) });
-  const rank = k => k==='late' ? 0 : k==='none' ? 2 : 1;
-  const keys = [...groups.keys()].sort((a,b)=>rank(a) - rank(b) || a.localeCompare(b));
-  const row = p => { const c = REC(p.rid), s = status(c, cfgOf(c,p));
-    return `<li><button class="cake-row" data-plan="${p.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}</b>
-      <span>${[p.meal && MEALN[p.meal], portionTxt(c,p)].filter(Boolean).join(', ')}</span><span class="${s.ok ? 'okt' : s.swapOnly ? 'swap' : 'miss'}">${esc(statusTxt(s))}</span></span>${ICON.chev}</button></li>` };
-  const meal = nowMeal();
-  const seed = t.split('-').join('');
+  const byMeal = (a,b)=>MEAL_IDX(a.meal) - MEAL_IDX(b.meal);
+  const todays = plans.filter(p=>p.date===t).sort(byMeal);
+  const late = plans.filter(p=>p.date && p.date < t).sort((a,b)=>a.date.localeCompare(b.date) || byMeal(a,b));
+  const next = plans.filter(p=>p.date && p.date > t);
+  const meal = nowMeal(), seed = t.split('-').join('');
   const hash = s => { let h = +seed; for(const ch of s) h = (h*31 + ch.charCodeAt(0)) % 1e9; return h };
   const sug = ALL().filter(c=>c.meals.includes(meal) && !plans.some(p=>p.rid===c.id) && status(c).ok).sort((a,b)=>hash(a.id) - hash(b.id)).slice(0,4);
   const nBuy = buyCount();
@@ -1977,20 +2029,152 @@ function renderToday(){
     ${cooking.map(c=>{ const st = SR(c), cc = calc(c), n = buildSteps(c, cc, topOf(c)).length;
       return `<div class="cook-card"><a class="txt" href="#/r/${c.id}/preparo/${st.cookAt}"><b>${esc(c.name)}</b><small>Preparando: passo ${st.cookAt+1} de ${n}</small></a>
         <button class="cc-drop" data-drop="${c.id}">Abandonar</button><a class="go" href="#/r/${c.id}/preparo/${st.cookAt}">Continuar</a></div>` }).join('')}
-    <h2 class="sec-h">Cardápio</h2>
-    ${keys.length ? keys.map(k=>`<h3 class="day-h">${k==='late' ? 'Ficou para trás' : k==='none' ? 'Sem data' : dayLabel(k, true)}</h3>
-        <ul class="cake-list">${groups.get(k).sort((a,b)=>(a.date||'').localeCompare(b.date||'') || MEAL_IDX(a.meal) - MEAL_IDX(b.meal)).map(row).join('')}</ul>`).join('')
-      : `<div class="empty-card"><p>Nada planejado. Escolha uma receita e toque em Vou fazer.</p><a class="btn secondary" href="#/receitas">Ver receitas</a></div>`}
-    <a class="link-card" href="#/despensa/comprar"><span class="txt"><b>Lista de compras</b><small>${nBuy ? `${nBuy} ${nBuy===1 ? 'item' : 'itens'} para comprar` : 'Nada para comprar'}</small></span>${ICON.chev}</a>
+    <h2 class="sec-h">Cardápio de hoje</h2>
+    ${todays.length ? `<ul class="cake-list">${todays.map(planRow).join('')}</ul>`
+      : `<div class="empty-card"><p>Nada planejado para hoje.</p><button class="btn secondary" data-add="${t}">${ICON.plus}Adicionar receita</button></div>`}
+    ${late.length ? `<h3 class="day-h">Ficou para trás</h3><ul class="cake-list">${late.map(planRow).join('')}</ul>` : ''}
+    <a class="link-card" href="#/calendario"><span class="txt"><b>Próximos dias</b><small>${next.length ? `${next.length} ${next.length===1 ? 'refeição planejada' : 'refeições planejadas'}` : 'Nada planejado ainda'}</small></span>${ICON.chev}</a>
+    <a class="link-card" style="margin-top:10px" href="#/despensa/comprar"><span class="txt"><b>Lista de compras</b><small>${nBuy ? `${nBuy} ${nBuy===1 ? 'item' : 'itens'} para comprar` : 'Nada para comprar'}</small></span>${ICON.chev}</a>
     ${sug.length ? `<h2 class="sec-h">${MEALN[meal]} com o que tem em casa</h2>
       <ul class="cake-list">${sug.map(c=>`<li><a class="cake-row" href="#/r/${c.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}</b><span>${minTxt(totalMin(c, calc(c), topOf(c)))}, ${esc(CATN(c.cat).toLowerCase())}</span></span>${ICON.chev}</a></li>`).join('')}</ul>` : ''}
   </div>`;
   $('#app').onclick = e=>{
     const d = e.target.closest('[data-drop]'); if(d){ abandonCook(REC(d.dataset.drop)); refresh(); return }
+    const a = e.target.closest('[data-add]'); if(a){ openAddSheet(a.dataset.add); return }
     const b = e.target.closest('[data-plan]'); if(!b) return;
     const pl = DB.plan.find(x=>x.id===b.dataset.plan); if(pl) openPlanSheet(REC(pl.rid), pl.id);
   };
 }
+
+/* =========================================================
+   CALENDÁRIO
+   ========================================================= */
+const CAL = {view:'week', anchor:null, focus:null};
+function shiftIso(s, n){ const d = new Date(s + 'T12:00:00'); d.setDate(d.getDate() + n); return iso(d) }
+function weekStart(s){ const d = new Date(s + 'T12:00:00'); d.setDate(d.getDate() - d.getDay()); return iso(d) }
+const fmtD = (s, o) => new Date(s + 'T12:00:00').toLocaleDateString('pt-BR', o).replace('.', '');
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const plansOn = s => DB.plan.filter(p=>p.date===s && REC(p.rid)).sort((a,b)=>MEAL_IDX(a.meal) - MEAL_IDX(b.meal));
+function marketTxt(short){
+  const m = DB.market;
+  if (!m.to) return 'de todo o cardápio';
+  if (short && m.to !== todayIso()) return `até ${fmtD(m.to, {weekday:'short', day:'numeric', month:'short'}).replace(/\./g,'')}`;
+  return `até ${lowerFirst(dayLabel(m.to, true))}`;
+}
+function renderCalendar(){
+  document.title = 'Calendário';
+  const t = todayIso(); CAL.anchor = CAL.anchor || t;
+  let body = '';
+  if(CAL.view==='week'){
+    const ws = weekStart(CAL.anchor), days = [...Array(7)].map((_,i)=>shiftIso(ws, i));
+    const a = days[0], b = days[6];
+    const range = a.slice(0,7)===b.slice(0,7) ? `${+a.slice(8)} a ${fmtD(b,{day:'numeric', month:'long'})}` : `${fmtD(a,{day:'numeric', month:'short'})} a ${fmtD(b,{day:'numeric', month:'short'})}`;
+    const undated = DB.plan.filter(p=>!p.date && REC(p.rid));
+    body = `<div class="cal-nav"><button class="icon-btn" data-wk="-7" aria-label="Semana anterior">${ICON.back}</button>
+        <b>${range}</b><button class="icon-btn flip" data-wk="7" aria-label="Próxima semana">${ICON.back}</button></div>
+      ${ws!==weekStart(t) ? `<button class="link cal-today" data-today>Voltar para esta semana</button>` : ''}
+      ${days.map(d=>{ const ps = plansOn(d);
+        return `<section class="cal-day ${d===t ? 'is-today' : ''} ${d < t ? 'is-past' : ''}" id="d-${d}">
+          <div class="cal-dh"><span><b>${cap(fmtD(d,{weekday:'long'}))}</b> ${fmtD(d,{day:'numeric', month:'short'})}</span>${d===t ? '<span class="tag">Hoje</span>' : ''}
+            <button class="cal-add" data-add="${d}" aria-label="Adicionar receita em ${fmtD(d,{weekday:'long', day:'numeric'})}">${ICON.plus}</button></div>
+          ${ps.length ? `<ul class="cake-list">${ps.map(planRow).join('')}</ul>` : `<button class="cal-empty" data-add="${d}">Nada planejado. Toque para adicionar.</button>`}
+        </section>` }).join('')}
+      ${undated.length ? `<section class="cal-day"><div class="cal-dh"><span><b>Sem data</b></span></div><ul class="cake-list">${undated.map(planRow).join('')}</ul></section>` : ''}`;
+  } else {
+    const first = CAL.anchor.slice(0,8) + '01', gs = weekStart(first);
+    const month = cap(fmtD(first, {month:'long', year:'numeric'}));
+    const cells = [...Array(42)].map((_,i)=>shiftIso(gs, i));
+    const lastRow = cells.slice(35).every(d=>d.slice(0,7)!==first.slice(0,7)) ? 35 : 42;
+    body = `<div class="cal-nav"><button class="icon-btn" data-mo="-1" aria-label="Mês anterior">${ICON.back}</button><b>${month}</b><button class="icon-btn flip" data-mo="1" aria-label="Próximo mês">${ICON.back}</button></div>
+      <div class="mgrid">${['D','S','T','Q','Q','S','S'].map(x=>`<span class="mh">${x}</span>`).join('')}
+      ${cells.slice(0, lastRow).map(d=>{ const ps = plansOn(d), out = d.slice(0,7)!==first.slice(0,7);
+        return `<button class="mcell ${out ? 'out' : ''} ${d===t ? 'is-today' : ''}" data-day="${d}" aria-label="${fmtD(d,{weekday:'long', day:'numeric', month:'long'})}${ps.length ? `, ${ps.length} ${ps.length===1 ? 'receita' : 'receitas'}` : ''}">
+          <span class="mn">${+d.slice(8)}</span><span class="mdots">${ps.slice(0,3).map(p=>`<i style="background:${toneOf(REC(p.rid))}"></i>`).join('')}${ps.length > 3 ? '<em>+</em>' : ''}</span></button>` }).join('')}</div>
+      <p class="cap">Toque num dia para ver a semana.</p>`;
+  }
+  const nBuy = buyCount();
+  $('#app').innerHTML = `<div class="wrap">
+    <header class="home-head"><div class="hh-row"><h1>Calendário</h1></div></header>
+    <div class="seg" role="tablist"><button role="tab" data-view="week" aria-selected="${CAL.view==='week'}">Semana</button><button role="tab" data-view="month" aria-selected="${CAL.view==='month'}">Mês</button></div>
+    <div class="mkt"><span class="t"><b>Mercado</b><small>${nBuy ? `${nBuy} ${nBuy===1 ? 'item' : 'itens'}` : 'Nada'} para comprar, para as refeições ${marketTxt()}.</small></span>
+      <button class="tbtn" data-act="mkt">Planejar</button></div>
+    ${body}
+  </div>`;
+  if(CAL.focus){ const el = document.getElementById('d-' + CAL.focus); CAL.focus = null; if(el) setTimeout(()=>el.scrollIntoView({block:'start'}), 0) }
+  $('#app').onclick = e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    if(b.dataset.plan){ const pl = DB.plan.find(x=>x.id===b.dataset.plan); if(pl) openPlanSheet(REC(pl.rid), pl.id); return }
+    if(b.dataset.add){ openAddSheet(b.dataset.add); return }
+    if(b.dataset.view){ CAL.view = b.dataset.view; return refresh() }
+    if(b.dataset.wk){ CAL.anchor = shiftIso(weekStart(CAL.anchor), +b.dataset.wk); return renderCalendar(), scrollTo(0,0) }
+    if(b.dataset.mo){ const d = new Date(CAL.anchor.slice(0,8) + '15T12:00:00'); d.setMonth(d.getMonth() + +b.dataset.mo); CAL.anchor = iso(d); return refresh() }
+    if(b.dataset.day){ CAL.view = 'week'; CAL.anchor = b.dataset.day; CAL.focus = b.dataset.day; return renderCalendar() }
+    if(b.dataset.today!=null){ CAL.anchor = todayIso(); return renderCalendar(), scrollTo(0,0) }
+    if(b.dataset.act==='mkt') openMarketSheet();
+  };
+}
+
+/* Adicionar receita num dia */
+function openAddSheet(day, meal){
+  const st = {meal: meal || (day===todayIso() ? nowMeal() : 'almoco'), q:''};
+  const row = c => { const s = status(c);
+    return `<button class="pick" data-pick="${c.id}">${swatch(c,'sm')}<span class="txt"><b>${esc(c.name)}</b><small class="${s.ok ? 'okt' : s.swapOnly ? '' : 'miss'}">${esc(statusTxt(s))}</small></span>${ICON.plus}</button>` };
+  const list = el => {
+    const q = plain(st.q.trim());
+    let all = ALL().filter(c=>c.meals.includes(st.meal));
+    if(q) all = ALL().filter(c=>plain(c.name).includes(q) || plain(CATN(c.cat)).includes(q) || c.ing.some(i=>plain(i.n).includes(q)));
+    const ok = q ? [] : all.filter(c=>status(c).ok).slice(0,5);
+    el.querySelector('#plist2').innerHTML = (ok.length ? `<p class="sh-sub">Dá para fazer com o que tem</p><div class="picks">${ok.map(row).join('')}</div>` : '')
+      + `<p class="sh-sub">${q ? 'Resultados' : 'Para o ' + MEALN[st.meal].toLowerCase()}</p><div class="picks">${all.filter(c=>!ok.includes(c)).map(row).join('') || '<p class="empty">Nenhuma receita encontrada.</p>'}</div>`;
+  };
+  openSheet(`<div class="sh-head"><h2>${day===todayIso() ? 'Hoje' : day===addDays(1) ? 'Amanhã' : cap(fmtD(day,{weekday:'long', day:'numeric', month:'short'}))}</h2><button class="sh-done" data-close>Fechar</button></div>
+    <div class="sh-body">
+      <div class="seg" id="ameal">${MEALS.map(([k])=>`<button data-meal="${k}" aria-pressed="${st.meal===k}">${MEAL_SHORT[k]}</button>`).join('')}</div>
+      <label class="search mt">${ICON.search}<input id="aq" type="search" placeholder="Buscar receita" autocomplete="off"></label>
+      <div id="plist2"></div></div>`, el=>{
+    list(el);
+    el.querySelector('#aq').oninput = e=>{ st.q = e.target.value; list(el) };
+    el.addEventListener('click', e=>{
+      const m = e.target.closest('[data-meal]');
+      if(m){ st.meal = m.dataset.meal; el.querySelectorAll('#ameal button').forEach(x=>x.setAttribute('aria-pressed', x.dataset.meal===st.meal)); list(el); return }
+      const p = e.target.closest('[data-pick]'); if(!p) return;
+      const c = REC(p.dataset.pick), s = SR(c), cc = calc(c);
+      const pl = {id:uid(), rid:c.id, date:day, meal:st.meal};
+      if(c.scale==='forma'){ pl.pan = cc.pan.id; pl.top = s.top } else pl.serves = s.serves || c.serves;
+      DB.plan.push(pl); save(); closeSheet(true); refresh();
+      toast(`${c.name}: ${MEALN[st.meal].toLowerCase()} de ${lowerFirst(dayLabel(day))}`);
+    });
+  }, {label:'Adicionar receita'});
+}
+
+/* Planejar o mercado: até qual dia a lista cobre */
+function openMarketSheet(){
+  const m = DB.market;
+  const draw = el => {
+    const inR = DB.plan.filter(p=>REC(p.rid) && inMarket(p));
+    const n = shopData().rows.length;
+    const days = [...Array(14)].map((_,i)=>addDays(i));
+    el.querySelector('.sh-body').innerHTML = `
+      <p class="cap" style="margin-top:0">Escolha até qual dia as compras devem durar. A lista soma as receitas desse período e desconta o que tem em casa.</p>
+      <p class="sh-sub">Comprar para as refeições até</p>
+      <div class="chiprow">${days.map(d=>`<button class="chip" data-to="${d}" aria-pressed="${m.to===d}">${dayLabel(d)}</button>`).join('')}<button class="chip" data-to="" aria-pressed="${!m.to}">Todo o cardápio</button></div>
+      <div class="card mt"><div class="set-row"><span class="t"><b>Incluir receitas sem data</b></span><button class="switch" role="switch" aria-checked="${m.undated}" data-und aria-label="Incluir receitas sem data"></button></div></div>
+      <p class="sh-sub">No período: ${inR.length} ${inR.length===1 ? 'receita' : 'receitas'}, ${n} ${n===1 ? 'item' : 'itens'} para comprar</p>
+      ${inR.length ? `<div class="picks">${inR.sort((a,b)=>(a.date||'9').localeCompare(b.date||'9') || MEAL_IDX(a.meal) - MEAL_IDX(b.meal)).map(p=>{ const c = REC(p.rid);
+        return `<div class="pick static">${swatch(c,'sm')}<span class="txt"><b>${esc(c.name)}</b><small>${[p.date ? dayLabel(p.date) : 'Sem data', p.meal && MEALN[p.meal].toLowerCase()].filter(Boolean).join(', ')}</small></span></div>` }).join('')}</div>`
+        : '<p class="empty">Nenhuma receita planejada nesse período. Adicione pelo calendário.</p>'}
+      <a class="btn primary block" href="#/despensa/comprar">Ver lista de compras</a>`;
+  };
+  openSheet(`<div class="sh-head"><h2>Planejar o mercado</h2><button class="sh-done" data-close>Pronto</button></div><div class="sh-body"></div>`, el=>{
+    draw(el);
+    el.addEventListener('click', e=>{
+      const b = e.target.closest('button'); if(!b) return;
+      if(b.dataset.to!=null){ m.to = b.dataset.to || null; save(); draw(el) }
+      else if(b.dataset.und!=null){ m.undated = !m.undated; save(); draw(el) }
+    });
+  }, {label:'Planejar o mercado', onClose:refresh});
+}
+const inMarket = p => !p.date ? DB.market.undated : (!DB.market.to || p.date <= DB.market.to);
 
 /* ---------- Vou fazer (planejar) ---------- */
 function openPlanSheet(c, planId){
@@ -2003,7 +2187,7 @@ function openPlanSheet(c, planId){
     const s = status(c, cfgOf(c, d));
     el.querySelector('.sh-body').innerHTML = `
       <p class="sh-sub">Quando</p>
-      <div class="chiprow">${[0,1,2,3,4,5,6].map(n=>addDays(n)).map(x=>`<button class="chip" data-day="${x}" aria-pressed="${d.date===x}">${dayLabel(x)}</button>`).join('')}<button class="chip" data-day="" aria-pressed="${!d.date}">Sem data</button></div>
+      <div class="chiprow">${[...new Set([...[...Array(14)].map((_,n)=>addDays(n)), ...(d.date && d.date >= todayIso() ? [d.date] : [])])].sort().map(x=>`<button class="chip" data-day="${x}" aria-pressed="${d.date===x}">${dayLabel(x)}</button>`).join('')}<button class="chip" data-day="" aria-pressed="${!d.date}">Sem data</button></div>
       <p class="sh-sub">Refeição</p>
       <div class="seg">${MEALS.map(([k])=>`<button data-meal="${k}" aria-pressed="${d.meal===k}">${MEAL_SHORT[k]}</button>`).join('')}</div>
       <div class="card mt">${c.scale!=='forma'
@@ -2163,6 +2347,7 @@ function backTarget(c){
   if(!LAST_LIST || h[0]==='r') return ['#/receitas/' + c.cat, CATN(c.cat)];
   if(!h[0]) return ['#/', 'Hoje'];
   if(h[0]==='despensa') return [LAST_LIST, 'Despensa'];
+  if(h[0]==='calendario') return ['#/calendario', 'Calendário'];
   if(h[0]==='receitas') return [LAST_LIST, h[1] ? (h[1]==='minhas' ? 'Minhas receitas' : CATN(h[1])) : 'Receitas'];
   return ['#/', 'Hoje'];
 }
@@ -2336,30 +2521,41 @@ function renderPantry(mode){
   $('#app').querySelectorAll('[data-go]').forEach(b=>b.onclick = ()=>location.replace(b.dataset.go));
   mode==='home' ? pantryHome() : pantryBuy();
 }
+/* ---------- Despensa: em casa ---------- */
+function planNeeds(){
+  const m = new Map();
+  for(const pl of DB.plan){ const c = REC(pl.rid); if(!c) continue; const cfg = cfgOf(c, pl);
+    for(const e of needs(c, calc(c, cfg), topOf(c, cfg)).values()){ if(!m.has(e.p)) m.set(e.p, []); if(!m.get(e.p).includes(c.name)) m.get(e.p).push(c.name) } }
+  return m;
+}
 function pantryHome(){
-  const q = plain(PQ.q.trim());
-  const ids = CAT_ORDER.filter(p=>!CAT[p].skip && (!q || plain(CAT[p].n).includes(q)) && (PQ.f==='all' || (PQ.f==='have') === !!DB.pantry[p]));
-  const secs = SECS.map(([k,l])=>[l, ids.filter(p=>CAT[p].sec===k)]).filter(x=>x[1].length);
+  const q = plain(PQ.q.trim()), need = planNeeds();
+  const pass = p => !CAT[p].skip && (!q || plain(CAT[p].n).includes(q))
+    && (PQ.f==='all' || (PQ.f==='have' && DB.pantry[p]) || (PQ.f==='no' && !DB.pantry[p]) || (PQ.f==='plan' && need.has(p)));
+  const sorted = arr => arr.sort((a,b)=>CAT[a].n.localeCompare(CAT[b].n, 'pt-BR'));
+  const secs = SECS.map(([k,l])=>{ const all = CAT_ORDER.filter(p=>CAT[p].sec===k);
+    return {k, l, ids: sorted(all.filter(pass)), have: all.filter(p=>DB.pantry[p]).length, total: all.length} });
   const row = p => {
-    const C = CAT[p], h = DB.pantry[p], u = punit(p), editing = PQ.edit===p;
+    const C = CAT[p], h = DB.pantry[p], u = punit(p), editing = PQ.edit===p, why = need.get(p);
     return `<div class="prow">
-      <button class="pbtn" role="checkbox" aria-checked="${!!h}" data-ph="${p}"><span class="box">${ICON.check}</span><span class="pn">${esc(C.n)}</span></button>
+      <button class="pbtn" role="checkbox" aria-checked="${!!h}" data-ph="${p}"><span class="box">${ICON.check}</span><span class="pn">${esc(C.n)}${PQ.f==='plan' && why ? `<span class="buy-from">Para ${esc(join(why.map(lowerFirst)))}</span>` : ''}</span></button>
       ${h && u ? `<button class="qbtn ${h.q > 0 ? '' : 'empty'}" data-pq="${p}" aria-label="Quantidade de ${esc(C.n.toLowerCase())}">${h.q > 0 ? qtyTxt(p, h.q) : 'Quantidade'}</button>` : ''}
     </div>
     ${editing ? `<div class="pedit"><span class="amt"><input id="pq-in" inputmode="decimal" enterkeyhint="done" value="${h && h.q > 0 ? numTxt(h.q) : ''}" placeholder="—" aria-label="Quantidade"><span>${u}</span></span>
       <button class="tbtn" data-pqok="${p}">Salvar</button>${h && h.q > 0 ? `<button class="tbtn" data-pqclear="${p}">Sem quantidade</button>` : ''}
       ${C.hint ? `<small>${C.hint}</small>` : ''}</div>` : ''}`;
   };
+  const shown = secs.filter(s=>s.ids.length);
+  const filters = [['all','Todos'],['have','Tenho'],['no','Não tenho'],['plan','Do cardápio']];
   $('#pbody').innerHTML = `
-    <label class="search">${ICON.search}<input id="pq" type="search" placeholder="Buscar ingrediente" value="${esc(PQ.q)}" autocomplete="off"></label>
-    <div class="chiprow">
-      <button class="chip" data-f="all" aria-pressed="${PQ.f==='all'}">Todos</button>
-      <button class="chip" data-f="have" aria-pressed="${PQ.f==='have'}">Tenho</button>
-      <button class="chip" data-f="no" aria-pressed="${PQ.f==='no'}">Não tenho</button>
-      <button class="chip" data-act="basics">${BASICS.every(b=>DB.pantry[b]) ? 'Desmarcar básicos' : 'Marcar básicos'}</button>
+    <div class="ptools">
+      <label class="search">${ICON.search}<input id="pq" type="search" placeholder="Buscar ingrediente" value="${esc(PQ.q)}" autocomplete="off"></label>
+      <div class="chiprow">${filters.map(([k,l])=>`<button class="chip" data-f="${k}" aria-pressed="${PQ.f===k}">${l}</button>`).join('')}</div>
+      ${!q && shown.length > 1 ? `<div class="jump" role="navigation" aria-label="Seções">${shown.map(s=>`<button data-jump="${s.k}">${s.l.split(',')[0]}</button>`).join('')}</div>` : ''}
     </div>
-    <p class="cap">Toque para marcar o que tem. Com a quantidade, o app desconta o que você usar e avisa quando acabar.</p>
-    <div id="plist">${secs.length ? secs.map(([l,arr])=>`<h3 class="grp">${l}</h3>${arr.map(row).join('')}`).join('') : '<p class="empty">Nenhum ingrediente encontrado.</p>'}</div>`;
+    ${PQ.f==='all' && !q ? `<div class="prow-actions"><span class="cap" style="margin:0">Com a quantidade, o app desconta o que você usar.</span><button class="tbtn" data-act="basics">${BASICS.every(b=>DB.pantry[b]) ? 'Desmarcar básicos' : 'Marcar básicos'}</button></div>` : ''}
+    <div id="plist">${shown.length ? shown.map(s=>`<h3 class="psec" id="sec-${s.k}">${s.l}<span class="num">${s.have} de ${s.total}</span></h3>${s.ids.map(row).join('')}`).join('')
+      : `<p class="empty" style="margin-top:16px">${PQ.f==='plan' ? 'Nenhuma receita no cardápio ainda.' : 'Nenhum ingrediente encontrado.'}</p>`}</div>`;
   const inp = $('#pq');
   inp.oninput = ()=>{ PQ.q = inp.value; const pos = inp.selectionStart; pantryHome(); const n = $('#pq'); n.focus(); n.setSelectionRange(pos,pos) };
   const qin = $('#pq-in');
@@ -2367,21 +2563,22 @@ function pantryHome(){
   $('#pbody').onclick = e=>{
     const b = e.target.closest('button'); if(!b) return;
     const re = () => { save(); const y = scrollY; renderPantry('home'); scrollTo(0,y) };
+    if(b.dataset.jump){ const el = document.getElementById('sec-' + b.dataset.jump); if(el) el.scrollIntoView({behavior:'smooth', block:'start'}); return }
     if(b.dataset.ph){ const p = b.dataset.ph; if(DB.pantry[p]){ delete DB.pantry[p]; if(PQ.edit===p) PQ.edit = null } else DB.pantry[p] = {q:null}; return re() }
     if(b.dataset.pq){ PQ.edit = PQ.edit===b.dataset.pq ? null : b.dataset.pq; return re() }
     if(b.dataset.pqok){ const v = num($('#pq-in').value); DB.pantry[b.dataset.pqok] = {q: v > 0 ? v : null}; PQ.edit = null; return re() }
     if(b.dataset.pqclear){ DB.pantry[b.dataset.pqclear] = {q:null}; PQ.edit = null; return re() }
-    if(b.dataset.f){ PQ.f = b.dataset.f; return re() }
+    if(b.dataset.f){ PQ.f = b.dataset.f; save(); renderPantry('home'); scrollTo(0,0); return }
     if(b.dataset.act==='basics'){ const all = BASICS.every(x=>DB.pantry[x]); BASICS.forEach(x=>{ if(all) delete DB.pantry[x]; else if(!DB.pantry[x]) DB.pantry[x] = {q:null} }); return re() }
   };
 }
 function pantryBuy(){
   const {rows} = shopData();
   const bySec = SECS.map(([k,l])=>[l, rows.filter(r=>CAT[r.p].sec===k)]).filter(x=>x[1].length);
-  const nPlan = DB.plan.filter(p=>REC(p.rid)).length;
+  const nPlan = DB.plan.filter(p=>REC(p.rid) && inMarket(p)).length, nAll = DB.plan.filter(p=>REC(p.rid)).length;
   const extras = DB.extras;
   $('#pbody').innerHTML = `
-    <p class="cap">${nPlan ? `Calculada a partir de ${nPlan} ${nPlan===1 ? 'receita' : 'receitas'} do cardápio, descontando o que tem em casa. Ao marcar um item, ele vai para a despensa.` : 'Planeje receitas com Vou fazer: o que faltar aparece aqui.'}</p>
+    <div class="mkt"><span class="t"><b>${DB.market.to ? 'Compras ' + marketTxt(true) : 'Compras para todo o cardápio'}</b><small>${nPlan ? `${nPlan} ${nPlan===1 ? 'receita' : 'receitas'}, descontando o que tem em casa. Ao marcar um item, ele vai para a despensa.` : nAll ? 'Nenhuma receita nesse período.' : 'Planeje receitas no calendário: o que faltar aparece aqui.'}</small></span><button class="tbtn" data-act="mkt">Período</button></div>
     ${bySec.map(([l,arr])=>`<h3 class="grp">${l}</h3>${arr.map(r=>`<div class="prow"><button class="pbtn" role="checkbox" aria-checked="false" data-buy="${r.p}">
         <span class="box">${ICON.check}</span><span class="pn">${esc(pname(r.p))}<span class="buy-from">${esc([r.note, 'Para ' + join(r.from.map(lowerFirst))].filter(Boolean).join('. '))}</span></span>
         <span class="bq">${packTxt(r.p, r.buy)}</span></button></div>`).join('')}`).join('')}
@@ -2408,6 +2605,7 @@ function pantryBuy(){
     if(b.dataset.undo!=null){ const x = DB.bought[+b.dataset.undo]; if(x){ if(x.prev) DB.pantry[x.p] = x.prev; else delete DB.pantry[x.p]; DB.bought.splice(+b.dataset.undo, 1) } return re() }
     if(b.dataset.ex){ const x = DB.extras.find(y=>y.id===b.dataset.ex); if(x) x.done = !x.done; return re() }
     if(b.dataset.exdel){ DB.extras = DB.extras.filter(y=>y.id!==b.dataset.exdel); return re() }
+    if(b.dataset.act==='mkt'){ openMarketSheet(); return }
     if(b.dataset.act==='clean'){ DB.bought = []; DB.extras = DB.extras.filter(x=>!x.done); return re() }
     if(b.dataset.act==='send'){
       const lines = []; bySec.forEach(([l,arr])=>{ lines.push('\n' + l); arr.forEach(r=>lines.push(`• ${pname(r.p)}${r.buy > 0 ? ': ' + packTxt(r.p, r.buy) : ''}`)) });
@@ -3002,6 +3200,9 @@ document.addEventListener('visibilitychange', ()=>{
     if(Object.keys(DB.timers).length) tick();
   }
 });
+
+/* sem zoom: pinça e toque duplo */
+['gesturestart','gesturechange','gestureend'].forEach(ev=>document.addEventListener(ev, e=>e.preventDefault(), {passive:false}));
 
 /* início */
 if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
