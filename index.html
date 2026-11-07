@@ -437,8 +437,9 @@ button.cake-row{width:100%;border:0;border-bottom:1px solid var(--line);backgrou
 .row2{display:flex;gap:10px;margin-top:10px}
 .row2 .btn{flex:1;margin-top:0}
 .danger-t,.btn.danger-t{color:var(--danger)}
-.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ed .duo .amt input{flex:1;min-width:0;width:auto}
+.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.duo>*{min-width:0}
+.ed .duo .amt input{flex:1;min-width:0;width:100%}
 .ed .duo .amt span{white-space:nowrap}
 .ed-switch{margin-top:14px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .ed .pchips .chip{height:36px}
@@ -645,6 +646,7 @@ body.cookbar-on .spacer{height:220px}
 .cook-acts+.uses,.cook-acts+.timer{margin-top:16px}
 .ver-btn{color:var(--muted)}
 .ver-btn svg{width:21px;height:21px}
+html,body{max-width:100%;overflow-x:hidden}
 </style>
 </head>
 <body>
