@@ -621,6 +621,13 @@ body.cookbar-on .spacer{height:220px}
 .cbox svg{width:12px;height:12px;opacity:0}
 .opt[aria-pressed=true] .cbox{border-color:var(--acc);background:var(--acc)}
 .opt[aria-pressed=true] .cbox svg{opacity:1}
+.now-row{display:flex;align-items:center;gap:12px;margin-top:12px;padding:10px 12px 10px 16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
+.now-row .t{flex:1;min-width:0}
+.now-row b{display:block;font-size:16px;font-weight:650}
+.now-row small{display:block;margin-top:1px;color:var(--muted);font-size:13px}
+.now-row.on{border-color:color-mix(in srgb,var(--acc) 35%,var(--line))}
+.rmeal{margin-top:10px}
+.fchips[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -1077,7 +1084,7 @@ function nutri(c){
   return {p: Math.round(p / s), c: Math.round(k / s)};
 }
 const SEL_PROT = 25, SEL_CARB = 15;
-const FDESC = {prot:'25 g de proteína ou mais por porção', low:'Até 15 g de carboidrato por porção', sf:'Fogão, panela ou nada', pan:'Uma panela ou assadeira do começo ao fim', marm:'Aguentam 3 a 4 dias na geladeira e reaquecem bem', veg:'Sem carne, frango ou peixe'};
+const FDESC = {rap:'Até 30 minutos no total', prot:'25 g de proteína ou mais por porção', low:'Até 15 g de carboidrato por porção', sf:'Fogão, panela ou nada', pan:'Uma panela ou assadeira do começo ao fim', marm:'Aguentam 3 a 4 dias na geladeira e reaquecem bem', veg:'Sem carne, frango ou peixe'};
 /* Tags: as calculadas saem dos dados; "uma panela" e "marmita" são editoriais. */
 const TAGDEF = [['prot','Proteica','Proteicas'],['low','Pouco carbo','Pouco carbo'],['rap','Rápida','Rápidas'],['marm','Boa para marmita','Boas para marmita'],['pan','Uma panela','Uma panela só'],['sf','Sem forno','Sem forno'],['veg','Vegetariana','Vegetarianas']];
 const ONE_POT = new Set('carne-panela almondegas strogonoff-carne carreteiro frango-ensopado strogonoff-frango frango-xadrez canja sopa-legumes caldo-verde creme-abobora sopa-ervilha peixe-assado frango-assado galeto sobrecoxa-limao frango-curry strogonoff-leve parmegiana-assada puchero carne-moida-abobrinha tainha-assada peixe-ensopado tilapia-parmesao salmao-brocolis camarao-alho sopa-capeletti sopa-lentilha frango-batata-doce picadinho-abobora moqueca curry-grao entrevero vaca-atolada shakshuka-verde peixe-papelote frango-tikka risoto-cogumelos ovos-tomate'.split(' '));
@@ -3283,8 +3290,8 @@ function startCook(c, planId){
 /* =========================================================
    RECEITAS
    ========================================================= */
-const RQ = {q:'', meal:'all', now:false, fav:false, rap:false, sort:(DB.prefs && SORTS_OK(DB.prefs.sort)) || 'pad', t:{}};
-const MORE_F = ['prot','low','sf','pan','marm','veg'];
+const RQ = {q:'', meal:'all', now:false, fav:false, sort:(DB.prefs && SORTS_OK(DB.prefs.sort)) || 'pad', t:{}};
+const MORE_F = ['rap','prot','low','sf','pan','marm','veg'];
 function SORTS_OK(k){ return ['pad','tempo','falta','prot','carb','feitas','nome'].includes(k) ? k : null }
 const SORTS = [['pad','Padrão','Ordem da categoria'],['tempo','Mais rápidas','Menor tempo total primeiro'],['falta','Falta menos','Menos ingredientes para comprar'],['prot','Mais proteína','Por porção, estimado'],['carb','Menos carboidrato','Por porção, estimado'],['feitas','Mais feitas','Pelo seu histórico'],['nome','A a Z','Ordem alfabética']];
 function sortRecipes(list){
@@ -3334,17 +3341,20 @@ function renderRecipes(){
   $('#app').innerHTML = `<div class="wrap">
     <header class="home-head"><div class="hh-row"><h1>Receitas</h1><a class="icon-btn" href="#/nova" aria-label="Nova receita">${ICON.plus}</a></div></header>
     <div class="srow"><label class="search">${ICON.search}<input id="rq" type="search" placeholder="Receita ou ingrediente" value="${esc(RQ.q)}" autocomplete="off" enterkeyhint="search"></label><button class="fbtn" id="fbtn" aria-label="Mais filtros"></button></div>
+    <div class="now-row" id="nowrow"></div>
     <div class="seg rmeal" id="rmeal" role="group" aria-label="Refeição"></div>
     <div class="fchips" id="rflt" role="group" aria-label="Filtros"></div>
     <div id="res"></div>
   </div>`;
   const nMore = () => MORE_F.filter(k=>RQ.t[k]).length;
-  const anyF = () => RQ.fav || RQ.now || RQ.rap || nMore() > 0;
+  const anyF = () => RQ.fav || RQ.now || nMore() > 0;
   const chips = () => {
     $('#rmeal').innerHTML = `<button data-meal="all" aria-pressed="${RQ.meal==='all'}">Tudo</button>${MEALS.map(([k])=>`<button data-meal="${k}" aria-pressed="${RQ.meal===k}">${MEAL_SHORT[k]}</button>`).join('')}`;
-    $('#rflt').innerHTML = (DB.favs.length || RQ.fav ? `<button class="fchip fv" data-f="fav" aria-pressed="${RQ.fav}">${RQ.fav ? ICON.heartOn : ICON.heart}Favoritas</button>` : '')
-      + [['rap','Rápidas'],['now','Dá para fazer']].map(([k,l])=>`<button class="fchip" data-f="${k}" aria-pressed="${!!RQ[k]}">${ICON.ok}${l}</button>`).join('')
+    $('#nowrow').innerHTML = `<span class="t"><b>Dá para fazer agora</b><small>${Object.keys(DB.pantry).length ? 'Só receitas com o que tem na despensa' : 'Marque o que tem em casa na Despensa'}</small></span><button class="switch" role="switch" data-f="now" aria-checked="${RQ.now}" aria-label="Dá para fazer agora"></button>`;
+    $('#nowrow').classList.toggle('on', RQ.now);
+    const fchips = (DB.favs.length || RQ.fav ? `<button class="fchip fv" data-f="fav" aria-pressed="${RQ.fav}">${RQ.fav ? ICON.heartOn : ICON.heart}Favoritas</button>` : '')
       + MORE_F.filter(k=>RQ.t[k]).map(k=>`<button class="fchip" data-t="${k}" aria-pressed="true">${ICON.ok}${TAGDEF.find(x=>x[0]===k)[2]}</button>`).join('');
+    $('#rflt').innerHTML = fchips; $('#rflt').hidden = !fchips;
     $('#fbtn').innerHTML = `${ICON.filter}${nMore() ? `<i>${nMore()}</i>` : ''}`; $('#fbtn').classList.toggle('on', nMore() > 0);
   };
   const results = () => {
@@ -3363,7 +3373,6 @@ function renderRecipes(){
     if(q) list = list.filter(c=>plain(c.name).includes(q) || plain(c.desc).includes(q) || plain(CATN(c.cat)).includes(q) || c.ing.some(i=>plain(i.n).includes(q)));
     if(RQ.fav) list = favs().filter(c=>list.includes(c));
     if(RQ.now) list = list.filter(c=>{ const s = status(c); return s.ok || s.swapOnly });
-    if(RQ.rap) list = list.filter(c=>hasTag(c,'rap'));
     MORE_F.filter(k=>RQ.t[k]).forEach(k=>{ list = list.filter(c=>hasTag(c,k)) });
     list = sortRecipes(list);
     $('#res').innerHTML = list.length ? `<p class="res-n"><span>${list.length} ${list.length===1 ? 'receita' : 'receitas'}</span>${sortBtn()}${anyF() || RQ.meal!=='all' ? '<button class="link" data-clear data-all>Limpar</button>' : ''}</p><ul class="cake-list">${list.map(c=>recRow(c)).join('')}</ul>`
@@ -3376,11 +3385,11 @@ function renderRecipes(){
     if(b.dataset.meal) RQ.meal = b.dataset.meal;
     else if(b.dataset.f) RQ[b.dataset.f] = !RQ[b.dataset.f];
     else if(b.dataset.t) RQ.t[b.dataset.t] = !RQ.t[b.dataset.t];
-    else if(b.dataset.clear!=null){ RQ.now = RQ.fav = RQ.rap = false; RQ.t = {}; RQ.meal = 'all' }
+    else if(b.dataset.clear!=null){ RQ.now = RQ.fav = false; RQ.t = {}; RQ.meal = 'all' }
     else return;
     chips(); results();
   };
-  ['#rmeal','#rflt','#res'].forEach(sel=>$(sel).onclick = onF);
+  ['#nowrow','#rmeal','#rflt','#res'].forEach(sel=>$(sel).onclick = onF);
   $('#fbtn').onclick = () => {
     openSheet(`<div class="sh-head"><h2>Filtros</h2><button class="sh-done" data-close>Pronto</button></div><div class="sh-body"><div class="opts" id="fopts"></div><p class="cap" id="fcount"></p></div>`, el=>{
       const draw = () => {
