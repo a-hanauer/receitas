@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Fornada">
+<meta name="theme-color" content="#FAFAF8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Fornada</title>
+<style>
+:root{
+  --bg:#FAFAF8; --surface:#FFFFFF; --ink:#171716; --ink2:#3B3A37; --muted:#74726C;
+  --line:#E8E7E3; --line2:#D9D7D1; --press:#F1F0EC;
+  --tone:#E07B2E; --tone-ink:#FFFFFF; --tone-soft:#FBEBDD;
+  --ok:#2F7D4F; --warn:#B4541A;
+  --r-sm:10px; --r-md:14px; --r-lg:20px;
+  --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#121211;--surface:#1C1C1A;--ink:#F2F1EE;--ink2:#CFCDC7;--muted:#97948D;--line:#2B2A27;--line2:#3A3935;--press:#262523;--ok:#5DB27F;--warn:#E58A50}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-size:17px;line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--tone);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:560px;margin:0 auto;padding:0 20px calc(40px + var(--safe-b))}
+
+/* ---------- Home ---------- */
+.home-head{padding:calc(28px + var(--safe-t)) 0 20px}
+.home-head h1{font-size:34px;line-height:1.1;letter-spacing:-.02em;margin:0;font-weight:700}
+.home-head p{margin:6px 0 0;color:var(--muted);font-size:17px}
+.cake-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.cake-row{display:flex;align-items:center;gap:14px;padding:14px 2px;border-bottom:1px solid var(--line);text-decoration:none;color:inherit;min-height:72px}
+.cake-row:active{background:var(--press)}
+.swatch{width:40px;height:40px;border-radius:12px;flex:none;position:relative;overflow:hidden}
+.swatch i{position:absolute;left:0;right:0;top:0;height:11px}
+.cake-row .txt{flex:1;min-width:0}
+.cake-row .txt{display:block}
+.cake-row b{display:block;color:var(--ink);font-size:17px;font-weight:600;letter-spacing:-.01em}
+.cake-row .txt>span{display:block;font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chev{width:8px;height:14px;flex:none;color:var(--line2)}
+.home-foot{margin-top:28px;font-size:13px;color:var(--muted);line-height:1.5}
+
+/* ---------- Recipe ---------- */
+.hero{background:var(--tone);color:var(--tone-ink);padding:calc(10px + var(--safe-t)) 0 26px}
+.hero .wrap{padding-bottom:0}
+.back{display:inline-flex;align-items:center;gap:6px;height:44px;margin-left:-6px;padding:0 6px;background:none;border:0;color:inherit;font-size:17px;opacity:.92}
+.back svg{width:10px;height:17px}
+.hero h1{font-size:34px;line-height:1.08;letter-spacing:-.025em;margin:10px 0 8px;font-weight:700}
+.hero p{margin:0;font-size:16px;opacity:.9;max-width:42ch}
+.facts{display:flex;gap:22px;margin-top:20px}
+.facts div{display:flex;flex-direction:column}
+.facts small{font-size:12px;opacity:.8}
+.facts strong{font-size:20px;font-weight:600;letter-spacing:-.01em}
+
+.sec{margin-top:28px}
+.sec h2{font-size:20px;font-weight:650;letter-spacing:-.015em;margin:0 0 12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md)}
+.seg{display:flex;background:var(--press);border-radius:10px;padding:3px;gap:3px}
+.seg button{flex:1;height:36px;border:0;border-radius:8px;background:transparent;font-size:15px;font-weight:550;color:var(--muted)}
+.seg button[aria-pressed=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08),0 0 0 .5px rgba(0,0,0,.04)}
+.field{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:0 16px;border-top:1px solid var(--line)}
+.field:first-child{border-top:0}
+.field label{font-size:16px;color:var(--ink2);flex:none;white-space:nowrap}
+.field select{appearance:none;-webkit-appearance:none;border:0;background:transparent;text-align:right;text-align-last:right;font-size:16px;font-weight:550;color:var(--ink);padding:14px 22px 14px 0;flex:1;width:100%;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 7px) 50%,calc(100% - 2px) 50%;background-size:5px 5px;background-repeat:no-repeat;min-width:0}
+.amt{display:flex;align-items:center;gap:6px}
+.amt input{width:96px;height:38px;border:1px solid var(--line2);border-radius:9px;background:var(--bg);text-align:right;padding:0 10px;font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
+.amt span{color:var(--muted);font-size:16px;width:24px}
+.scale-box{padding:12px 0 0}
+.scale-box .seg{margin:0 12px 4px}
+.scale-box .rows{margin-top:8px}
+.scale-box .rows .field:first-child{border-top:1px solid var(--line)}
+.fit{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-top:1px solid var(--line);font-size:14px;color:var(--ink2)}
+.fit .dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex:none;background:var(--ok)}
+.fit.warn .dot{background:var(--warn)}
+.fit button{background:none;border:0;padding:0;color:var(--tone-text,var(--ink));text-decoration:underline;text-underline-offset:2px;font-size:14px;font-weight:600}
+
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:2px 20px 4px;scroll-padding:20px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:38px;padding:0 15px;border-radius:19px;border:1px solid var(--line2);background:var(--surface);font-size:15px;font-weight:500;white-space:nowrap}
+.chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.chip-sep{flex:none;width:1px;background:var(--line);margin:6px 2px}
+.top-desc{font-size:14px;color:var(--muted);margin:10px 0 0}
+
+.tabs{position:sticky;top:0;z-index:5;background:var(--bg);margin:28px -20px 0;padding:calc(8px + var(--safe-t)) 20px 10px;border-bottom:1px solid var(--line)}
+.tabs .seg{max-width:560px}
+
+.list-tools{display:flex;align-items:center;justify-content:space-between;margin:18px 0 6px;gap:12px}
+.list-tools .progress{font-size:14px;color:var(--muted)}
+.tool-btns{display:flex;gap:4px}
+.tbtn{height:34px;padding:0 12px;border-radius:17px;border:0;background:var(--press);font-size:14px;font-weight:550}
+.switch-row{display:flex;align-items:center;justify-content:space-between;font-size:14px;color:var(--muted);margin:2px 0 4px}
+.switch{position:relative;width:44px;height:26px;border-radius:13px;background:var(--line2);border:0;transition:background .2s}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.switch[aria-checked=true]{background:var(--ok)}
+.switch[aria-checked=true]::after{transform:translateX(18px)}
+.grp{font-size:15px;font-weight:650;margin:22px 0 2px;color:var(--ink)}
+.grp small{font-weight:400;color:var(--muted);margin-left:6px}
+.ing{display:flex;align-items:flex-start;gap:12px;width:100%;padding:12px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left}
+.ing:active{background:var(--press)}
+.box{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line2);flex:none;margin-top:1px;display:grid;place-items:center;transition:background .15s,border-color .15s}
+.box svg{width:12px;height:12px;opacity:0}
+.ing[aria-checked=true] .box{background:var(--ok);border-color:var(--ok)}
+.ing[aria-checked=true] .box svg{opacity:1}
+.ing[aria-checked=true] .iname,.ing[aria-checked=true] .iq{color:var(--muted)}
+.ing[aria-checked=true] .iname{text-decoration:line-through;text-decoration-color:var(--line2)}
+.iname{flex:1;font-size:16px;line-height:1.35;padding-top:1px}
+.iname em{font-style:normal;color:var(--muted);font-size:14px}
+.iq{text-align:right;flex:none;max-width:52%}
+.iq b{display:block;font-size:17px;font-weight:650;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.iq small{display:block;font-size:13px;color:var(--muted);line-height:1.3;white-space:nowrap}
+.iq small.adj{color:var(--warn)}
+
+.steps{list-style:none;margin:18px 0 0;padding:0}
+.steps li{display:grid;grid-template-columns:30px 1fr;gap:4px 10px;padding:14px 0;border-bottom:1px solid var(--line)}
+.steps .n{font-size:15px;font-weight:650;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:1px}
+.steps .ph{grid-column:2;font-size:13px;color:var(--muted)}
+.steps h3{grid-column:2;margin:0;font-size:17px;font-weight:600}
+.steps p{grid-column:2;margin:2px 0 0;font-size:16px;color:var(--ink2)}
+.steps .t{grid-column:2;font-size:14px;color:var(--muted);margin-top:4px}
+b.q{font-weight:650;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tips{margin-top:24px}
+.tips h3{font-size:17px;margin:0 0 6px;font-weight:650}
+.tips ul{margin:0;padding-left:18px;color:var(--ink2);font-size:15px}
+.tips li{margin:6px 0}
+.notes textarea{width:100%;min-height:220px;margin-top:18px;border:1px solid var(--line2);border-radius:var(--r-md);background:var(--surface);padding:14px;font-size:16px;line-height:1.5;resize:vertical}
+.notes p{font-size:13px;color:var(--muted);margin:8px 2px 0}
+
+.cta-bar{position:fixed;left:0;right:0;bottom:0;padding:12px 20px calc(12px + var(--safe-b));background:linear-gradient(to top,var(--bg) 70%,transparent);z-index:6}
+.cta{display:block;width:100%;max-width:520px;margin:0 auto;height:54px;border:0;border-radius:27px;background:var(--ink);color:var(--bg);font-size:17px;font-weight:650}
+.cta:active{transform:scale(.99)}
+.spacer{height:96px}
+
+/* ---------- Cook mode ---------- */
+.cook{position:fixed;inset:0;background:var(--bg);z-index:20;display:flex;flex-direction:column}
+.cook-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:calc(6px + var(--safe-t)) 12px 6px}
+.icon-btn{width:44px;height:44px;border:0;background:none;display:grid;place-items:center;border-radius:22px}
+.icon-btn svg{width:18px;height:18px}
+.cook-count{font-size:15px;color:var(--muted);font-weight:550}
+.pill{height:32px;padding:0 12px;border-radius:16px;border:1px solid var(--line2);background:none;font-size:13px;font-weight:550;display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--line2)}
+.pill[aria-pressed=true]{color:var(--ink);border-color:var(--ink)}
+.pill[aria-pressed=true] i{background:var(--ok)}
+.bar{height:3px;background:var(--line);margin:0 20px}
+.bar i{display:block;height:100%;background:var(--tone);transition:width .25s}
+.cook-body{flex:1;overflow-y:auto;padding:26px 24px 20px;max-width:600px;width:100%;margin:0 auto}
+.cook-ph{font-size:15px;color:var(--muted);font-weight:550}
+.cook-body h2{font-size:30px;line-height:1.12;letter-spacing:-.025em;margin:6px 0 14px;font-weight:700}
+.cook-body p{font-size:20px;line-height:1.5;margin:0;color:var(--ink2)}
+.cook-body b.q{color:var(--ink)}
+.timer{margin-top:28px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r-lg);padding:18px 18px 16px}
+.timer .lbl{font-size:14px;color:var(--muted)}
+.timer .clock{font-size:56px;font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1;margin:2px 0 14px}
+.timer.done .clock{color:var(--tone)}
+.trow{display:flex;gap:8px}
+.tb{height:46px;border-radius:23px;border:1px solid var(--line2);background:none;padding:0 18px;font-size:16px;font-weight:600}
+.tb.main{flex:1;background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.mini{margin:10px 20px 0;display:flex;gap:8px;flex-wrap:wrap}
+.mini button{height:34px;border-radius:17px;border:0;background:var(--tone-soft);color:var(--ink);padding:0 12px;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.cook-nav{display:flex;gap:10px;padding:12px 20px calc(12px + var(--safe-b));max-width:600px;width:100%;margin:0 auto}
+.cook-nav button{height:56px;border-radius:28px;font-size:17px;font-weight:650;border:1px solid var(--line2);background:none}
+.cook-nav .prev{width:56px;flex:none;display:grid;place-items:center}
+.cook-nav .prev svg{width:10px;height:17px}
+.cook-nav .next{flex:1;background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cook-nav .prev:disabled{opacity:.35}
+
+.ring{position:fixed;inset:0;z-index:40;background:var(--tone);color:var(--tone-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+.ring h2{font-size:34px;margin:0 0 8px;letter-spacing:-.02em}
+.ring p{font-size:19px;margin:0 0 30px;opacity:.92;max-width:28ch}
+.ring button{height:56px;padding:0 34px;border-radius:28px;border:0;background:var(--tone-ink);color:var(--tone);font-size:18px;font-weight:700}
+.ring button+button{margin-top:12px;background:transparent;color:var(--tone-ink);border:1.5px solid var(--tone-ink)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.85}}
+.ring{animation:pulse 1.2s ease-in-out infinite}
+.toast{position:fixed;left:50%;bottom:calc(90px + var(--safe-b));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:20px;font-size:15px;z-index:50}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="cook" class="cook" hidden></div>
+<div id="ring" class="ring" hidden></div>
+
+<script>
+'use strict';
+/* =========================================================
+   DADOS
+   Todas as receitas de bolo estão calibradas para a forma
+   retangular 20×30 cm (fator 1). Coberturas também.
+   u: g | ml | un | cc (colher de chá) | pitada
+   s: texto curto usado dentro dos passos
+   cup: g por xícara de 240 ml · sp: g por colher de sopa
+   each: peso de uma unidade para a dica "≈ 2 cenouras"
+   ========================================================= */
+const PANS = [
+  {id:'r2030', n:'Retangular 20×30 cm', shape:'ret',  vol:1,    area:1,    dt:0},
+  {id:'r2233', n:'Retangular 22×33 cm', shape:'ret',  vol:1.21, area:1.21, dt:0},
+  {id:'r2535', n:'Retangular 25×35 cm', shape:'ret',  vol:1.46, area:1.46, dt:0},
+  {id:'q2020', n:'Quadrada 20×20 cm',   shape:'ret',  vol:.67,  area:.67,  dt:0},
+  {id:'c20',   n:'Redonda 20 cm',       shape:'round',vol:.52,  area:.52,  dt:0},
+  {id:'c24',   n:'Redonda 24 cm',       shape:'round',vol:.75,  area:.75,  dt:0},
+  {id:'f22',   n:'Com furo 22 cm',      shape:'tube', vol:.8,   area:.6,   dt:5},
+  {id:'f24',   n:'Com furo 24 cm',      shape:'tube', vol:1,    area:.72,  dt:5},
+  {id:'f26',   n:'Com furo 26 cm',      shape:'tube', vol:1.2,  area:.85,  dt:8},
+  {id:'ing',   n:'Bolo inglês 26×11 cm',shape:'loaf', vol:.55,  area:.48,  dt:12}
+];
+const OVOS = {id:'ovos', n:'Ovos', u:'un', s:'ovos', s1:'ovo', egg:true};
+const SAL = {id:'sal', n:'Sal', q:1, u:'pitada', s:'de sal'};
+const FERM = q => ({id:'fermento', n:'Fermento químico em pó', q, u:'g', s:'de fermento', sp:12});
+const FAR = q => ({id:'farinha', n:'Farinha de trigo', q, u:'g', s:'de farinha de trigo', cup:120});
+const ACU = (q,n) => ({id:'acucar', n:n||'Açúcar refinado', q, u:'g', s:'de açúcar', cup:180});
+const OLEO = q => ({id:'oleo', n:'Óleo (girassol ou canola)', q, u:'ml', s:'de óleo'});
+const LEITE = (q,s) => ({id:'leite', n:'Leite integral', q, u:'ml', s:s||'de leite'});
+
+const CAKES = [
+{ id:'cenoura', name:'Cenoura', tone:'#E07B2E', top2:'#4A2C1E', toneInk:'#fff',
+  desc:'Massa laranja e fofa de liquidificador, com casquinha de chocolate.',
+  temp:180, bake:[30,40], key:'cenoura', tops:['casquinha','brigadeiro','ganache'],
+  ing:[{id:'cenoura', n:'Cenoura descascada e picada', q:250, u:'g', s:'de cenoura', each:{g:125,one:'cenoura grande',many:'cenouras grandes'}},
+       {...OVOS,q:3.3}, OLEO(170), ACU(275), FAR(250), FERM(12), SAL],
+  steps:[
+    {t:'Bata a base', d:'No liquidificador, bata {cenoura}, {ovos} e {oleo} até virar um creme liso, sem nenhum pedaço de cenoura.', timer:180},
+    {t:'Misture os secos', d:'Numa tigela grande, misture {acucar}, {farinha} e {sal}.'},
+    {t:'Junte tudo', d:'Despeje o creme na tigela e misture com fouet só até não ver mais farinha seca. Não bata demais: o bolo fica borrachudo.'},
+    {t:'Fermento', d:'Junte {fermento} e mexa delicadamente. Despeje na forma.'}],
+  tips:['Pedaços de cenoura afundam e pesam a massa: bata até ficar realmente liso.','A farinha vai à mão, não no liquidificador.','Cobertura quente sobre bolo quente é o que forma a casquinha.']},
+
+{ id:'banana', name:'Banana', tone:'#E3B23C', toneInk:'#2A2108',
+  desc:'Mesma base do de cenoura, com banana bem madura. Menos açúcar, mais aroma.',
+  temp:180, bake:[35,45], key:'banana', tops:['casquinha','acucar-canela','ganache'],
+  ing:[{id:'banana', n:'Banana nanica bem madura, sem casca', q:300, u:'g', s:'de banana', each:{g:100,one:'banana nanica',many:'bananas nanicas'}},
+       {...OVOS,q:3}, OLEO(150), ACU(200), FAR(250), FERM(12), SAL,
+       {id:'canela', n:'Canela em pó', q:1, u:'cc', s:'de canela', opt:true}],
+  steps:[
+    {t:'Bata a base', d:'No liquidificador, bata {banana}, {ovos} e {oleo} até ficar um creme liso.', timer:120},
+    {t:'Misture os secos', d:'Numa tigela, misture {acucar}, {farinha}, {sal} e {canela}.'},
+    {t:'Junte tudo', d:'Despeje o creme na tigela e misture com fouet só até incorporar.'},
+    {t:'Fermento', d:'Junte {fermento}, mexa delicadamente e despeje na forma.'}],
+  tips:['Use bananas com a casca cheia de pintas pretas: são mais doces e perfumadas.','A massa é densa; faça o teste do palito bem no centro.']},
+
+{ id:'milho', name:'Milho verde', tone:'#F2C230', toneInk:'#2A2208',
+  desc:'Bolo de milho de liquidificador, úmido e com sabor marcado de milho.',
+  temp:180, bake:[40,50], key:'milho', tops:['nenhuma','acucar-canela','goiabada'],
+  ing:[{id:'milho', n:'Milho verde escorrido (lata ou espiga)', q:340, u:'g', s:'de milho verde', each:{g:170,one:'lata escorrida',many:'latas escorridas'}},
+       LEITE(120), {...OVOS,q:4}, OLEO(100), ACU(250),
+       {id:'fuba', n:'Fubá mimoso', q:150, u:'g', s:'de fubá', cup:160}, FAR(120), FERM(14), SAL],
+  steps:[
+    {t:'Bata o milho', d:'No liquidificador, bata {milho} com {leite} até virar um creme bem fino.', timer:180},
+    {t:'Complete a base', d:'Junte {ovos}, {oleo} e {acucar} e bata mais 1 minuto.', timer:60},
+    {t:'Misture os secos', d:'Numa tigela, misture {fuba}, {farinha} e {sal}.'},
+    {t:'Junte tudo', d:'Despeje o creme na tigela e misture com fouet até ficar homogêneo.'},
+    {t:'Fermento', d:'Junte {fermento}, mexa delicadamente e despeje na forma.'}],
+  tips:['Com milho de espiga, use os grãos crus cortados rente ao sabugo (3 a 4 espigas).','Para textura mais lisa, passe o creme de milho pela peneira antes de juntar os ovos.']},
+
+{ id:'fuba', name:'Fubá', tone:'#D9A441', toneInk:'#2A1E08',
+  desc:'O bolo de vó: fofo, perfumado, perfeito com café.',
+  temp:180, bake:[40,45], key:'fuba', tops:['nenhuma','goiabada','acucar-canela'],
+  ing:[{id:'fuba', n:'Fubá mimoso', q:250, u:'g', s:'de fubá', cup:160}, FAR(190), ACU(220), {...OVOS,q:3},
+       OLEO(190), LEITE(380), FERM(14), SAL,
+       {id:'erva', n:'Erva-doce em grão', q:1, u:'cc', s:'de erva-doce', opt:true}],
+  steps:[
+    {t:'Bata os líquidos', d:'No liquidificador, bata {ovos}, {leite}, {oleo} e {acucar}.', timer:120},
+    {t:'Misture os secos', d:'Numa tigela, misture {fuba}, {farinha}, {sal} e {erva}.'},
+    {t:'Junte tudo', d:'Despeje os líquidos na tigela e misture com fouet até ficar liso.'},
+    {t:'Fermento', d:'Junte {fermento}, mexa delicadamente e despeje na forma.'}],
+  tips:['Fubá mimoso (o mais fino) deixa o bolo macio; o comum deixa arenoso.','A massa é líquida mesmo. Não corrija com mais farinha.']},
+
+{ id:'chocolate', name:'Chocolate', tone:'#5A3324', toneInk:'#fff',
+  desc:'Fofo e escuro, com leite quente para abrir o sabor do chocolate.',
+  temp:180, bake:[35,40], key:'farinha', tops:['brigadeiro','ganache','casquinha'],
+  ing:[{id:'choc', n:'Chocolate em pó 50%', q:80, u:'g', s:'de chocolate em pó', cup:90, sp:7},
+       FAR(240), ACU(250), {...OVOS,q:3}, OLEO(120), LEITE(240,'de leite quente'), FERM(12), SAL],
+  steps:[
+    {t:'Bata a base', d:'No liquidificador, bata {ovos}, {oleo} e {acucar} até clarear.', timer:120},
+    {t:'Misture os secos', d:'Numa tigela, peneire {farinha}, {choc} e {sal}.'},
+    {t:'Junte tudo', d:'Despeje a base na tigela e junte {leite} aos poucos, misturando com fouet até ficar liso e brilhante.'},
+    {t:'Fermento', d:'Junte {fermento}, mexa delicadamente e despeje na forma.'}],
+  tips:['Leite quente (ou metade café) dissolve o cacau e intensifica o sabor.','Peneirar o chocolate evita grumos secos na massa.']},
+
+{ id:'laranja', name:'Laranja com casca', tone:'#F08A24', toneInk:'#fff',
+  desc:'A laranja inteira vai ao liquidificador. Perfume intenso, com calda.',
+  temp:180, bake:[35,40], key:'laranja', tops:['calda-laranja','casquinha','nenhuma'],
+  ing:[{id:'laranja', n:'Laranja-pera com casca, sem miolo branco e sementes', q:200, u:'g', s:'de laranja', each:{g:200,one:'laranja grande',many:'laranjas grandes'}},
+       {...OVOS,q:4}, OLEO(180), ACU(300), FAR(280), FERM(14), SAL],
+  steps:[
+    {t:'Prepare a laranja', d:'Lave bem {laranja}, corte em 8 gomos e retire o miolo branco do centro e todas as sementes. Eles amargam o bolo.'},
+    {t:'Bata a base', d:'No liquidificador, bata a laranja com {ovos}, {oleo} e {acucar} até não ver pedaços de casca.', timer:180},
+    {t:'Misture os secos', d:'Numa tigela, misture {farinha} e {sal}.'},
+    {t:'Junte tudo', d:'Despeje o creme na tigela e misture com fouet só até incorporar.'},
+    {t:'Fermento', d:'Junte {fermento}, mexa delicadamente e despeje na forma.'}],
+  tips:['Laranja de casca fina amarga menos. Laranja-lima não serve: falta acidez.','Se for a primeira vez, use só metade da casca para conhecer o amargor.']},
+
+{ id:'limao', name:'Limão', tone:'#9DBF3B', toneInk:'#1C2408',
+  desc:'Massa úmida de iogurte com raspas de limão e glacê ácido.',
+  temp:180, bake:[35,40], key:'iogurte', tops:['glace-limao','nenhuma'],
+  ing:[{id:'limoes', n:'Limão-taiti (raspas)', q:2, u:'un', s:'limões', s1:'limão', r:1},
+       ACU(250), {id:'iogurte', n:'Iogurte natural integral', q:170, u:'g', s:'de iogurte', each:{g:170,one:'pote',many:'potes'}},
+       {...OVOS,q:3}, OLEO(120), {id:'suco', n:'Suco de limão', q:60, u:'ml', s:'de suco de limão'}, FAR(260), FERM(12), SAL],
+  steps:[
+    {t:'Perfume o açúcar', d:'Rale a casca de {limoes} direto sobre {acucar} (só a parte verde). Esfregue com os dedos por 1 minuto: o óleo da casca passa para o açúcar.'},
+    {t:'Bata a base', d:'No liquidificador, bata o açúcar perfumado com {iogurte}, {ovos}, {oleo} e {suco}.', timer:90},
+    {t:'Misture os secos', d:'Numa tigela, misture {farinha} e {sal}.'},
+    {t:'Junte tudo', d:'Despeje o creme na tigela e misture com fouet só até incorporar.'},
+    {t:'Fermento', d:'Junte {fermento}, mexa delicadamente e despeje na forma.'}],
+  tips:['A parte branca da casca amarga; rale só a verde.','Esprema o suco depois de ralar: limão inteiro é mais fácil de ralar.']},
+
+{ id:'coco', name:'Coco', tone:'#C9B79C', toneInk:'#2A2216',
+  desc:'Fofo, com coco na massa e calda molhadinha de leite de coco.',
+  temp:180, bake:[35,40], key:'coco', tops:['calda-coco','nenhuma','brigadeiro'],
+  ing:[{id:'coco', n:'Coco ralado sem açúcar', q:100, u:'g', s:'de coco ralado', cup:80},
+       {...OVOS,q:4}, {id:'lcoco', n:'Leite de coco', q:200, u:'ml', s:'de leite de coco', each:{g:200,one:'vidro',many:'vidros'}},
+       LEITE(100), OLEO(100), ACU(250), FAR(250), FERM(14), SAL],
+  steps:[
+    {t:'Hidrate o coco', d:'Misture {coco} com {leite} e deixe 10 minutos. O coco amacia e não fica seco no bolo.', timer:600},
+    {t:'Bata a base', d:'No liquidificador, bata {ovos}, {lcoco}, {oleo} e {acucar}.', timer:90},
+    {t:'Misture os secos', d:'Numa tigela, misture {farinha} e {sal}.'},
+    {t:'Junte tudo', d:'Despeje a base e o coco hidratado na tigela e misture com fouet só até incorporar.'},
+    {t:'Fermento', d:'Junte {fermento}, mexa delicadamente e despeje na forma.'}],
+  tips:['Coco fresco ralado fica ainda melhor: use o dobro do peso e pule a hidratação.']},
+
+{ id:'aipim', name:'Aipim', tone:'#B98B4E', toneInk:'#fff',
+  desc:'Sem farinha: cremoso por dentro, bem dourado por fora.',
+  temp:200, bake:[45,55], key:'aipim', tops:['nenhuma','acucar-canela'], noLeaven:true,
+  done:'Está pronto quando a superfície estiver bem dourada e firme. O centro fica cremoso: o palito sai úmido, mas sem massa líquida.',
+  cool:{t:'Deixe esfriar por completo', d:'Bolo de aipim firma ao esfriar. Cortado quente, desmancha. Espere pelo menos 1 hora antes de desenformar e cortar.', timer:3600},
+  ing:[{id:'aipim', n:'Aipim cru ralado fino, sem o fio central', q:500, u:'g', s:'de aipim ralado'},
+       {...OVOS,q:3}, ACU(220), {id:'lcoco', n:'Leite de coco', q:200, u:'ml', s:'de leite de coco', each:{g:200,one:'vidro',many:'vidros'}},
+       LEITE(200), {id:'manteiga', n:'Manteiga derretida', q:40, u:'g', s:'de manteiga derretida', sp:15},
+       {id:'coco', n:'Coco ralado sem açúcar', q:50, u:'g', s:'de coco ralado', cup:80},
+       {id:'queijo', n:'Queijo parmesão ralado', q:30, u:'g', s:'de parmesão', sp:6, opt:true}, SAL],
+  steps:[
+    {t:'Rale o aipim', d:'Descasque o aipim, corte ao meio no comprimento, retire o fio duro do centro e rale no ralo fino até ter {aipim}.'},
+    {t:'Bata os líquidos', d:'No liquidificador, bata {ovos}, {acucar}, {lcoco}, {leite}, {manteiga} e {sal}.', timer:60},
+    {t:'Junte tudo', d:'Numa tigela, misture o aipim, os líquidos, {coco} e {queijo} até ficar homogêneo. Despeje na forma.'}],
+  tips:['O bolo é baixinho e denso por natureza: não leva fermento.','Aipim congelado já descascado funciona; descongele e escorra antes de ralar.']},
+
+{ id:'formigueiro', name:'Formigueiro', tone:'#E9DCC6', toneInk:'#2A2216',
+  desc:'Massa amanteigada de baunilha pontilhada de chocolate granulado.',
+  temp:180, bake:[35,40], key:'farinha', tops:['brigadeiro','ganache','nenhuma'],
+  ing:[{...OVOS,q:3}, ACU(220), LEITE(200), OLEO(120),
+       {id:'baunilha', n:'Extrato de baunilha', q:1, u:'cc', s:'de baunilha'},
+       FAR(260), SAL, {id:'granulado', n:'Chocolate granulado', q:100, u:'g', s:'de granulado', sp:12}, FERM(12)],
+  steps:[
+    {t:'Bata a base', d:'No liquidificador, bata {ovos}, {acucar}, {leite}, {oleo} e {baunilha}.', timer:90},
+    {t:'Misture os secos', d:'Numa tigela, misture {farinha} e {sal}. Separe 1 colher de sopa dessa mistura.'},
+    {t:'Junte tudo', d:'Despeje a base na tigela e misture com fouet só até incorporar.'},
+    {t:'Granulado e fermento', d:'Passe {granulado} na colher de farinha separada (assim ele não afunda). Junte à massa com {fermento} e misture delicadamente. Despeje na forma.'}],
+  tips:['Granulado de chocolate de verdade (não o sabor chocolate) derrete menos e marca melhor.']},
+
+{ id:'maca', name:'Maçã com canela', tone:'#B8432F', toneInk:'#fff',
+  desc:'Massa de canela e mascavo com cubinhos de maçã por todo o bolo.',
+  temp:180, bake:[40,45], key:'maca', tops:['acucar-canela','nenhuma','calda-laranja'],
+  ing:[{id:'maca', n:'Maçã em cubinhos, com casca', q:300, u:'g', s:'de maçã', each:{g:150,one:'maçã média',many:'maçãs médias'}},
+       {...OVOS,q:3}, {id:'mascavo', n:'Açúcar mascavo', q:100, u:'g', s:'de açúcar mascavo', cup:160}, ACU(100),
+       OLEO(140), LEITE(100), FAR(250), {id:'canela', n:'Canela em pó', q:2, u:'cc', s:'de canela'}, FERM(12), SAL],
+  steps:[
+    {t:'Prepare a maçã', d:'Corte {maca} em cubos de 1 cm. Polvilhe 1 colher de sopa de farinha (tirada da receita) e misture: os cubos não afundam.'},
+    {t:'Bata a base', d:'No liquidificador, bata {ovos}, {mascavo}, {acucar}, {oleo} e {leite}.', timer:120},
+    {t:'Misture os secos', d:'Numa tigela, misture o resto de {farinha}, {canela} e {sal}.'},
+    {t:'Junte tudo', d:'Despeje a base na tigela e misture com fouet só até incorporar.'},
+    {t:'Maçã e fermento', d:'Junte {fermento} e a maçã e misture delicadamente com espátula. Despeje na forma.'}],
+  tips:['Maçã fuji ou gala mantém a forma; evite as muito farinhentas.']}
+];
+
+/* when: quente (cobre o bolo quente) | morno | frio | none */
+const TOPS = [
+  {id:'nenhuma', name:'Sem cobertura', when:'none', desc:'Só o bolo. Polvilhe açúcar de confeiteiro se quiser.', ing:[], prep:[]},
+  {id:'casquinha', name:'Casquinha de chocolate', when:'quente', desc:'A clássica do bolo de cenoura: fina e firme por cima.',
+   ing:[{id:'tacucar', n:'Açúcar refinado', q:150, u:'g', s:'de açúcar', cup:180},
+        {id:'tchoc', n:'Chocolate em pó 50%', q:35, u:'g', s:'de chocolate em pó', sp:7},
+        {id:'tmant', n:'Manteiga', q:15, u:'g', s:'de manteiga', sp:15},
+        {id:'tleite', n:'Leite', q:85, u:'ml', s:'de leite'}],
+   prep:[{t:'Comece a cobertura', d:'Numa panela, junte {tacucar}, {tchoc}, {tmant} e {tleite}.'},
+         {t:'Ferva a cobertura', d:'Leve ao fogo médio mexendo sempre. Conte o tempo a partir da fervura, até engrossar levemente. Mais 1 a 2 minutos deixam a casquinha mais dura.', timer:240}],
+   apply:'Fure o bolo quente com um garfo e espalhe a cobertura ainda quente. Deixe esfriar para a casquinha firmar.', applyTimer:1800},
+  {id:'brigadeiro', name:'Brigadeiro', when:'morno', desc:'Cremoso, de colher. Fica mole mesmo depois de frio.',
+   ing:[{id:'tlc', n:'Leite condensado', q:395, u:'g', s:'de leite condensado', each:{g:395,one:'lata',many:'latas'}},
+        {id:'tchoc', n:'Chocolate em pó 50%', q:28, u:'g', s:'de chocolate em pó', sp:7},
+        {id:'tmant', n:'Manteiga', q:15, u:'g', s:'de manteiga', sp:15},
+        {id:'tcreme', n:'Creme de leite', q:100, u:'g', s:'de creme de leite', each:{g:200,one:'caixinha',many:'caixinhas'}}],
+   prep:[{t:'Cozinhe o brigadeiro', d:'Numa panela, junte {tlc}, {tchoc} e {tmant}. Cozinhe em fogo baixo mexendo sempre, até engrossar e começar a soltar do fundo.', timer:480},
+         {t:'Deixe cremoso', d:'Desligue o fogo e misture {tcreme}. Reserve.'}],
+   apply:'Espalhe o brigadeiro sobre o bolo morno.'},
+  {id:'ganache', name:'Ganache', when:'frio', desc:'Chocolate meio amargo e creme de leite. Brilhante e menos doce.',
+   ing:[{id:'tmeio', n:'Chocolate meio amargo picado', q:200, u:'g', s:'de chocolate meio amargo'},
+        {id:'tcreme', n:'Creme de leite', q:200, u:'g', s:'de creme de leite', each:{g:200,one:'caixinha',many:'caixinhas'}}],
+   prep:[{t:'Aqueça o creme', d:'Aqueça {tcreme} até as bordas borbulharem. Não deixe ferver.'},
+         {t:'Derreta o chocolate', d:'Despeje o creme sobre {tmeio} e espere 2 minutos sem mexer.', timer:120},
+         {t:'Emulsione', d:'Misture do centro para fora até ficar liso e brilhante. Deixe engrossar 10 minutos.', timer:600}],
+   apply:'Espalhe a ganache sobre o bolo frio.'},
+  {id:'calda-laranja', name:'Calda de laranja', when:'quente', desc:'Fina, ácida, penetra na massa.',
+   ing:[{id:'tsuco', n:'Suco de laranja', q:150, u:'ml', s:'de suco de laranja'},
+        {id:'tacucar', n:'Açúcar refinado', q:120, u:'g', s:'de açúcar', cup:180}],
+   prep:[{t:'Faça a calda', d:'Numa panela, ferva {tsuco} com {tacucar} até virar uma calda rala.', timer:180}],
+   apply:'Fure o bolo quente com um garfo e regue a calda quente devagar.'},
+  {id:'glace-limao', name:'Glacê de limão', when:'frio', desc:'Branco, ácido e firme ao secar.',
+   ing:[{id:'tconf', n:'Açúcar de confeiteiro', q:160, u:'g', s:'de açúcar de confeiteiro', cup:120},
+        {id:'tsuco', n:'Suco de limão', q:35, u:'ml', s:'de suco de limão'}],
+   prep:[{t:'Faça o glacê', d:'Misture {tconf} com {tsuco}, adicionando o suco aos poucos, até formar uma pasta grossa que escorre devagar da colher.'}],
+   apply:'Espalhe o glacê sobre o bolo frio e espere secar 20 minutos.', applyTimer:1200},
+  {id:'calda-coco', name:'Calda de coco', when:'morno', desc:'Deixa o bolo molhadinho, estilo bolo gelado.',
+   ing:[{id:'tlc', n:'Leite condensado', q:395, u:'g', s:'de leite condensado', each:{g:395,one:'lata',many:'latas'}},
+        {id:'tlcoco', n:'Leite de coco', q:200, u:'ml', s:'de leite de coco', each:{g:200,one:'vidro',many:'vidros'}},
+        {id:'tleite', n:'Leite', q:150, u:'ml', s:'de leite'},
+        {id:'tcoco', n:'Coco ralado para finalizar', q:30, u:'g', s:'de coco ralado', cup:80}],
+   prep:[{t:'Aqueça a calda', d:'Numa panela, aqueça {tlc}, {tlcoco} e {tleite} mexendo, só até levantar fervura.', timer:300}],
+   apply:'Fure o bolo morno com um garfo, regue a calda devagar e polvilhe {tcoco}. Fica ainda melhor gelado.'},
+  {id:'acucar-canela', name:'Açúcar e canela', when:'morno', desc:'Crosta doce e perfumada, sem panela.',
+   ing:[{id:'tmant', n:'Manteiga derretida', q:25, u:'g', s:'de manteiga derretida', sp:15},
+        {id:'tacucar', n:'Açúcar refinado', q:40, u:'g', s:'de açúcar', sp:12},
+        {id:'tcanela', n:'Canela em pó', q:1, u:'cc', s:'de canela'}],
+   prep:[{t:'Misture o açúcar', d:'Misture {tacucar} com {tcanela}.'}],
+   apply:'Pincele {tmant} sobre o bolo morno e polvilhe o açúcar com canela por cima.'},
+  {id:'goiabada', name:'Calda de goiabada', when:'morno', desc:'Goiabada derretida, combina com fubá e milho.',
+   ing:[{id:'tgoia', n:'Goiabada cascão picada', q:200, u:'g', s:'de goiabada'},
+        {id:'tagua', n:'Água', q:60, u:'ml', s:'de água'}],
+   prep:[{t:'Derreta a goiabada', d:'Numa panela, derreta {tgoia} com {tagua} em fogo baixo, mexendo e amassando até virar uma calda lisa.', timer:300}],
+   apply:'Espalhe a calda de goiabada sobre o bolo morno.'}
+];
+const TOP = id => TOPS.find(t=>t.id===id) || TOPS[0];
+const CAKE = id => CAKES.find(c=>c.id===id);
+const PAN = id => PANS.find(p=>p.id===id) || PANS[0];
+
+/* =========================================================
+   ESTADO (localStorage)
+   ========================================================= */
+const KEY = 'fornada:v1';
+let DB = load();
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {} }catch(e){ return {} } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(DB)) }catch(e){} }
+DB.cakes = DB.cakes || {}; DB.prefs = Object.assign({home:true, wake:true}, DB.prefs||{}); DB.timers = DB.timers || {};
+function S(c){
+  if(!DB.cakes[c.id]) DB.cakes[c.id] = {mode:'forma', pan:'r2030', panManual:false, base:c.key, amt:null, top:c.tops[0], checks:{}, note:'', tab:'ing'};
+  return DB.cakes[c.id];
+}
+
+/* =========================================================
+   CÁLCULO
+   ========================================================= */
+function calc(c){
+  const st = S(c);
+  let pan = PAN(st.pan), f = pan.vol, fill = 1, suggested = null, baseIng = null;
+  if(st.mode === 'ing'){
+    baseIng = c.ing.find(i=>i.id===st.base && i.u!=='pitada') || c.ing.find(i=>i.id===c.key);
+    const amt = Number(st.amt);
+    f = amt > 0 ? amt / baseIng.q : 1;
+    suggested = PANS.reduce((a,p)=> Math.abs(Math.log(p.vol/f)) < Math.abs(Math.log(a.vol/f)) ? p : a);
+    if(!st.panManual) pan = suggested;
+    fill = f / pan.vol;
+  }
+  let [a,b] = c.bake; a += pan.dt; b += pan.dt;
+  if(fill > 1.12){ a += 5; b += 5 } else if(fill < .88){ a -= 5; b -= 5 }
+  return {f, ft:pan.area, pan, fill, suggested, baseIng, time:[Math.max(15,a), Math.max(20,b)]};
+}
+
+const FR = {0:'',25:'¼',50:'½',75:'¾'};
+function frac(x, step=.25){
+  const r = Math.round(x/step)*step, w = Math.floor(r + 1e-9), p = Math.round((r-w)*100);
+  if(w===0 && p===0) return '0';
+  return (w ? String(w) : '') + (FR[p]||'');
+}
+function nf(x){ return x.toLocaleString('pt-BR') }
+function roundQ(q){ return q < 20 ? Math.round(q) : Math.round(q/5)*5 }
+
+/* retorna {main, hint, adj} */
+function fmt(ing, k){
+  const raw = (ing.q||1) * (ing.u==='pitada' ? 1 : k);
+  if(ing.u==='pitada') return {main:'1 pitada'};
+  if(ing.u==='cc'){
+    const v = Math.max(.25, Math.round(raw*4)/4), fr = frac(v);
+    return {main: fr + (v>1 ? ' colheres de chá' : ' colher de chá'), short:true};
+  }
+  if(ing.u==='un'){
+    const step = ing.r || 1, n = Math.max(1, Math.round(raw/step)*step);
+    const out = {main: nf(n) + ' ' + (n===1 ? (ing.s1||ing.s) : ing.s), n};
+    if(ing.egg){
+      const d = raw - n;
+      const conta = nf(Math.round(raw*10)/10);
+      if(d >= .25) out.hint = `Use grandes (conta: ${conta})`, out.adj = true;
+      else if(d <= -.25) out.hint = `Use médios (conta: ${conta})`, out.adj = true;
+    }
+    return out;
+  }
+  const q = Math.max(1, roundQ(raw)), unit = ing.u;
+  const out = {main: nf(q) + ' ' + unit, q};
+  if(DB.prefs.home){
+    if(ing.each){
+      const n = Math.round(q/ing.each.g*2)/2;
+      if(n >= .5) out.hint = '≈ ' + frac(n,.5) + ' ' + (n>1 ? ing.each.many : ing.each.one);
+    } else if(unit==='ml'){
+      out.hint = q >= 60 ? '≈ ' + frac(q/240) + ' xícara' + (q/240 > 1.12 ? 's' : '') : '≈ ' + frac(q/15,.5) + ' colher' + (q/15>1.25?'es':'') + ' de sopa';
+    } else if(ing.cup && q >= ing.cup*.25){
+      const x = q/ing.cup; out.hint = '≈ ' + frac(x) + ' xícara' + (x > 1.12 ? 's' : '');
+    } else if(ing.sp){
+      const x = Math.max(.5, Math.round(q/ing.sp*2)/2); out.hint = '≈ ' + frac(x,.5) + ' colher' + (x>1?'es':'') + ' de sopa';
+    }
+  }
+  return out;
+}
+function inline(ing, k){
+  const r = fmt(ing,k);
+  if(ing.u==='un') return `<b class="q">${r.main}</b>`;
+  return `<b class="q">${r.main}</b> ${ing.s}`;
+}
+function render_text(txt, c, cc, extra){
+  return txt.replace(/\{(\w+)\}/g, (m,id)=>{
+    if(id==='temp') return `<b class="q">${c.temp} °C</b>`;
+    if(id==='time') return `<b class="q">${cc.time[0]} a ${cc.time[1]} min</b>`;
+    if(id==='pan') return cc.pan.n.toLowerCase();
+    let i = c.ing.find(x=>x.id===id); if(i) return inline(i, cc.f);
+    i = extra && extra.ing.find(x=>x.id===id); if(i) return inline(i, cc.ft);
+    return m;
+  });
+}
+
+/* Monta o passo a passo completo: massa → forno → cobertura → finalização */
+function buildSteps(c, cc, top){
+  const out = [], P = (ph,s,extra)=>out.push({ph, t:s.t, d:render_text(s.d,c,cc,extra), timer:s.timer||0, bake:!!s.bake});
+  const tube = cc.pan.shape==='tube' || cc.pan.shape==='round' || cc.pan.shape==='loaf';
+  P('Antes de começar', {t:'Forno e forma', d:`Preaqueça o forno a {temp} (se tiver ventilação, use ${c.temp-20} °C). Unte a forma ${cc.pan.n.toLowerCase()} com manteiga e polvilhe farinha, batendo o excesso.`});
+  c.steps.forEach(s=>P('Massa', s));
+  P('Forno', {t:'Asse', d:`Asse por {time}. Não abra o forno nos primeiros 20 minutos. ${c.done || 'Está pronto quando dourar e um palito espetado no centro sair limpo.'}`, timer:cc.time[0]*60, bake:true});
+  const during = top.when==='quente' || top.when==='morno';
+  if(during) top.prep.forEach(s=>P('Cobertura, enquanto o bolo assa', s, top));
+  if(top.when==='quente'){
+    P('Finalização', {t:'Cubra o bolo', d: (tube ? 'Espere 5 minutos, desenforme num prato e, ainda quente: ' : '') + render_text(top.apply,c,cc,top), timer: c.cool ? 0 : (top.applyTimer||0)});
+    if(c.cool) P('Descanso', c.cool);
+    return out;
+  }
+  if(c.cool) P('Descanso', c.cool);
+  if(top.when==='none'){
+    if(!c.cool) P('Descanso', {t:'Deixe amornar', d: tube ? 'Espere 15 minutos na forma, passe uma faca nas bordas e desenforme num prato.' : 'Espere 15 minutos antes de cortar. Pode servir na própria forma.', timer:900});
+    return out;
+  }
+  if(top.when==='morno'){
+    if(!c.cool) P('Descanso', {t:'Deixe amornar', d: tube ? 'Espere 15 minutos na forma, passe uma faca nas bordas e desenforme num prato.' : 'Espere 15 minutos. Pode cobrir na própria forma.', timer:900});
+    P('Finalização', {t:'Cubra o bolo', d:render_text(top.apply,c,cc,top), timer:top.applyTimer||0});
+  } else {
+    if(!c.cool) P('Descanso', {t:'Deixe esfriar', d: (tube ? 'Espere 15 minutos, desenforme num prato ' : 'Espere ') + (tube?'e deixe':'o bolo') + ' esfriar por completo. Cobertura sobre bolo quente derrete e escorre.', timer:3600});
+    top.prep.forEach(s=>P('Cobertura', s, top));
+    P('Finalização', {t:'Cubra o bolo', d:render_text(top.apply,c,cc,top), timer:top.applyTimer||0});
+  }
+  return out;
+}
+
+/* =========================================================
+   UI helpers
+   ========================================================= */
+const $ = s => document.querySelector(s);
+const CHEV = '<svg class="chev" viewBox="0 0 8 14" fill="none"><path d="M1 1l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const BACK = '<svg viewBox="0 0 10 17" fill="none"><path d="M8.5 1.5 1.5 8.5l7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CHECK = '<svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6.2 5 8.5l4.5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CLOSE = '<svg viewBox="0 0 18 18" fill="none"><path d="M3 3l12 12M15 3 3 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+function toast(msg){ const t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),1800) }
+function setTone(c){
+  const r = document.documentElement.style;
+  const m = document.querySelectorAll('meta[name=theme-color]');
+  m.forEach(x=>{ x.dataset.def = x.dataset.def || x.content; x.content = c ? c.tone : x.dataset.def });
+  if(c){ r.setProperty('--tone', c.tone); r.setProperty('--tone-ink', c.toneInk); r.setProperty('--tone-soft', c.tone+'33') }
+  else { r.removeProperty('--tone'); r.removeProperty('--tone-ink'); r.removeProperty('--tone-soft') }
+}
+function mm(s){ s=Math.max(0,Math.ceil(s)); const m=Math.floor(s/60), x=s%60; return (m>=60? Math.floor(m/60)+':'+String(m%60).padStart(2,'0') : m)+':'+String(x).padStart(2,'0') }
+function durLabel(s){ const m=Math.round(s/60); return m>=60 ? (m/60===1?'1 hora':nf(+(m/60).toFixed(1))+' horas') : (s<60? s+' s' : m+' min') }
+
+/* =========================================================
+   ROTAS
+   ========================================================= */
+function route(){
+  const h = location.hash.replace(/^#\/?/,'').split('/');
+  closeCook(true);
+  if(h[0] && CAKE(h[0])){
+    renderCake(CAKE(h[0]));
+    if(h[1]==='preparo') openCook(CAKE(h[0]), Number(h[2])||0);
+  } else renderHome();
+}
+addEventListener('hashchange', route);
+
+/* ---------- Home ---------- */
+function renderHome(){
+  setTone(null); document.title = 'Fornada';
+  $('#app').innerHTML = `<div class="wrap">
+    <header class="home-head"><h1>Fornada</h1><p>Escolha o bolo de hoje.</p></header>
+    <ul class="cake-list">${CAKES.map(c=>{
+      const st = DB.cakes[c.id], t = TOP(st ? st.top : c.tops[0]);
+      return `<li><a class="cake-row" href="#/${c.id}">
+        <span class="swatch" style="background:${c.tone}">${t.id!=='nenhuma'?`<i style="background:${topColor(t)}"></i>`:''}</span>
+        <span class="txt"><b>${c.name}</b><span>${c.desc}</span></span>${CHEV}</a></li>`}).join('')}
+    </ul>
+    <p class="home-foot">Quantidades calibradas para forma retangular 20×30 cm e recalculadas para a sua forma. Medidas em gramas e mililitros; a medida caseira aparece como referência.</p>
+  </div>`;
+  scrollTo(0,0);
+}
+function topColor(t){ return ({casquinha:'#4A2C1E',brigadeiro:'#3E2418',ganache:'#2E1A12','calda-laranja':'#F7B34A','glace-limao':'#F6F4EC','calda-coco':'#F3EEE2','acucar-canela':'#A0642E',goiabada:'#9E2A2B'})[t.id]||'transparent' }
+
+/* ---------- Bolo ---------- */
+function renderCake(c){
+  const st = S(c), cc = calc(c), top = TOP(st.top);
+  setTone(c); document.title = 'Bolo de ' + c.name.toLowerCase();
+  const steps = buildSteps(c, cc, top);
+  const totalMin = Math.round(steps.reduce((a,s)=>a+(s.bake? cc.time[1]*60 : s.timer),0)/60) + 15;
+
+  const baseOpts = c.ing.filter(i=>i.u==='g'||i.u==='ml'||i.egg);
+  const scale = `<div class="card scale-box">
+      <div class="seg" role="group" aria-label="Calcular a partir de">
+        <button data-mode="forma" aria-pressed="${st.mode==='forma'}">Pela forma</button>
+        <button data-mode="ing" aria-pressed="${st.mode==='ing'}">Pelo que tenho</button>
+      </div>
+      <div class="rows">
+        ${st.mode==='ing' ? `
+        <div class="field"><label for="base">Ingrediente</label>
+          <select id="base">${baseOpts.map(i=>`<option value="${i.id}" ${i.id===cc.baseIng.id?'selected':''}>${shortName(i)}</option>`).join('')}</select></div>
+        <div class="field"><label for="amt">Quantidade</label>
+          <span class="amt"><input id="amt" inputmode="decimal" enterkeyhint="done" value="${st.amt ?? ''}" placeholder="${cc.baseIng.egg? nf(Math.round(cc.baseIng.q)) : nf(cc.baseIng.q)}"><span>${cc.baseIng.u==='un'?'un':cc.baseIng.u}</span></span></div>` : ''}
+        <div class="field"><label for="pan">${st.mode==='ing' && !st.panManual ? 'Forma sugerida' : 'Forma'}</label>
+          <select id="pan">${PANS.map(p=>`<option value="${p.id}" ${p.id===cc.pan.id?'selected':''}>${p.n}</option>`).join('')}</select></div>
+        ${st.mode==='ing' ? fitNote(cc) : ''}
+      </div>
+    </div>`;
+
+  const sugg = c.tops, rest = TOPS.map(t=>t.id).filter(id=>!sugg.includes(id));
+  const chips = `<div class="chips" role="group" aria-label="Cobertura">
+      ${sugg.map(id=>chip(id, st.top)).join('')}<span class="chip-sep" aria-hidden="true"></span>${rest.map(id=>chip(id, st.top)).join('')}
+    </div><p class="top-desc">${top.desc}${sugg.includes(top.id)?'':' Fora das sugestões para este bolo, mas funciona.'}</p>`;
+
+  let body = '';
+  if(st.tab==='ing'){
+    const all = [...c.ing.map(i=>['m',i]), ...top.ing.map(i=>['c',i])];
+    const done = all.filter(([g,i])=>st.checks[g+i.id]).length;
+    body = `<div class="list-tools"><span class="progress num">${done} de ${all.length} separados</span>
+        <span class="tool-btns">${done?'<button class="tbtn" data-act="clear">Limpar</button>':''}<button class="tbtn" data-act="share">${done?'Enviar o que falta':'Enviar lista'}</button></span></div>
+      <div class="switch-row"><span>Mostrar medidas caseiras</span><button class="switch" role="switch" aria-checked="${DB.prefs.home}" data-act="home" aria-label="Mostrar medidas caseiras"></button></div>
+      <div class="grp">Massa</div>${c.ing.map(i=>ingRow('m',i,cc.f,st)).join('')}
+      ${top.ing.length?`<div class="grp">Cobertura <small>${top.name}</small></div>${top.ing.map(i=>ingRow('c',i,cc.ft,st)).join('')}`:''}`;
+  } else if(st.tab==='prep'){
+    body = `<ol class="steps">${steps.map((s,n)=>`<li><span class="n">${n+1}</span><span class="ph">${s.ph}</span><h3>${s.t}</h3><p>${s.d}</p>${s.timer?`<span class="t">${s.bake?'Timer de forno: ':'Timer: '}${durLabel(s.timer)}</span>`:''}</li>`).join('')}</ol>
+      ${c.tips?`<div class="tips"><h3>Para acertar</h3><ul>${c.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:''}`;
+  } else {
+    body = `<div class="notes"><textarea id="note" placeholder="Ex.: meu forno precisou de 5 minutos a mais. Da próxima vez, menos açúcar na cobertura.">${escapeHtml(st.note)}</textarea>
+      <p>${st.noteAt ? 'Salvo em ' + new Date(st.noteAt).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}) : 'Salva automaticamente neste aparelho.'}</p></div>`;
+  }
+
+  $('#app').innerHTML = `
+  <header class="hero"><div class="wrap">
+    <button class="back" data-act="home">${BACK}Bolos</button>
+    <h1>Bolo de ${c.name.toLowerCase()}</h1><p>${c.desc}</p>
+    <div class="facts">
+      <div><small>Forno</small><strong class="num">${c.temp} °C</strong></div>
+      <div><small>Assar</small><strong class="num">${cc.time[0]}–${cc.time[1]} min</strong></div>
+      <div><small>Total</small><strong class="num">~${totalMin>=60? Math.floor(totalMin/60)+'h'+String(totalMin%60).padStart(2,'0') : totalMin+' min'}</strong></div>
+    </div>
+  </div></header>
+  <main class="wrap">
+    <section class="sec"><h2>Quantidade</h2>${scale}</section>
+    <section class="sec"><h2>Cobertura</h2>${chips}</section>
+    <nav class="tabs"><div class="seg" role="tablist">
+      <button role="tab" data-tab="ing" aria-pressed="${st.tab==='ing'}">Ingredientes</button>
+      <button role="tab" data-tab="prep" aria-pressed="${st.tab==='prep'}">Preparo</button>
+      <button role="tab" data-tab="note" aria-pressed="${st.tab==='note'}">Notas</button>
+    </div></nav>
+    ${body}
+    <div class="spacer"></div>
+  </main>
+  <div class="cta-bar"><button class="cta" data-act="cook">${resumeIdx(c)!=null?'Continuar preparo':'Começar preparo'}</button></div>`;
+  bindCake(c);
+}
+function shortName(i){ return i.n.replace(/( descascad| cru | sem | com | em | bem | \(|,).*$/,'') }
+function escapeHtml(s){ return (s||'').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m]) }
+function chip(id, cur){ const t=TOP(id); return `<button class="chip" data-top="${id}" aria-pressed="${id===cur}">${t.name}</button>` }
+function fitNote(cc){
+  const pct = Math.round(cc.fill*100), s = cc.suggested;
+  if(cc.fill >= .88 && cc.fill <= 1.12) return `<div class="fit"><span class="dot"></span><span>Medida certa para esta forma.</span></div>`;
+  const msg = cc.fill < .88 ? `Massa pouca para esta forma (${pct}% do ideal): o bolo fica baixo e resseca.` : `Massa demais para esta forma (${pct}% do ideal): pode transbordar e cru no centro.`;
+  return `<div class="fit warn"><span class="dot"></span><span>${msg} ${s && s.id!==cc.pan.id ? `<button data-act="usepan" data-pan="${s.id}">Usar ${s.n.toLowerCase()}</button>` : ''}</span></div>`;
+}
+function ingRow(g, i, k, st){
+  const r = fmt(i,k), on = !!st.checks[g+i.id];
+  return `<button class="ing" role="checkbox" aria-checked="${on}" data-chk="${g+i.id}">
+    <span class="box">${CHECK}</span>
+    <span class="iname">${i.n}${i.opt?' <em>opcional</em>':''}</span>
+    <span class="iq"><b>${r.main.replace(/ (ovos?|limões|limão)$/,'')}</b>${r.hint?`<small class="${r.adj?'adj':''}">${r.hint}</small>`:''}</span>
+  </button>`;
+}
+
+function bindCake(c){
+  const st = S(c), app = $('#app');
+  const re = ()=>{ save(); const y = scrollY; renderCake(c); scrollTo(0,y) };
+  app.onclick = e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    if(b.dataset.mode){ st.mode=b.dataset.mode; st.panManual=false; if(st.mode==='forma' && !PAN(st.pan)) st.pan='r2030'; return re() }
+    if(b.dataset.top){ st.top=b.dataset.top; return re() }
+    if(b.dataset.tab){ st.tab=b.dataset.tab; return re() }
+    if(b.dataset.chk){ st.checks[b.dataset.chk] = !st.checks[b.dataset.chk]; return re() }
+    const a = b.dataset.act;
+    if(a==='home'){ if(b.classList.contains('switch')){ DB.prefs.home=!DB.prefs.home; return re() } location.hash='#/'; }
+    if(a==='clear'){ st.checks={}; return re() }
+    if(a==='usepan'){ st.pan=b.dataset.pan; st.panManual=true; return re() }
+    if(a==='share') return shareList(c);
+    if(a==='cook'){ unlockAudio(); location.hash = `#/${c.id}/preparo/${resumeIdx(c)||0}` }
+  };
+  const pan = $('#pan'); if(pan) pan.onchange = ()=>{ st.pan=pan.value; if(st.mode==='ing') st.panManual=true; re() };
+  const base = $('#base'); if(base) base.onchange = ()=>{ st.base=base.value; st.amt=null; st.panManual=false; re() };
+  const amt = $('#amt');
+  if(amt){
+    const commit = ()=>{ const v = parseFloat(amt.value.replace(',','.')); st.amt = v>0 ? v : null; st.panManual=false; re() };
+    amt.onchange = commit; amt.onkeydown = e=>{ if(e.key==='Enter'){ amt.blur() } };
+  }
+  const note = $('#note');
+  if(note){ let t; note.oninput = ()=>{ clearTimeout(t); t=setTimeout(()=>{ st.note=note.value; st.noteAt=Date.now(); save(); const p=note.nextElementSibling; p.textContent='Salvo em '+new Date(st.noteAt).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}) },400) } }
+}
+
+function shareList(c){
+  const st = S(c), cc = calc(c), top = TOP(st.top);
+  const line = (g,i,k)=>{ if(st.checks[g+i.id]) return null; const r=fmt(i,k); return `• ${i.n}: ${r.main.replace(/ (ovos?|limões|limão)$/,'')}${r.hint&&!r.adj?` (${r.hint})`:''}` };
+  const m = c.ing.map(i=>line('m',i,cc.f)).filter(Boolean), t = top.ing.map(i=>line('c',i,cc.ft)).filter(Boolean);
+  let txt = `Bolo de ${c.name.toLowerCase()} (${cc.pan.n.toLowerCase()})\n\nMassa\n${m.join('\n')||'• tudo separado'}`;
+  if(top.ing.length) txt += `\n\n${top.name}\n${t.join('\n')||'• tudo separado'}`;
+  if(navigator.share) navigator.share({text:txt}).catch(()=>{});
+  else navigator.clipboard.writeText(txt).then(()=>toast('Lista copiada'));
+}
+
+/* =========================================================
+   MODO PREPARO
+   ========================================================= */
+let COOK = null, wakeLock = null;
+function resumeIdx(c){ const st=S(c); return st.cookAt!=null && Date.now()-st.cookTs < 6*3600e3 ? st.cookAt : null }
+function openCook(c, idx){
+  const st = S(c), cc = calc(c), steps = buildSteps(c, cc, TOP(st.top));
+  idx = Math.min(Math.max(0,idx), steps.length-1);
+  COOK = {c, steps, idx}; st.cookAt = idx; st.cookTs = Date.now(); save();
+  $('#cook').hidden = false; document.body.style.overflow='hidden';
+  if(DB.prefs.wake) requestWake();
+  drawCook();
+}
+function closeCook(silent){
+  if(!COOK) return;
+  COOK = null; $('#cook').hidden = true; document.body.style.overflow=''; releaseWake();
+}
+function drawCook(){
+  const {c, steps, idx} = COOK, s = steps[idx], key = c.id+':'+idx, T = DB.timers[key];
+  const last = idx === steps.length-1;
+  const others = Object.entries(DB.timers).filter(([k])=>k.startsWith(c.id+':') && k!==key);
+  $('#cook').innerHTML = `
+    <div class="cook-top">
+      <button class="icon-btn" data-act="x" aria-label="Fechar preparo">${CLOSE}</button>
+      <span class="cook-count num">Passo ${idx+1} de ${steps.length}</span>
+      <button class="pill" data-act="wake" aria-pressed="${!!wakeLock}" aria-label="Manter a tela ligada"><i></i>Tela ligada</button>
+    </div>
+    <div class="bar"><i style="width:${(idx+1)/steps.length*100}%"></i></div>
+    ${others.length?`<div class="mini">${others.map(([k,t])=>`<button data-go="${k.split(':')[1]}" data-tid="${k}">${steps[+k.split(':')[1]].t}: <span data-clock="${k}">${mm(remain(t))}</span></button>`).join('')}</div>`:''}
+    <div class="cook-body">
+      <div class="cook-ph">${s.ph}</div>
+      <h2>${s.t}</h2>
+      <p>${s.d}</p>
+      ${s.timer ? timerBlock(key, s) : ''}
+    </div>
+    <div class="cook-nav">
+      <button class="prev" data-act="prev" ${idx===0?'disabled':''} aria-label="Passo anterior">${BACK}</button>
+      <button class="next" data-act="next">${last?'Concluir':'Próximo passo'}</button>
+    </div>`;
+  $('#cook').onclick = cookClick;
+  $('#cook').querySelector('.cook-body').scrollTop = 0;
+}
+function timerBlock(key, s){
+  const T = DB.timers[key], r = T ? remain(T) : s.timer, done = T && r<=0;
+  const state = !T ? 'idle' : T.paused ? 'paused' : done ? 'done' : 'run';
+  return `<div class="timer ${done?'done':''}">
+    <div class="lbl">${s.bake?'Forno: confira no mínimo do tempo':'Timer'}</div>
+    <div class="clock" data-clock="${key}">${mm(r)}</div>
+    <div class="trow">
+      ${state==='idle'?`<button class="tb main" data-act="tstart">Iniciar ${durLabel(s.timer)}</button>`:''}
+      ${state==='run'?`<button class="tb main" data-act="tpause">Pausar</button><button class="tb" data-act="tadd">+${s.bake?5:1} min</button>`:''}
+      ${state==='paused'?`<button class="tb main" data-act="tresume">Continuar</button><button class="tb" data-act="treset">Zerar</button>`:''}
+      ${state==='done'?`<button class="tb main" data-act="tadd">+${s.bake?5:1} min</button><button class="tb" data-act="treset">Zerar</button>`:''}
+    </div></div>`;
+}
+function cookClick(e){
+  const b = e.target.closest('button'); if(!b || !COOK) return;
+  const {c, steps} = COOK, key = c.id+':'+COOK.idx, s = steps[COOK.idx], st = S(c);
+  if(b.dataset.go!=null){ go(+b.dataset.go); return }
+  switch(b.dataset.act){
+    case 'x': st.cookAt = COOK.idx; save(); location.hash = '#/'+c.id; break;
+    case 'prev': go(COOK.idx-1); break;
+    case 'next':
+      if(COOK.idx === steps.length-1){ st.cookAt=null; Object.keys(DB.timers).filter(k=>k.startsWith(c.id+':')).forEach(k=>delete DB.timers[k]); save(); location.hash='#/'+c.id; toast('Bom bolo!') }
+      else go(COOK.idx+1);
+      break;
+    case 'wake': DB.prefs.wake = !wakeLock; save(); wakeLock ? releaseWake() : requestWake(); break;
+    case 'tstart': unlockAudio(); DB.timers[key] = {end:Date.now()+s.timer*1000, label:s.t, cake:c.id, idx:COOK.idx}; save(); drawCook(); tick(); break;
+    case 'tpause': { const T=DB.timers[key]; T.paused=true; T.left=remain(T); save(); drawCook(); break }
+    case 'tresume': { const T=DB.timers[key]; T.paused=false; T.end=Date.now()+T.left*1000; T.rung=false; save(); drawCook(); tick(); break }
+    case 'tadd': { const T=DB.timers[key], add=(s.bake?5:1)*60; T.end = Math.max(Date.now(), T.end) + add*1000; T.rung=false; T.paused=false; save(); drawCook(); tick(); break }
+    case 'treset': delete DB.timers[key]; save(); drawCook(); break;
+  }
+}
+function go(i){ if(!COOK) return; history.replaceState(null,'',`#/${COOK.c.id}/preparo/${i}`); COOK.idx=Math.min(Math.max(0,i),COOK.steps.length-1); const st=S(COOK.c); st.cookAt=COOK.idx; st.cookTs=Date.now(); save(); drawCook() }
+function remain(T){ return T.paused ? T.left : (T.end - Date.now())/1000 }
+
+/* Timers baseados em horário: continuam certos mesmo com o app em segundo plano */
+let ticking = null;
+function tick(){
+  if(ticking) return;
+  ticking = setInterval(()=>{
+    const live = Object.entries(DB.timers).filter(([,T])=>!T.paused);
+    if(!live.length && !ringing){ clearInterval(ticking); ticking=null; return }
+    for(const [k,T] of live){
+      const r = remain(T);
+      document.querySelectorAll(`[data-clock="${k}"]`).forEach(el=>el.textContent=mm(r));
+      if(r<=0 && !T.rung){ T.rung=true; save(); ring(k,T); if(COOK) drawCook() }
+    }
+  }, 250);
+}
+let ac = null, ringing = null;
+function unlockAudio(){
+  try{
+    if(navigator.audioSession) navigator.audioSession.type = 'playback'; // toca mesmo com o iPhone no silencioso
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    if(ac.state==='suspended') ac.resume();
+    const o=ac.createOscillator(), g=ac.createGain(); g.gain.value=0; o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime+.01);
+  }catch(e){}
+}
+function beep(){
+  if(!ac) return; const t=ac.currentTime;
+  [0,.22,.44].forEach(d=>{ const o=ac.createOscillator(), g=ac.createGain(); o.type='sine'; o.frequency.value=880;
+    g.gain.setValueAtTime(0,t+d); g.gain.linearRampToValueAtTime(.35,t+d+.02); g.gain.exponentialRampToValueAtTime(.001,t+d+.18);
+    o.connect(g).connect(ac.destination); o.start(t+d); o.stop(t+d+.2) });
+}
+function ring(k,T){
+  const c = CAKE(T.cake), el = $('#ring'); setTone(c);
+  el.innerHTML = `<h2>${T.label}</h2><p>Tempo esgotado. ${/Asse/.test(T.label)?'Faça o teste do palito no centro.':'Siga para o próximo passo.'}</p>
+    <button data-r="ok">Ok</button>${/Asse/.test(T.label)?'<button data-r="add">Mais 5 minutos</button>':''}`;
+  el.hidden = false; beep(); clearInterval(ringing); let n=0;
+  ringing = setInterval(()=>{ beep(); if(++n>40) stopRing() }, 1500);
+  if(navigator.vibrate) navigator.vibrate([300,150,300]);
+  el.onclick = e=>{ const b=e.target.closest('button'); if(!b) return;
+    if(b.dataset.r==='add'){ T.end=Date.now()+300e3; T.rung=false; save(); tick() }
+    stopRing(); if(COOK) drawCook() };
+}
+function stopRing(){ clearInterval(ringing); ringing=null; $('#ring').hidden=true; const h=location.hash.replace(/^#\/?/,'').split('/')[0]; setTone(CAKE(h)||null) }
+
+async function requestWake(){
+  try{ if('wakeLock' in navigator){ wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release',()=>{ wakeLock=null; if(COOK) drawCook() }) } }catch(e){ wakeLock=null }
+  if(COOK) drawCook();
+}
+function releaseWake(){ if(wakeLock){ wakeLock.release().catch(()=>{}); wakeLock=null } }
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='visible'){
+    if(COOK && DB.prefs.wake && !wakeLock) requestWake();
+    if(Object.keys(DB.timers).length) tick();
+  }
+});
+
+/* início */
+if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+if(Object.keys(DB.timers).length) tick();
+route();
+</script>
+</body>
+</html>
