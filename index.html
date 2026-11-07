@@ -603,6 +603,10 @@ body.cookbar-on .spacer{height:220px}
 .fchip.fv svg{display:block;width:13px;height:13px}
 .fchip.fv[aria-pressed=true]{background:#FBE3EA;color:#C2305A}
 @media (prefers-color-scheme:dark){.fchip.fv[aria-pressed=true]{background:#3A1E28;color:#F28BA8}}
+.res-n>span{flex:1}
+.sort-btn{flex:none;display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 10px;border:0;border-radius:15px;background:var(--press);color:var(--ink2);font-size:13px;font-weight:600}
+.sort-btn svg{width:13px;height:13px}
+.res-n .link{margin-left:6px}
 </style>
 </head>
 <body>
@@ -2905,6 +2909,7 @@ const ICON = {
   clock:'<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8.6" r="5.6" stroke="currentColor" stroke-width="1.6"/><path d="M8 5.8v3l2 1.4M6.4 1.8h3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
   heart:'<svg viewBox="0 0 20 20" fill="none"><path d="M10 16.6s-6.6-4-6.6-8.6A3.6 3.6 0 0 1 10 5.6a3.6 3.6 0 0 1 6.6 2.4c0 4.6-6.6 8.6-6.6 8.6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
   heartOn:'<svg viewBox="0 0 20 20"><path d="M10 16.6s-6.6-4-6.6-8.6A3.6 3.6 0 0 1 10 5.6a3.6 3.6 0 0 1 6.6 2.4c0 4.6-6.6 8.6-6.6 8.6Z" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+  sort:'<svg viewBox="0 0 16 16" fill="none"><path d="M5 3v10M5 13l-2.4-2.4M5 13l2.4-2.4M11 13V3M11 3 8.6 5.4M11 3l2.4 2.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   plus:'<svg viewBox="0 0 16 16" fill="none"><path d="M8 2.5v11M2.5 8h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   trash:'<svg viewBox="0 0 16 16" fill="none"><path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   star:'<svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9L12 2.8Z" fill="currentColor"/></svg>',
@@ -3244,7 +3249,29 @@ function startCook(c, planId){
 /* =========================================================
    RECEITAS
    ========================================================= */
-const RQ = {q:'', meal:'all', now:false, prot:false, low:false, fav:false};
+const RQ = {q:'', meal:'all', now:false, prot:false, low:false, fav:false, sort:'pad'};
+const SORTS = [['pad','Padrão','Ordem da categoria'],['tempo','Mais rápidas','Menor tempo total primeiro'],['falta','Falta menos','Menos ingredientes para comprar'],['prot','Mais proteína','Por porção, estimado'],['carb','Menos carboidrato','Por porção, estimado'],['feitas','Mais feitas','Pelo seu histórico'],['nome','A a Z','Ordem alfabética']];
+function sortRecipes(list){
+  const k = RQ.sort, key = {
+    tempo: c=>totalMin(c, calc(c), topOf(c)),
+    falta: c=>{ const s = status(c); return s.miss.length + s.short.length },
+    prot: c=>{ const n = nutri(c); return n ? -n.p : 1e9 },
+    carb: c=>{ const n = nutri(c); return n ? n.c : 1e9 },
+    feitas: c=>{ const h = hist(c.id); return h.length ? -(h.length*1e13 + h[h.length-1].at) : 1e15 }
+  }[k];
+  if(k==='nome') return [...list].sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
+  if(!key) return list;
+  const m = new Map(list.map(c=>[c, key(c)]));
+  return [...list].sort((a,b)=>m.get(a) - m.get(b));
+}
+const sortBtn = () => `<button class="sort-btn" data-sort>${ICON.sort}${SORTS.find(x=>x[0]===RQ.sort)[1]}</button>`;
+function openSortSheet(){
+  openSheet(`<div class="sh-head"><h2>Ordenar por</h2><button class="sh-done" data-close>Fechar</button></div>
+    <div class="sh-body"><div class="opts">${SORTS.map(([k,l,d])=>`<button class="opt" data-so="${k}" aria-pressed="${RQ.sort===k}"><span class="ot"><b>${l}</b><small>${d}</small></span><span class="radio"></span></button>`).join('')}</div></div>`, el=>{
+    el.addEventListener('click', e=>{ const b = e.target.closest('[data-so]'); if(!b) return; RQ.sort = b.dataset.so; closeSheet(true); refresh() });
+  }, {label:'Ordenar'});
+}
+document.addEventListener('click', e=>{ if(e.target.closest('[data-sort]')){ e.preventDefault(); openSortSheet() } });
 function recRow(c, sub){
   const s = status(c);
   const f = isFav(c.id);
@@ -3299,7 +3326,8 @@ function renderRecipes(){
     if(RQ.now) list = list.filter(c=>{ const s = status(c); return s.ok || s.swapOnly });
     if(RQ.prot || RQ.low) list = list.filter(c=>{ const k = selos(c).map(x=>x[0]); return (!RQ.prot || k.includes('prot')) && (!RQ.low || k.includes('low')) });
     const desc = [RQ.meal!=='all' && MEALN[RQ.meal].toLowerCase(), RQ.now && 'dá para fazer', RQ.prot && 'proteicas', RQ.low && 'pouco carbo'].filter(Boolean);
-    $('#res').innerHTML = list.length ? `<p class="res-n"><span>${list.length} ${list.length===1 ? 'receita' : 'receitas'}</span>${anyF() || RQ.meal!=='all' ? '<button class="link" data-clear data-all>Limpar</button>' : ''}</p><ul class="cake-list">${list.map(c=>recRow(c)).join('')}</ul>`
+    list = sortRecipes(list);
+    $('#res').innerHTML = list.length ? `<p class="res-n"><span>${list.length} ${list.length===1 ? 'receita' : 'receitas'}</span>${sortBtn()}${anyF() || RQ.meal!=='all' ? '<button class="link" data-clear data-all>Limpar</button>' : ''}</p><ul class="cake-list">${list.map(c=>recRow(c)).join('')}</ul>`
       : `<div class="empty-card"><p>${RQ.now && !Object.keys(DB.pantry).length ? 'Marque o que você tem na Despensa para ver o que dá para fazer.' : RQ.now ? 'Nenhuma receita dá para fazer só com o que está na despensa, com esses filtros.' : 'Nenhuma receita com esses filtros.'}</p>${anyF() || RQ.meal!=='all' ? '<button class="btn secondary" data-clear>Limpar filtros</button>' : ''}</div>`;
   };
   chips(); results();
@@ -3320,7 +3348,7 @@ function renderCategory(cat){
   document.title = name;
   $('#app').innerHTML = `<div class="wrap">
     <header class="sub-head"><a class="back" href="#/receitas">${ICON.back}Receitas</a><h1>${name}</h1></header>
-    ${list.length ? `<ul class="cake-list" style="margin-top:16px">${list.map(c=>recRow(c)).join('')}</ul>` : '<p class="empty">Nenhuma receita aqui ainda.</p>'}
+    ${list.length ? `<p class="res-n"><span>${list.length} ${list.length===1 ? 'receita' : 'receitas'}</span>${sortBtn()}</p><ul class="cake-list">${sortRecipes(list).map(c=>recRow(c)).join('')}</ul>` : '<p class="empty">Nenhuma receita aqui ainda.</p>'}
     <a class="btn secondary block new-btn" href="#/nova">${ICON.plus}Nova receita</a>
   </div>`;
   $('#app').onclick = null;
