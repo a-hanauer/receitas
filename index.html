@@ -575,6 +575,25 @@ body.cookbar-on .spacer{height:220px}
 #res .empty-card{margin-top:18px}
 .res-n{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
 .res-n .link{flex:none;font-size:14px}
+.ch-acts{display:flex;align-items:center;gap:4px;margin-right:-10px}
+.fav-btn{color:var(--muted)}
+.fav-btn svg{width:22px;height:22px}
+.fav-btn[aria-pressed=true]{color:#D9416A}
+.row-fav{display:inline-block;width:14px;height:14px;margin-left:6px;color:#D9416A;vertical-align:-1px}
+.row-fav svg{display:block;width:100%;height:100%}
+.catc .ci{position:relative}
+.catc.fav{grid-column:1/-1;flex-direction:row;align-items:center;gap:6px;min-height:0;padding:6px 16px 6px 6px}
+.catc.fav .ci{margin:0}
+.catc.fav b{margin:0}
+.catc.fav small{margin:2px 0 0}
+.catc.fav .t{flex:1;min-width:0}
+.catc.fav .t b{display:flex;align-items:center;gap:6px}
+.catc.fav .t b svg{width:16px;height:16px;color:#D9416A}
+.catc.fav .t small{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.catc.fav .ci{width:72px;height:72px}
+.catc.fav .chev{width:8px;height:14px;color:var(--muted)}
+.fav-badge{position:absolute;right:2px;top:8px;display:grid;place-items:center;width:26px;height:26px;border-radius:13px;background:#D9416A;color:#fff}
+.fav-badge svg{width:14px;height:14px}
 </style>
 </head>
 <body>
@@ -2461,7 +2480,7 @@ function normalize(){
   DB.prefs = Object.assign({home:true, wake:true, alarm:false}, DB.prefs || {});
   DB.prefs.oven = Object.assign({time:0, temp:0, fan:false, changedAt:0}, DB.prefs.oven || {});
   DB.timers = DB.timers || {}; DB.custom = DB.custom || []; DB.history = DB.history || [];
-  DB.plan = DB.plan || []; DB.extras = DB.extras || []; DB.bought = DB.bought || [];
+  DB.plan = DB.plan || []; DB.extras = DB.extras || []; DB.bought = DB.bought || []; DB.favs = DB.favs || [];
   DB.market = Object.assign({to:null, undated:true}, DB.market || {});
   if(!DB.pantry){
     DB.pantry = {};
@@ -2569,6 +2588,13 @@ function customToRecipe(d){
 }
 let _custom = null;
 const customs = () => _custom || (_custom = DB.custom.map(customToRecipe));
+const isFav = id => DB.favs.includes(id);
+const favs = () => DB.favs.map(id=>REC(id)).filter(Boolean);
+function toggleFav(c){
+  const on = !isFav(c.id);
+  DB.favs = on ? [c.id, ...DB.favs] : DB.favs.filter(x=>x!==c.id); save();
+  toast(on ? 'Nas favoritas' : 'Saiu das favoritas', {label:'Desfazer', fn:()=>{ DB.favs = on ? DB.favs.filter(x=>x!==c.id) : [c.id, ...DB.favs]; save(); refresh() }});
+}
 const invalidate = () => { _custom = null };
 const ALL = () => [...RECIPES, ...CAKES, ...customs()];
 const REC = id => ALL().find(c=>c.id===id);
@@ -2868,6 +2894,8 @@ const ICON = {
   steps:'<svg viewBox="0 0 20 20" fill="none"><circle cx="4.5" cy="5" r="1.6" fill="currentColor"/><circle cx="4.5" cy="10" r="1.6" fill="currentColor"/><circle cx="4.5" cy="15" r="1.6" fill="currentColor"/><path d="M8.5 5H17M8.5 10H17M8.5 15H14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
   bowl:'<svg viewBox="0 0 20 20" fill="none"><path d="M2.5 9.5h15a7.5 6 0 0 1-15 0Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M7 17h6M12.5 9.5l4-6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
   clock:'<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8.6" r="5.6" stroke="currentColor" stroke-width="1.6"/><path d="M8 5.8v3l2 1.4M6.4 1.8h3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  heart:'<svg viewBox="0 0 20 20" fill="none"><path d="M10 16.6s-6.6-4-6.6-8.6A3.6 3.6 0 0 1 10 5.6a3.6 3.6 0 0 1 6.6 2.4c0 4.6-6.6 8.6-6.6 8.6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+  heartOn:'<svg viewBox="0 0 20 20"><path d="M10 16.6s-6.6-4-6.6-8.6A3.6 3.6 0 0 1 10 5.6a3.6 3.6 0 0 1 6.6 2.4c0 4.6-6.6 8.6-6.6 8.6Z" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
   plus:'<svg viewBox="0 0 16 16" fill="none"><path d="M8 2.5v11M2.5 8h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   trash:'<svg viewBox="0 0 16 16" fill="none"><path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   star:'<svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9L12 2.8Z" fill="currentColor"/></svg>',
@@ -3210,7 +3238,7 @@ function startCook(c, planId){
 const RQ = {q:'', meal:'all', now:false, prot:false, low:false};
 function recRow(c, sub){
   const s = status(c);
-  return `<li><a class="cake-row" href="#/r/${c.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}</b>
+  return `<li><a class="cake-row" href="#/r/${c.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}${isFav(c.id) ? `<i class="row-fav" aria-label="Favorita">${ICON.heartOn}</i>` : ''}</b>
     <span>${sub || minTxt(totalMin(c, calc(c), topOf(c))) + (histMeta(c.id) ? ', feita ' + histMeta(c.id) : '')}${sub ? '' : selos(c).map(([k,l])=>` <i class="sel ${k}">${l}</i>`).join('')}</span>
     <span class="${s.ok ? 'okt' : s.swapOnly ? 'swap' : 'miss'}">${esc(statusTxt(s))}</span></span>${ICON.chev}</a></li>`;
 }
@@ -3235,7 +3263,8 @@ function renderRecipes(){
     const browse = !q && RQ.meal==='all' && !RQ.now && !RQ.prot && !RQ.low;
     if(browse){
       const mine = customs();
-      $('#res').innerHTML = `<div class="cats">${CATS.map(k=>{ const n = all.filter(c=>c.cat===k.id).length;
+      const fv = favs();
+      $('#res').innerHTML = `<div class="cats">${fv.length ? `<a class="catc fav" href="#/receitas/favoritas" style="--tone:#D9416A"><span class="ci">${illus(fv[0], fv[0].tops[0])}</span><span class="t"><b>${ICON.heartOn}Favoritas</b><small>${fv.length} ${fv.length===1 ? 'receita' : 'receitas'}</small></span>${ICON.chev}</a>` : ''}${CATS.map(k=>{ const n = all.filter(c=>c.cat===k.id).length;
           const ic = REC(CAT_ICON[k.id]);
           return `<a class="catc" href="#/receitas/${k.id}" style="--tone:${k.tone}"><span class="ci">${ic ? illus(ic, ic.tops[0]) : ''}</span><b>${k.n}</b><small>${n} ${n===1 ? 'receita' : 'receitas'}</small></a>` }).join('')}
           ${mine.length ? `<a class="catc" href="#/receitas/minhas" style="--tone:#C9B79C"><span class="ci"><svg viewBox="0 0 64 64">${ILL.GENERIC('#C9B79C')}</svg></span><b>Minhas receitas</b><small>${mine.length} ${mine.length===1 ? 'receita' : 'receitas'}</small></a>` : ''}</div>
@@ -3263,8 +3292,8 @@ function renderRecipes(){
   ['#rmeal','#rflt','#res'].forEach(sel=>$(sel).onclick = onF);
 }
 function renderCategory(cat){
-  const mine = cat==='minhas', list = mine ? customs() : ALL().filter(c=>c.cat===cat);
-  const name = mine ? 'Minhas receitas' : CATN(cat);
+  const mine = cat==='minhas', fav = cat==='favoritas', list = mine ? customs() : fav ? favs() : ALL().filter(c=>c.cat===cat);
+  const name = mine ? 'Minhas receitas' : fav ? 'Favoritas' : CATN(cat);
   document.title = name;
   $('#app').innerHTML = `<div class="wrap">
     <header class="sub-head"><a class="back" href="#/receitas">${ICON.back}Receitas</a><h1>${name}</h1></header>
@@ -3333,7 +3362,7 @@ function backTarget(c){
   if(!h[0]) return ['#/', 'Hoje'];
   if(h[0]==='despensa') return [LAST_LIST, 'Despensa'];
   if(h[0]==='calendario') return ['#/calendario', 'Calendário'];
-  if(h[0]==='receitas') return [LAST_LIST, h[1] ? (h[1]==='minhas' ? 'Minhas receitas' : CATN(h[1])) : 'Receitas'];
+  if(h[0]==='receitas') return [LAST_LIST, h[1] ? (h[1]==='minhas' ? 'Minhas receitas' : h[1]==='favoritas' ? 'Favoritas' : CATN(h[1])) : 'Receitas'];
   return ['#/', 'Hoje'];
 }
 function renderRecipe(c){
@@ -3392,7 +3421,7 @@ function renderRecipe(c){
   $('#app').innerHTML = `
   <header class="ch"><div class="wrap">
     <div class="ch-nav"><a class="back" href="${backHref}">${ICON.back}${esc(backLbl)}</a>
-      ${c.custom ? `<a class="link" href="#/editar/${c.id}">Editar receita</a>` : `<a class="link" href="#/versao/${c.id}">Criar minha versão</a>`}</div>
+      <span class="ch-acts">${c.custom ? `<a class="link" href="#/editar/${c.id}">Editar receita</a>` : `<a class="link" href="#/versao/${c.id}">Criar minha versão</a>`}<button class="icon-btn fav-btn" data-act="fav" aria-pressed="${isFav(c.id)}" aria-label="${isFav(c.id) ? 'Tirar das favoritas' : 'Favoritar'}">${isFav(c.id) ? ICON.heartOn : ICON.heart}</button></span></div>
     <div class="ch-title">${swatch(c,'lg')}<div><h1>${esc(title(c))}</h1>${c.desc ? `<p>${esc(c.desc)}</p>` : ''}</div></div>
     <div class="facts">${facts}</div>
     ${(()=>{ const n = nutri(c); if(!n) return ''; const sl = selos(c);
@@ -3428,6 +3457,7 @@ function bindRecipe(c){
       save(); return refresh();
     }
     switch(b.dataset.act){
+      case 'fav': toggleFav(c); refresh(); break;
       case 'pan': openPanSheet(c); break;
       case 'top': openTopSheet(c); break;
       case 'plan': openPlanSheet(c); break;
