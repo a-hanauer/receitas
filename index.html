@@ -607,6 +607,20 @@ body.cookbar-on .spacer{height:220px}
 .sort-btn{flex:none;display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 10px;border:0;border-radius:15px;background:var(--press);color:var(--ink2);font-size:13px;font-weight:600}
 .sort-btn svg{width:13px;height:13px}
 .res-n .link{margin-left:6px}
+.srow{display:flex;gap:8px}
+.srow .search{flex:1;min-width:0}
+.fbtn{position:relative;flex:none;display:grid;place-items:center;width:46px;border:0;border-radius:var(--r-sm);background:var(--press);color:var(--ink2)}
+.fbtn svg{width:20px;height:20px}
+.fbtn.on{background:var(--acc-soft);color:var(--acc)}
+.fbtn i{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--acc);color:var(--on-acc);font-size:11px;font-style:normal;font-weight:700;line-height:18px;text-align:center}
+.sels-row{display:flex!important;flex-wrap:wrap;gap:4px;margin:4px 0 2px}
+.sels-row .sel{margin:0}
+.sel.rap,.sel.marm,.sel.pan,.sel.sf,.sel.veg{background:var(--press);color:var(--ink2)}
+.sel.veg{background:var(--sel-l-bg);color:var(--sel-l)}
+.cbox{flex:none;display:grid;place-items:center;width:22px;height:22px;border:1.5px solid var(--line2);border-radius:6px}
+.cbox svg{width:12px;height:12px;opacity:0}
+.opt[aria-pressed=true] .cbox{border-color:var(--acc);background:var(--acc)}
+.opt[aria-pressed=true] .cbox svg{opacity:1}
 </style>
 </head>
 <body>
@@ -1063,13 +1077,32 @@ function nutri(c){
   return {p: Math.round(p / s), c: Math.round(k / s)};
 }
 const SEL_PROT = 25, SEL_CARB = 15;
-function selos(c){
-  const n = nutri(c); if(!n) return [];
-  const out = [];
-  if(n.p >= SEL_PROT) out.push(['prot','Proteica']);
-  if(n.c <= SEL_CARB) out.push(['low','Pouco carbo']);
+const FDESC = {prot:'25 g de proteína ou mais por porção', low:'Até 15 g de carboidrato por porção', sf:'Fogão, panela ou nada', pan:'Uma panela ou assadeira do começo ao fim', marm:'Aguentam 3 a 4 dias na geladeira e reaquecem bem', veg:'Sem carne, frango ou peixe'};
+/* Tags: as calculadas saem dos dados; "uma panela" e "marmita" são editoriais. */
+const TAGDEF = [['prot','Proteica','Proteicas'],['low','Pouco carbo','Pouco carbo'],['rap','Rápida','Rápidas'],['marm','Boa para marmita','Boas para marmita'],['pan','Uma panela','Uma panela só'],['sf','Sem forno','Sem forno'],['veg','Vegetariana','Vegetarianas']];
+const ONE_POT = new Set('carne-panela almondegas strogonoff-carne carreteiro frango-ensopado strogonoff-frango frango-xadrez canja sopa-legumes caldo-verde creme-abobora sopa-ervilha peixe-assado frango-assado galeto sobrecoxa-limao frango-curry strogonoff-leve parmegiana-assada puchero carne-moida-abobrinha tainha-assada peixe-ensopado tilapia-parmesao salmao-brocolis camarao-alho sopa-capeletti sopa-lentilha frango-batata-doce picadinho-abobora moqueca curry-grao entrevero vaca-atolada shakshuka-verde peixe-papelote frango-tikka risoto-cogumelos ovos-tomate'.split(' '));
+const MARMITA = new Set('carne-panela almondegas strogonoff-carne carreteiro frango-ensopado fricasse frango-xadrez escondidinho torta-frango panqueca quibe canja sopa-legumes sopa-ervilha caldo-verde creme-abobora lasanha bolonhesa puchero carne-moida-abobrinha escondidinho-couve-flor abobrinha-recheada lasanha-abobrinha frango-curry polenta-ragu sopa-lentilha salada-atum-grao frango-batata-doce picadinho-abobora kafta frango-cuscuz-marroquino curry-grao entrevero massa-frango-brocolis vaca-atolada baiao-de-dois frango-quiabo pimentao-recheado berinjela-recheada tabule-quinoa salada-lentilha frango-tikka muffin-espinafre omelete-forno falafel quiche-alho-poro pacoca-pinhao sobrecoxa-limao'.split(' '));
+const NOT_QUICK = new Set(['overnight-oats','pudim-chia','ovos-shoyu','sagu-uva']);
+const _tags = new Map();
+function tagsOf(c){
+  if(!c || c.scale==='forma') return [];
+  const key = c.id + ':' + (c.custom ? c.ver || '' : '');
+  if(!c.custom && _tags.has(key)) return _tags.get(key);
+  const n = nutri(c), on = new Set();
+  if(n && n.p >= SEL_PROT) on.add('prot');
+  if(n && n.c <= SEL_CARB) on.add('low');
+  if(c.time <= 30 && !NOT_QUICK.has(c.id)) on.add('rap');
+  if(MARMITA.has(c.id) || (c.from && MARMITA.has(c.from))) on.add('marm');
+  if(ONE_POT.has(c.id) || (c.from && ONE_POT.has(c.from))) on.add('pan');
+  if(!c.oven) on.add('sf');
+  if(!c.ing.some(i=>i.p && CAT[i.p] && (CAT[i.p].sec==='carn' || i.p==='atum'))) on.add('veg');
+  const out = TAGDEF.filter(([k])=>on.has(k)).map(([k,l])=>[k,l]);
+  if(!c.custom) _tags.set(key, out);
   return out;
 }
+const hasTag = (c, k) => tagsOf(c).some(t=>t[0]===k);
+/* No máximo 3 selos por receita, na ordem de TAGDEF. */
+function selos(c){ return tagsOf(c).slice(0,3) }
 
 
 /* =========================================================
@@ -2910,6 +2943,7 @@ const ICON = {
   heart:'<svg viewBox="0 0 20 20" fill="none"><path d="M10 16.6s-6.6-4-6.6-8.6A3.6 3.6 0 0 1 10 5.6a3.6 3.6 0 0 1 6.6 2.4c0 4.6-6.6 8.6-6.6 8.6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
   heartOn:'<svg viewBox="0 0 20 20"><path d="M10 16.6s-6.6-4-6.6-8.6A3.6 3.6 0 0 1 10 5.6a3.6 3.6 0 0 1 6.6 2.4c0 4.6-6.6 8.6-6.6 8.6Z" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
   sort:'<svg viewBox="0 0 16 16" fill="none"><path d="M5 3v10M5 13l-2.4-2.4M5 13l2.4-2.4M11 13V3M11 3 8.6 5.4M11 3l2.4 2.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  filter:'<svg viewBox="0 0 20 20" fill="none"><path d="M3 5.5h14M5.5 10h9M8 14.5h4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
   plus:'<svg viewBox="0 0 16 16" fill="none"><path d="M8 2.5v11M2.5 8h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   trash:'<svg viewBox="0 0 16 16" fill="none"><path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   star:'<svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9L12 2.8Z" fill="currentColor"/></svg>',
@@ -3249,7 +3283,8 @@ function startCook(c, planId){
 /* =========================================================
    RECEITAS
    ========================================================= */
-const RQ = {q:'', meal:'all', now:false, prot:false, low:false, fav:false, sort:'pad'};
+const RQ = {q:'', meal:'all', now:false, fav:false, rap:false, sort:'pad', t:{}};
+const MORE_F = ['prot','low','sf','pan','marm','veg'];
 const SORTS = [['pad','Padrão','Ordem da categoria'],['tempo','Mais rápidas','Menor tempo total primeiro'],['falta','Falta menos','Menos ingredientes para comprar'],['prot','Mais proteína','Por porção, estimado'],['carb','Menos carboidrato','Por porção, estimado'],['feitas','Mais feitas','Pelo seu histórico'],['nome','A a Z','Ordem alfabética']];
 function sortRecipes(list){
   const k = RQ.sort, key = {
@@ -3276,7 +3311,7 @@ function recRow(c, sub){
   const s = status(c);
   const f = isFav(c.id);
   return `<li class="rec-li"><a class="cake-row" href="#/r/${c.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}</b>
-    <span>${sub || minTxt(totalMin(c, calc(c), topOf(c))) + (histMeta(c.id) ? ', feita ' + histMeta(c.id) : '')}${sub ? '' : selos(c).map(([k,l])=>` <i class="sel ${k}">${l}</i>`).join('')}</span>
+    <span>${sub || minTxt(totalMin(c, calc(c), topOf(c))) + (histMeta(c.id) ? ', feita ' + histMeta(c.id) : '')}</span>${sub || !selos(c).length ? '' : `<span class="sels-row">${selos(c).map(([k,l])=>`<i class="sel ${k}">${l}</i>`).join('')}</span>`}
     <span class="${s.ok ? 'okt' : s.swapOnly ? 'swap' : 'miss'}">${esc(statusTxt(s))}</span></span>${ICON.chev}</a><button class="row-fav" data-favtog="${c.id}" aria-pressed="${f}" aria-label="${f ? 'Tirar ' + esc(c.name) + ' das favoritas' : 'Favoritar ' + esc(c.name)}">${f ? ICON.heartOn : ICON.heart}</button></li>`;
 }
 function askFav(c){
@@ -3297,16 +3332,19 @@ function renderRecipes(){
   const all = ALL();
   $('#app').innerHTML = `<div class="wrap">
     <header class="home-head"><div class="hh-row"><h1>Receitas</h1><a class="icon-btn" href="#/nova" aria-label="Nova receita">${ICON.plus}</a></div></header>
-    <label class="search">${ICON.search}<input id="rq" type="search" placeholder="Buscar receita ou ingrediente" value="${esc(RQ.q)}" autocomplete="off" enterkeyhint="search"></label>
+    <div class="srow"><label class="search">${ICON.search}<input id="rq" type="search" placeholder="Receita ou ingrediente" value="${esc(RQ.q)}" autocomplete="off" enterkeyhint="search"></label><button class="fbtn" id="fbtn" aria-label="Mais filtros"></button></div>
     <div class="seg rmeal" id="rmeal" role="group" aria-label="Refeição"></div>
     <div class="fchips" id="rflt" role="group" aria-label="Filtros"></div>
     <div id="res"></div>
   </div>`;
-  const anyF = () => RQ.fav || RQ.now || RQ.prot || RQ.low;
+  const nMore = () => MORE_F.filter(k=>RQ.t[k]).length;
+  const anyF = () => RQ.fav || RQ.now || RQ.rap || nMore() > 0;
   const chips = () => {
     $('#rmeal').innerHTML = `<button data-meal="all" aria-pressed="${RQ.meal==='all'}">Tudo</button>${MEALS.map(([k])=>`<button data-meal="${k}" aria-pressed="${RQ.meal===k}">${MEAL_SHORT[k]}</button>`).join('')}`;
-    $('#rflt').innerHTML = (DB.favs.length || RQ.fav ? `<button class="fchip fv" data-f="fav" aria-pressed="${RQ.fav}">${RQ.fav ? ICON.heartOn : ICON.heart}Favoritas</button>` : '') + [['now','Dá para fazer'],['prot','Proteicas'],['low','Pouco carbo']].map(([k,l])=>`<button class="fchip" data-f="${k}" aria-pressed="${!!RQ[k]}">${ICON.ok}${l}</button>`).join('')
-      ;
+    $('#rflt').innerHTML = (DB.favs.length || RQ.fav ? `<button class="fchip fv" data-f="fav" aria-pressed="${RQ.fav}">${RQ.fav ? ICON.heartOn : ICON.heart}Favoritas</button>` : '')
+      + [['rap','Rápidas'],['now','Dá para fazer']].map(([k,l])=>`<button class="fchip" data-f="${k}" aria-pressed="${!!RQ[k]}">${ICON.ok}${l}</button>`).join('')
+      + MORE_F.filter(k=>RQ.t[k]).map(k=>`<button class="fchip" data-t="${k}" aria-pressed="true">${ICON.ok}${TAGDEF.find(x=>x[0]===k)[2]}</button>`).join('');
+    $('#fbtn').innerHTML = `${ICON.filter}${nMore() ? `<i>${nMore()}</i>` : ''}`; $('#fbtn').classList.toggle('on', nMore() > 0);
   };
   const results = () => {
     const q = plain(RQ.q.trim());
@@ -3324,8 +3362,8 @@ function renderRecipes(){
     if(q) list = list.filter(c=>plain(c.name).includes(q) || plain(c.desc).includes(q) || plain(CATN(c.cat)).includes(q) || c.ing.some(i=>plain(i.n).includes(q)));
     if(RQ.fav) list = favs().filter(c=>list.includes(c));
     if(RQ.now) list = list.filter(c=>{ const s = status(c); return s.ok || s.swapOnly });
-    if(RQ.prot || RQ.low) list = list.filter(c=>{ const k = selos(c).map(x=>x[0]); return (!RQ.prot || k.includes('prot')) && (!RQ.low || k.includes('low')) });
-    const desc = [RQ.meal!=='all' && MEALN[RQ.meal].toLowerCase(), RQ.now && 'dá para fazer', RQ.prot && 'proteicas', RQ.low && 'pouco carbo'].filter(Boolean);
+    if(RQ.rap) list = list.filter(c=>hasTag(c,'rap'));
+    MORE_F.filter(k=>RQ.t[k]).forEach(k=>{ list = list.filter(c=>hasTag(c,k)) });
     list = sortRecipes(list);
     $('#res').innerHTML = list.length ? `<p class="res-n"><span>${list.length} ${list.length===1 ? 'receita' : 'receitas'}</span>${sortBtn()}${anyF() || RQ.meal!=='all' ? '<button class="link" data-clear data-all>Limpar</button>' : ''}</p><ul class="cake-list">${list.map(c=>recRow(c)).join('')}</ul>`
       : `<div class="empty-card"><p>${RQ.now && !Object.keys(DB.pantry).length ? 'Marque o que você tem na Despensa para ver o que dá para fazer.' : RQ.now ? 'Nenhuma receita dá para fazer só com o que está na despensa, com esses filtros.' : 'Nenhuma receita com esses filtros.'}</p>${anyF() || RQ.meal!=='all' ? '<button class="btn secondary" data-clear>Limpar filtros</button>' : ''}</div>`;
@@ -3336,11 +3374,24 @@ function renderRecipes(){
     const b = e.target.closest('button'); if(!b) return;
     if(b.dataset.meal) RQ.meal = b.dataset.meal;
     else if(b.dataset.f) RQ[b.dataset.f] = !RQ[b.dataset.f];
-    else if(b.dataset.clear!=null){ RQ.now = RQ.prot = RQ.low = RQ.fav = false; RQ.meal = 'all' }
+    else if(b.dataset.t) RQ.t[b.dataset.t] = !RQ.t[b.dataset.t];
+    else if(b.dataset.clear!=null){ RQ.now = RQ.fav = RQ.rap = false; RQ.t = {}; RQ.meal = 'all' }
     else return;
     chips(); results();
   };
   ['#rmeal','#rflt','#res'].forEach(sel=>$(sel).onclick = onF);
+  $('#fbtn').onclick = () => {
+    openSheet(`<div class="sh-head"><h2>Filtros</h2><button class="sh-done" data-close>Pronto</button></div><div class="sh-body"><div class="opts" id="fopts"></div><p class="cap" id="fcount"></p></div>`, el=>{
+      const draw = () => {
+        el.querySelector('#fopts').innerHTML = MORE_F.map(k=>{ const d = TAGDEF.find(x=>x[0]===k); return `<button class="opt" data-t="${k}" aria-pressed="${!!RQ.t[k]}"><span class="ot"><b>${d[2]}</b><small>${FDESC[k]}</small></span><span class="cbox">${ICON.check}</span></button>` }).join('');
+        chips(); results();
+        const n = document.querySelectorAll('#res .cake-row').length;
+        el.querySelector('#fcount').textContent = anyF() || RQ.meal!=='all' || RQ.q ? `${n} ${n===1 ? 'receita' : 'receitas'} com os filtros atuais.` : '';
+      };
+      draw();
+      el.addEventListener('click', e=>{ const b = e.target.closest('[data-t]'); if(!b) return; RQ.t[b.dataset.t] = !RQ.t[b.dataset.t]; draw() });
+    }, {label:'Filtros'});
+  };
 }
 function renderCategory(cat){
   const mine = cat==='minhas', fav = cat==='favoritas', list = mine ? customs() : fav ? favs() : ALL().filter(c=>c.cat===cat);
