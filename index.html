@@ -391,7 +391,9 @@ button.cake-row{width:100%;border:0;border-bottom:1px solid var(--line);backgrou
 .cook-card .txt{flex:1;min-width:0}
 .cook-card b{display:block;font-size:16px}
 .cook-card small{display:block;font-size:14px;opacity:.75}
-.cook-card .go{font-weight:650}
+.cook-card .go{font-weight:650;color:inherit;text-decoration:none;padding:6px 0}
+.cook-card a.txt{color:inherit;text-decoration:none}
+.cc-drop{flex:none;padding:6px 4px;border:0;background:none;color:var(--bg);opacity:.7;font-size:15px;font-weight:550}
 .link-card{display:flex;align-items:center;gap:12px;margin-top:22px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);color:inherit;text-decoration:none}
 .link-card .txt{flex:1}
 .link-card b{display:block;font-size:16px;font-weight:600}
@@ -430,7 +432,7 @@ button.cake-row{width:100%;border:0;border-bottom:1px solid var(--line);backgrou
 .backup textarea{display:block;width:100%;min-height:96px;margin-top:12px;padding:10px 12px;border:1px solid var(--line2);border-radius:var(--r-sm);background:var(--bg);font:13px/1.4 ui-monospace,Menlo,monospace;word-break:break-all;resize:vertical}
 .row2{display:flex;gap:10px;margin-top:10px}
 .row2 .btn{flex:1;margin-top:0}
-.danger-t{color:var(--danger)}
+.danger-t,.btn.danger-t{color:var(--danger)}
 .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .ed .duo .amt input{flex:1;min-width:0;width:auto}
 .ed .duo .amt span{white-space:nowrap}
@@ -1791,7 +1793,8 @@ function renderToday(){
     <header class="home-head"><div class="hh-row"><h1>Hoje</h1><a class="icon-btn" href="#/ajustes" aria-label="Ajustes">${ICON.gear}</a></div>
       <p>${today.charAt(0).toUpperCase() + today.slice(1)}</p></header>
     ${cooking.map(c=>{ const st = SR(c), cc = calc(c), n = buildSteps(c, cc, topOf(c)).length;
-      return `<a class="cook-card" href="#/r/${c.id}/preparo/${st.cookAt}"><span class="txt"><b>${esc(c.name)}</b><small>Preparando: passo ${st.cookAt+1} de ${n}</small></span><span class="go">Continuar</span></a>` }).join('')}
+      return `<div class="cook-card"><a class="txt" href="#/r/${c.id}/preparo/${st.cookAt}"><b>${esc(c.name)}</b><small>Preparando: passo ${st.cookAt+1} de ${n}</small></a>
+        <button class="cc-drop" data-drop="${c.id}">Abandonar</button><a class="go" href="#/r/${c.id}/preparo/${st.cookAt}">Continuar</a></div>` }).join('')}
     <h2 class="sec-h">Cardápio</h2>
     ${keys.length ? keys.map(k=>`<h3 class="day-h">${k==='late' ? 'Ficou para trás' : k==='none' ? 'Sem data' : dayLabel(k, true)}</h3>
         <ul class="cake-list">${groups.get(k).sort((a,b)=>(a.date||'').localeCompare(b.date||'') || MEAL_IDX(a.meal) - MEAL_IDX(b.meal)).map(row).join('')}</ul>`).join('')
@@ -1801,6 +1804,7 @@ function renderToday(){
       <ul class="cake-list">${sug.map(c=>`<li><a class="cake-row" href="#/r/${c.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}</b><span>${minTxt(totalMin(c, calc(c), topOf(c)))}, ${esc(CATN(c.cat).toLowerCase())}</span></span>${ICON.chev}</a></li>`).join('')}</ul>` : ''}
   </div>`;
   $('#app').onclick = e=>{
+    const d = e.target.closest('[data-drop]'); if(d){ abandonCook(REC(d.dataset.drop)); refresh(); return }
     const b = e.target.closest('[data-plan]'); if(!b) return;
     const pl = DB.plan.find(x=>x.id===b.dataset.plan); if(pl) openPlanSheet(REC(pl.rid), pl.id);
   };
@@ -2031,6 +2035,7 @@ function renderRecipe(c){
         : `<p class="empty">Ao concluir o preparo, registre como ficou. O que você fez aparece aqui.</p>`}`;
   }
   const resume = resumeIdx(c)!=null;
+  const cookBan = resume ? `<div class="plan-card"><span><b>Preparo em andamento:</b> passo ${st.cookAt+1} de ${steps.length}</span><button class="link" data-act="drop">Abandonar</button></div>` : '';
   $('#app').innerHTML = `
   <header class="ch"><div class="wrap">
     <div class="ch-nav"><a class="back" href="${backHref}">${ICON.back}${esc(backLbl)}</a>
@@ -2039,7 +2044,7 @@ function renderRecipe(c){
     <div class="facts">${facts}</div>
   </div></header>
   <main class="wrap">
-    ${cfgCard}${planCard}
+    ${cfgCard}${cookBan}${planCard}
     <nav class="tabs"><div class="seg" role="tablist">
       <button role="tab" data-tab="ing" aria-selected="${st.tab==='ing'}">Ingredientes</button>
       <button role="tab" data-tab="prep" aria-selected="${st.tab==='prep'}">Preparo</button>
@@ -2071,6 +2076,7 @@ function bindRecipe(c){
       case 'pan': openPanSheet(c); break;
       case 'top': openTopSheet(c); break;
       case 'plan': openPlanSheet(c); break;
+      case 'drop': abandonCook(c); refresh(); break;
       case 'editplan': { const pl = DB.plan.find(p=>p.rid===c.id); if(pl) openPlanSheet(c, pl.id); break }
       case 'cook': {
         const t = todayIso();
@@ -2633,7 +2639,10 @@ function cookClick(e){
   if(b.dataset.go!=null) return go(+b.dataset.go);
   const T = DB.timers[key];
   switch(b.dataset.act){
-    case 'x': st.cookAt = COOK.idx; save(); location.hash = '#/r/' + c.id; break;
+    case 'x':
+      if(COOK.idx===0 && !Object.keys(DB.timers).some(k=>k.startsWith(c.id + ':')) && !Object.values(st.checks).some(Boolean)){ st.cookAt = null; save(); location.hash = '#/r/' + c.id }
+      else openExitSheet();
+      break;
     case 'ings': openIngSheet(); break;
     case 'prev': go(COOK.idx - 1); break;
     case 'next': COOK.idx===steps.length - 1 ? openFinish() : go(COOK.idx + 1); break;
@@ -2647,6 +2656,31 @@ function cookClick(e){
     case 'treset': delete DB.timers[key]; save(); drawCook(); break;
     case 'tready': st.lastBake = Math.max(1, Math.round((Date.now() - T.start)/60000)); delete DB.timers[key]; save(); drawCook(); toast(`Tempo registrado: ${st.lastBake} min`); break;
   }
+}
+function openExitSheet(){
+  const {c, idx, steps} = COOK;
+  openSheet(`<div class="sh-head"><h2>Sair do preparo</h2><button class="sh-done" data-close>Voltar</button></div>
+    <div class="sh-body"><p class="cap" style="margin-top:0">Você está no passo ${idx+1} de ${steps.length}.</p>
+      <button class="btn primary block" data-ex="pause">Pausar e continuar depois</button>
+      <button class="btn ghost block danger-t" data-ex="drop">Abandonar preparo</button>
+      <p class="cap">Abandonar zera os passos, os timers e os itens marcados. A receita continua no cardápio e a despensa não muda.</p></div>`, el=>{
+    el.addEventListener('click', e=>{
+      const b = e.target.closest('[data-ex]'); if(!b) return;
+      const st = S(c); closeSheet(true);
+      if(b.dataset.ex==='pause'){ st.cookAt = COOK.idx; save() } else abandonCook(c);
+      location.hash = '#/r/' + c.id;
+    });
+  }, {label:'Sair do preparo'});
+}
+function abandonCook(c){
+  if(!c) return;
+  const st = S(c), keys = Object.keys(DB.timers).filter(k=>k.startsWith(c.id + ':'));
+  const snap = {cookAt:st.cookAt, checks:Object.assign({}, st.checks), planId:st.planId, lastBake:st.lastBake, timers:Object.fromEntries(keys.map(k=>[k, DB.timers[k]]))};
+  st.cookAt = null; st.checks = {}; st.planId = null; st.lastBake = null; keys.forEach(k=>delete DB.timers[k]); save();
+  toast('Preparo abandonado. A despensa não mudou.', {label:'Desfazer', fn:()=>{
+    Object.assign(st, {cookAt:snap.cookAt, cookTs:Date.now(), checks:snap.checks, planId:snap.planId, lastBake:snap.lastBake});
+    Object.assign(DB.timers, snap.timers); save(); if(keys.length) tick(); refresh();
+  }});
 }
 function go(i){
   if(!COOK) return;
