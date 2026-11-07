@@ -60,6 +60,17 @@ button{cursor:pointer}
 .pchips{display:flex;flex-wrap:wrap;gap:8px}
 .pchips .chip{height:36px;padding:0 14px;font-size:15px}
 .pantry-actions{display:flex;gap:8px;margin-top:18px}
+.qty{margin-top:18px;border-top:1px solid var(--line)}
+.qty-toggle{display:flex;align-items:center;gap:10px;width:100%;height:50px;padding:0;border:0;background:none;text-align:left;font-size:16px;font-weight:600}
+.qty-toggle>span:first-child{flex:1}
+.qty-toggle em{font-style:normal;font-weight:400;color:var(--muted);font-size:14px;margin-left:4px}
+.qty.open .pchev,.qty-toggle[aria-expanded=true] .pchev{transform:rotate(180deg)}
+.qty-help{margin:0 0 6px;font-size:14px;color:var(--muted)}
+.qrow{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;border-top:1px solid var(--line)}
+.qrow .qn{font-size:16px;line-height:1.3}
+.qrow .qn small{display:block;font-size:13px;color:var(--muted)}
+.qrow .amt span{width:26px}
+.cake-row .txt>span.pan-note{color:var(--ink2);white-space:normal}
 .res-h{font-size:20px;font-weight:650;letter-spacing:-.015em;margin:28px 0 10px;display:flex;align-items:baseline;gap:8px}
 .res-h span{font-size:15px;font-weight:500;color:var(--muted)}
 .res-empty{margin:0;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:15px;color:var(--muted)}
@@ -618,21 +629,50 @@ function pid(i, top){
   const v = i.id in PMAP ? PMAP[i.id] : i.id;
   return v && PNAME[v] ? v : null;
 }
-const needs = list => [...new Set(list.map(([i,t])=>pid(i,t)).filter(Boolean))];
-function avail(c, have){
-  const miss = needs(c.ing.map(i=>[i])).filter(x=>!have.has(x));
-  const tops = c.tops.filter(id=>id!=='nenhuma' && needs(TOP(id).ing.map(i=>[i,id])).every(x=>have.has(x)));
-  return {miss, tops};
+/* quantidades: unidade e dica de cada item da despensa (sem entrada = sem quantidade) */
+const PUNIT = {ovos:'un', limoes:'un', oleo:'ml', leite:'ml', lcoco:'ml', canela:null, baunilha:null};
+const PHINT = {lc:'lata = 395 g', creme:'caixinha = 200 g', lcoco:'vidro = 200 ml', milho:'lata escorrida ≈ 170 g', iogurte:'pote = 170 g',
+  cenoura:'1 grande ≈ 125 g', banana:'1 nanica ≈ 100 g', laranja:'1 grande ≈ 200 g', maca:'1 média ≈ 150 g', farinha:'1 kg', acucar:'1 kg', fuba:'pacote = 500 g', fermento:'lata = 100 g', manteiga:'tablete = 200 g', oleo:'garrafa = 900 ml', leite:'caixa = 1 litro'};
+const punit = id => id in PUNIT ? PUNIT[id] : 'g';
+const PANS_BY_VOL = [...PANS].sort((x,y)=>y.vol-x.vol);
+function needMap(list){
+  const m = {};
+  for(const [i,t,k] of list){ const p = pid(i,t); if(!p) continue; m[p] = (m[p]||0) + (i.u==='cc'||i.u==='pitada' ? 0 : i.q*k) }
+  return m;
 }
+/* quanto precisa na forma: ovos/limões no mesmo arredondamento da receita; pesos com 5% de folga */
+function needAt(x, base, k){ return punit(x)==='un' ? Math.max(1, Math.round(base*k)) : base*k*.95 }
+function avail(c, have, qty){
+  const mass = needMap(c.ing.map(i=>[i,null,1]));
+  const miss = Object.keys(mass).filter(x=>!have.has(x));
+  const limited = Object.entries(mass).filter(([x,n])=>have.has(x) && qty[x]>0 && n>0);
+  const fails = pan => limited.filter(([x,n])=>needAt(x,n,pan.vol) > qty[x]);
+  const st = DB.cakes[c.id], pref = PAN(st && st.mode==='forma' ? st.pan : 'r2030');
+  let pan = null, lim = null;
+  if(!fails(pref).length) pan = pref;
+  else {
+    const f = fails(pref); lim = f.reduce((a,b)=> qty[b[0]]/b[1] < qty[a[0]]/a[1] ? b : a)[0];
+    pan = PANS_BY_VOL.find(p=>p.vol < pref.vol && !fails(p).length) || null;
+  }
+  const smallest = PANS_BY_VOL[PANS_BY_VOL.length-1];
+  const short = pan ? [] : fails(smallest).map(([x,n])=>({x, need:needAt(x,n,smallest.vol)/(punit(x)==='un'?1:.95)}));
+  const tops = !pan ? [] : c.tops.filter(id=>{
+    if(id==='nenhuma') return false;
+    const tn = needMap(TOP(id).ing.map(i=>[i,id,pan.area]));
+    return Object.entries(tn).every(([x,n])=> have.has(x) && !(qty[x]>0 && ((mass[x]||0)*pan.vol + n)*.95 > qty[x]));
+  });
+  return {miss, short, pan, pref, lim, tops};
+}
+function qtyTxt(x, v){ const u = punit(x); return u==='un' ? nf(Math.ceil(v-1e-9)) : nf(roundQ(v)) + ' ' + u }
 
 function renderHome(){
   setTone(null); document.title = 'Fornada';
-  const have = new Set(DB.prefs.pantry || []), open = !!DB.prefs.pantryOpen, on = have.size > 0;
-  const row = (c, sub) => {
+  const have = new Set(DB.prefs.pantry || []), qty = DB.prefs.qty || {}, open = !!DB.prefs.pantryOpen, on = have.size > 0;
+  const row = (c, sub, pan) => {
     const st = DB.cakes[c.id], t = TOP(st ? st.top : c.tops[0]);
-    return `<li><a class="cake-row" href="#/${c.id}">
+    return `<li><a class="cake-row" href="#/${c.id}" ${pan?`data-cake="${c.id}" data-pan="${pan}"`:''}>
       <span class="swatch" style="background:${c.tone}">${t.id!=='nenhuma'?`<i style="background:${topColor(t)}"></i>`:''}</span>
-      <span class="txt"><b>${c.name}</b><span class="${sub&&sub.cls||''}">${sub ? sub.txt : c.desc}</span></span>${CHEV}</a></li>`;
+      <span class="txt"><b>${c.name}</b>${sub ? sub : `<span>${c.desc}</span>`}</span>${CHEV}</a></li>`;
   };
   const lower = s => s.charAt(0).toLowerCase() + s.slice(1);
   const join = a => a.length<2 ? a.join('') : a.slice(0,-1).join(', ') + ' e ' + a[a.length-1];
@@ -641,16 +681,36 @@ function renderHome(){
   if(!on){
     list = `<ul class="cake-list">${CAKES.map(c=>row(c)).join('')}</ul>`;
   } else {
-    const rs = CAKES.map(c=>({c, ...avail(c,have)}));
-    const ok = rs.filter(r=>!r.miss.length), one = rs.filter(r=>r.miss.length===1), more = rs.filter(r=>r.miss.length>1).sort((a,b)=>a.miss.length-b.miss.length);
-    const okSub = r => ({txt: r.tops.length ? 'Cobertura: ' + join(r.tops.map(id=>lower(TOP(id).name))) : 'Sem ingredientes para as coberturas sugeridas'});
-    const missSub = r => ({txt: (r.miss.length>1?'Faltam: ':'Falta: ') + join(r.miss.map(x=>lower(PNAME[x]))), cls:'miss'});
+    const rs = CAKES.map(c=>({c, ...avail(c,have,qty)}));
+    const gaps = r => r.miss.length + r.short.length;
+    const ok = rs.filter(r=>!gaps(r)), one = rs.filter(r=>gaps(r)===1), more = rs.filter(r=>gaps(r)>1).sort((a,b)=>gaps(a)-gaps(b));
+    const okSub = r => {
+      const panLine = r.pan.id!==r.pref.id ? `<span class="pan-note">Dá para a forma ${lower(r.pan.n)} (limite: ${lower(PNAME[r.lim])})</span>` : '';
+      const top = r.tops.length ? 'Cobertura: ' + join(r.tops.map(id=>lower(TOP(id).name))) : 'Sem ingredientes para as coberturas sugeridas';
+      return panLine + `<span>${top}</span>`;
+    };
+    const missSub = r => {
+      const items = [...r.miss.map(x=>lower(PNAME[x])), ...r.short.map(({x,need})=>`mais ${lower(PNAME[x])} (tem ${qtyTxt(x,qty[x])}, precisa de ${qtyTxt(x,need)})`)];
+      return `<span class="miss">${items.length>1?'Faltam: ':'Falta: '}${join(items)}</span>`;
+    };
     const grp = (title, arr, sub, empty) => `<h2 class="res-h">${title} <span class="num">${arr.length}</span></h2>` +
-      (arr.length ? `<ul class="cake-list">${arr.map(r=>row(r.c, sub(r))).join('')}</ul>` : `<p class="res-empty">${empty}</p>`);
+      (arr.length ? `<ul class="cake-list">${arr.map(r=>row(r.c, sub(r), r.pan && r.pan.id!==r.pref.id && !gaps(r) ? r.pan.id : null)).join('')}</ul>` : `<p class="res-empty">${empty}</p>`);
     list = grp('Dá para fazer', ok, okSub, 'Nenhum bolo completo com o que você marcou. Os mais próximos estão abaixo.')
       + (one.length ? grp('Falta 1 ingrediente', one, missSub) : '')
       + (more.length ? grp('Faltam 2 ou mais', more, missSub) : '');
   }
+
+  const qItems = PANTRY.flatMap(g=>g.items).filter(([id])=>have.has(id) && punit(id));
+  const qOpen = !!DB.prefs.qtyOpen, qCount = qItems.filter(([id])=>qty[id]>0).length;
+  const qBlock = !on ? '' : `<div class="qty">
+      <button class="qty-toggle" data-act="qtoggle" aria-expanded="${qOpen}">
+        <span>Quantidades <em>opcional</em></span><span class="pantry-count num">${qCount ? qCount + ' informada' + (qCount>1?'s':'') : ''}</span>
+        <svg class="pchev" viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      ${qOpen ? `<p class="qty-help">Deixe em branco o que você tem de sobra. Com a quantidade, o app escolhe a maior forma que dá para fazer.</p>
+      ${qItems.map(([id,n])=>`<label class="qrow"><span class="qn">${n}${PHINT[id]?`<small>${PHINT[id]}</small>`:''}</span>
+        <span class="amt"><input data-q="${id}" inputmode="decimal" enterkeyhint="done" value="${qty[id]>0 ? String(qty[id]).replace('.',',') : ''}" placeholder="—" aria-label="Quantidade de ${n.toLowerCase()}"><span>${punit(id)}</span></span></label>`).join('')}` : ''}
+    </div>`;
 
   $('#app').innerHTML = `<div class="wrap">
     <header class="home-head"><h1>Fornada</h1><p>Escolha o bolo de hoje.</p></header>
@@ -666,23 +726,31 @@ function renderHome(){
           <button class="tbtn" data-act="pbasics">${BASICS.every(b=>have.has(b))?'Desmarcar básicos':'Marcar básicos'}</button>
           ${on?'<button class="tbtn" data-act="pclear">Limpar tudo</button>':''}
         </div>
+        ${qBlock}
       </div>
     </section>
     ${list}
     <p class="home-foot">Quantidades calibradas para forma retangular 20×30 cm e recalculadas para a sua forma. Medidas em gramas e mililitros; a medida caseira aparece como referência.${on?' Sal, água e ingredientes opcionais não entram no filtro.':''}</p>
   </div>`;
 
+  const rerender = ()=>{ save(); const y = scrollY; renderHome(); scrollTo(0,y) };
   $('#app').onclick = e=>{
+    const a = e.target.closest('a[data-pan]');
+    if(a){ const c = CAKE(a.dataset.cake), st = S(c); st.mode='forma'; st.pan=a.dataset.pan; st.panManual=false; save(); return }
     const b = e.target.closest('button'); if(!b) return;
     const set = new Set(DB.prefs.pantry || []);
-    if(b.dataset.p){ set.has(b.dataset.p) ? set.delete(b.dataset.p) : set.add(b.dataset.p) }
+    if(b.dataset.p){ const id=b.dataset.p; if(set.has(id)){ set.delete(id); if(DB.prefs.qty) delete DB.prefs.qty[id] } else set.add(id) }
     else if(b.dataset.act==='ptoggle'){ DB.prefs.pantryOpen = !DB.prefs.pantryOpen }
-    else if(b.dataset.act==='pbasics'){ const all = BASICS.every(x=>set.has(x)); BASICS.forEach(x=> all ? set.delete(x) : set.add(x)) }
-    else if(b.dataset.act==='pclear'){ set.clear() }
+    else if(b.dataset.act==='qtoggle'){ DB.prefs.qtyOpen = !DB.prefs.qtyOpen }
+    else if(b.dataset.act==='pbasics'){ const all = BASICS.every(x=>set.has(x)); BASICS.forEach(x=>{ if(all){ set.delete(x); if(DB.prefs.qty) delete DB.prefs.qty[x] } else set.add(x) }) }
+    else if(b.dataset.act==='pclear'){ set.clear(); DB.prefs.qty = {} }
     else return;
-    DB.prefs.pantry = [...set]; save();
-    const y = scrollY; renderHome(); scrollTo(0,y);
+    DB.prefs.pantry = [...set]; rerender();
   };
+  document.querySelectorAll('[data-q]').forEach(inp=>{
+    inp.onchange = ()=>{ const v = parseFloat(inp.value.replace(',','.')); DB.prefs.qty = DB.prefs.qty || {}; if(v>0) DB.prefs.qty[inp.dataset.q]=v; else delete DB.prefs.qty[inp.dataset.q]; rerender() };
+    inp.onkeydown = e=>{ if(e.key==='Enter') inp.blur() };
+  });
 }
 function topColor(t){ return ({casquinha:'#4A2C1E',brigadeiro:'#3E2418',ganache:'#2E1A12','calda-laranja':'#F7B34A','glace-limao':'#F6F4EC','calda-coco':'#F3EEE2','acucar-canela':'#A0642E',goiabada:'#9E2A2B'})[t.id]||'transparent' }
 
