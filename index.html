@@ -1019,17 +1019,16 @@ function selos(c){
    ========================================================= */
 const CATS = [
   {id:'cafe', n:'Café da manhã', tone:'#E3B23C'},
-  {id:'basicos', n:'Básicos do dia a dia', tone:'#B9AC94'},
+  {id:'peixe', n:'Peixe e ovos', tone:'#5E86C9'},
   {id:'carne', n:'Carne', tone:'#C0412F'},
   {id:'leves', n:'Saladas e leguminosas', tone:'#5F9E45'},
   {id:'sopas', n:'Sopas e caldos', tone:'#3FA3A3'},
   {id:'frango', n:'Frango', tone:'#EE8A2E'},
   {id:'forno', n:'Forno', tone:'#A8834F'},
   {id:'massas', n:'Massas e risotos', tone:'#8C7BC9'},
-  {id:'peixe', n:'Peixe e ovos', tone:'#5E86C9'},
   {id:'lanches', n:'Lanches', tone:'#E8664A'},
-  {id:'doces', n:'Sobremesas', tone:'#B35FA6'},
-  {id:'bolos', n:'Bolos', tone:'#6B3F2A'}
+  {id:'bolos', n:'Bolos', tone:'#6B3F2A'},
+  {id:'doces', n:'Sobremesas', tone:'#B35FA6'}
 ];
 const MEALS = [['cafe','Café da manhã'],['almoco','Almoço'],['lanche','Lanche'],['janta','Jantar']];
 const MEAL_SHORT = {cafe:'Café', almoco:'Almoço', lanche:'Lanche', janta:'Jantar'};
@@ -1061,108 +1060,8 @@ R({id:'pao-de-queijo', cat:'cafe', meals:['cafe','lanche'], name:'Pão de queijo
   done:'Está pronto quando dourar por baixo e ficar firme por fora.',
   tips:['Para congelar, congele as bolinhas cruas numa assadeira e depois guarde em saco. Asse direto do congelador, com 10 minutos a mais.','Queijo meia cura dá o sabor clássico. Parmesão deixa mais salgado e seco.']});
 
-R({id:'tapioca', cat:'cafe', meals:['cafe','lanche'], name:'Tapioca', desc:'Com queijo derretido. Pronta em 5 minutos.', serves:2, time:10,
-  ing:[['goma',160,null,'hidratada'],['queijo',60,null,'ralado'],['manteiga',10,null,'?para servir']],
-  steps:[
-    {t:'Solte a goma', d:'Esfarele {goma} com as mãos ou passe por uma peneira até ficar fina e soltinha.'},
-    {t:'Forme o disco', d:'Aqueça uma frigideira antiaderente em fogo médio, sem óleo. Espalhe metade da goma numa camada fina e uniforme, sem apertar.'},
-    {t:'Recheie e dobre', d:'Quando a goma grudar e as bordas soltarem, cubra metade com metade de {queijo}, dobre e deixe mais 30 segundos. Repita com o resto.', timer:60}],
-  tips:['Precisa ser a goma hidratada, vendida em pacote. Polvilho seco não forma o disco.','Outros recheios: coco com leite condensado, frango com requeijão, banana com canela.']});
-
-R({id:'cuscuz', cat:'cafe', meals:['cafe','janta'], name:'Cuscuz nordestino', desc:'Na cuscuzeira, soltinho e úmido.', serves:4, time:30,
-  ing:[['flocao',250],['agua',200],['sal',1,'cc'],['manteiga',20,null,'?para servir']],
-  steps:[
-    {t:'Hidrate o flocão', d:'Misture {flocao}, {agua} e {sal} com um garfo até a farinha ficar úmida por igual, sem empapar.', timer:600},
-    {t:'Monte a cuscuzeira', d:'Coloque água na parte de baixo da cuscuzeira até a marca e o flocão por cima, sem apertar.'},
-    {t:'Cozinhe no vapor', d:'Tampe e conte o tempo a partir do momento em que o vapor sair pela tampa.', timer:600},
-    {t:'Sirva', d:'Solte com um garfo e sirva quente com {manteiga}, ovo ou carne.'}],
-  tips:['Sem cuscuzeira: use um escorredor de metal sobre uma panela com água, coberto com pano e tampa.']});
-
-R({id:'ovos-mexidos', cat:'cafe', meals:['cafe','janta'], name:'Ovos mexidos cremosos', desc:'Fogo baixo e paciência: macios, nunca borrachudos.', serves:2, time:10,
-  ing:[['ovos',4],['sal',.5,'cc'],['manteiga',10],['creme',20,null,'?para finalizar'],['cheiro',1,null,'?picado']],
-  steps:[
-    {t:'Bata os ovos', d:'Bata {ovos} com {sal} só até misturar gema e clara.'},
-    {t:'Cozinhe devagar', d:'Derreta {manteiga} em fogo baixo. Junte os ovos e mexa sem parar com uma espátula, raspando o fundo.', timer:180},
-    {t:'Tire antes do ponto', d:'Desligue quando ainda estiverem brilhantes e úmidos: o calor da panela termina o cozimento. Misture {creme} e {cheiro}.'}]});
-
-R({id:'crepioca', cat:'cafe', meals:['cafe','lanche'], name:'Crepioca', desc:'Ovo com goma de tapioca, dourada na frigideira.', serves:1, time:10,
-  ing:[['ovos',1],['goma',30],['sal',1,'pitada'],['queijo',30,null,'?ralado']],
-  steps:[
-    {t:'Misture', d:'Bata {ovos} com {goma} e {sal} até ficar liso.'},
-    {t:'Doure', d:'Unte uma frigideira pequena e aqueça em fogo médio. Despeje a massa e cozinhe até firmar por baixo. Vire e doure o outro lado.', timer:120},
-    {t:'Recheie', d:'Cubra metade com {queijo}, dobre e sirva.'}]});
-
-R({id:'mingau-aveia', cat:'cafe', meals:['cafe','janta'], name:'Mingau de aveia', desc:'Cremoso, com canela.', serves:2, time:10,
-  ing:[['leite',400],['aveia',60],['acucar',20],['canela',.5,null,'?para polvilhar']],
-  steps:[
-    {t:'Cozinhe', d:'Junte {leite}, {aveia} e {acucar} numa panela e leve ao fogo médio, mexendo sempre, até ferver e engrossar.', timer:300},
-    {t:'Sirva', d:'Sirva quente com {canela}. Engrossa ao esfriar: se precisar, junte um pouco de leite.'}]});
-
-R({id:'pao-frigideira', cat:'cafe', meals:['cafe','lanche'], name:'Pão de frigideira', desc:'Massa de ovo e tapioca que abre como pão.', serves:1, time:10,
-  ing:[['ovos',2],['goma',40],['requeijao',30],['sal',1,'pitada'],['fermento',.5,'cc']],
-  steps:[
-    {t:'Misture', d:'Misture {ovos}, {goma}, {requeijao} e {sal} até ficar liso. Junte {fermento}.'},
-    {t:'Primeiro lado', d:'Despeje numa frigideira pequena untada, tampe e cozinhe em fogo baixo.', timer:180},
-    {t:'Segundo lado', d:'Vire e doure o outro lado. Abra ao meio na horizontal e recheie como um pão.', timer:120}]});
-
 /* ---------- Básicos ---------- */
-R({id:'arroz', cat:'basicos', meals:['almoco','janta'], name:'Arroz branco', desc:'Soltinho, refogado no alho e na cebola.', serves:4, time:30,
-  ing:[['arroz',250],['agua',500,null,'fervente'],['oleo',15],['cebola',.5,null,'picada'],['alho',2,null,'picados'],['sal',1,'cc']],
-  steps:[
-    {t:'Ferva a água', d:'Ferva {agua} numa chaleira.'},
-    {t:'Refogue', d:'Aqueça {oleo} e refogue {cebola} e {alho} sem dourar. Junte {arroz} e mexa por 1 minuto.', timer:180},
-    {t:'Cozinhe', d:'Junte a água fervente e {sal}. Cozinhe em fogo médio-baixo com a tampa entreaberta até a água secar e aparecerem furinhos na superfície.', timer:900},
-    {t:'Descanse', d:'Desligue, tampe e deixe descansar. Solte com um garfo.', timer:300}],
-  tips:['Proporção: 1 parte de arroz para 2 de água, em volume.','Água fervente faz o arroz cozinhar por igual.']});
-
-R({id:'feijao', cat:'basicos', meals:['almoco','janta'], name:'Feijão', desc:'Na pressão, com caldo grosso e temperado.', serves:6, time:60,
-  ing:[['feijao',500],['agua',1500],['louro',2],['oleo',15],['calabresa',100,null,'?em cubos'],['cebola',.5,null,'picada'],['alho',3,null,'picados'],['sal',2,'cc']],
-  steps:[
-    {t:'Lave o feijão', d:'Escolha {feijao}, tirando pedrinhas e grãos ruins, e lave em água corrente.'},
-    {t:'Cozinhe na pressão', d:'Na panela de pressão, junte o feijão, {agua} e {louro}. Conte a partir do momento em que pegar pressão. Desligue e espere a pressão sair sozinha.', timer:1500},
-    {t:'Faça o tempero', d:'Numa frigideira, aqueça {oleo} e doure {calabresa}, se usar. Junte {cebola} e {alho} e refogue até dourar.', timer:180},
-    {t:'Engrosse o caldo', d:'Junte 2 conchas de feijão ao refogado, amasse e devolva tudo à panela com {sal}. Ferva sem tampa, mexendo de vez em quando, até o caldo engrossar.', timer:600}],
-  tips:['De molho por 8 horas, o feijão precisa de só 15 minutos de pressão. Descarte a água do molho.','Congela bem por até 3 meses.']});
-
-R({id:'farofa', cat:'basicos', meals:['almoco','janta'], name:'Farofa', desc:'Na manteiga, com cebola dourada.', serves:4, time:15,
-  ing:[['manteiga',50],['cebola',.5,null,'picada'],['farinha_mandioca',200],['sal',.5,'cc'],['cheiro',2,null,'?picado']],
-  steps:[
-    {t:'Doure a cebola', d:'Derreta {manteiga} em fogo médio e doure {cebola}.', timer:180},
-    {t:'Toste a farinha', d:'Junte {farinha_mandioca} aos poucos, mexendo sempre, até ficar soltinha e levemente tostada.', timer:300},
-    {t:'Tempere', d:'Acerte com {sal} e misture {cheiro}.'}],
-  tips:['Variações: junte ovos mexidos, bacon ou banana-da-terra antes da farinha.']});
-
-R({id:'pure', cat:'basicos', meals:['almoco','janta'], name:'Purê de batata', desc:'Liso e amanteigado.', serves:4, time:35,
-  ing:[['batata',800],['leite',150,null,'quente'],['manteiga',40],['sal',1,'cc'],['noz',1,'pitada','?']],
-  steps:[
-    {t:'Cozinhe as batatas', d:'Descasque {batata}, corte em pedaços iguais e cozinhe em água com sal até furar fácil com o garfo.', timer:1200},
-    {t:'Esprema', d:'Escorra bem e passe pelo espremedor ainda quente. Liquidificador deixa o purê grudento.'},
-    {t:'Finalize', d:'Volte ao fogo baixo com {manteiga} e {leite}, mexendo até ficar cremoso. Acerte com {sal} e {noz}.'}]});
-
-R({id:'vinagrete', cat:'basicos', meals:['almoco','janta'], name:'Vinagrete', desc:'Fresco, para carnes, feijão e churrasco.', serves:4, time:20,
-  ing:[['tomate',2,null,'sem sementes'],['cebola',.5],['pimentao',.5],['cheiro',2],['vinagre',30],['azeite',30],['sal',1,'cc']],
-  steps:[
-    {t:'Pique', d:'Pique em cubinhos {tomate}, {cebola} e {pimentao}. Junte {cheiro} picado.'},
-    {t:'Tempere e descanse', d:'Tempere com {vinagre}, {azeite} e {sal} e deixe na geladeira para pegar gosto.', timer:900}]});
-
-R({id:'molho-tomate', cat:'basicos', meals:['almoco','janta'], name:'Molho de tomate caseiro', desc:'Para massas, almôndegas e lasanha. Rende cerca de 600 ml.', serves:4, time:50,
-  ing:[['tomate',8,null,'maduros'],['azeite',30],['cebola',.5,null,'picada'],['alho',3,null,'picados'],['sal',1,'cc'],['acucar',5],['oregano',1,'cc','?']],
-  steps:[
-    {t:'Tire a pele', d:'Faça um X na base de {tomate}, mergulhe em água fervente por 1 minuto e passe para água fria. Tire a pele e as sementes e pique.', timer:60},
-    {t:'Refogue', d:'Aqueça {azeite} e refogue {cebola} e {alho} até murchar.', timer:180},
-    {t:'Apure', d:'Junte os tomates, {sal} e {acucar}. Cozinhe em fogo baixo com a tampa entreaberta, mexendo de vez em quando, até encorpar. Finalize com {oregano}.', timer:1800}],
-  tips:['O açúcar só corrige a acidez. Tomates bem maduros podem dispensar.','Congela bem por até 3 meses.']});
-
 /* ---------- Carne ---------- */
-R({id:'bife-acebolado', cat:'carne', meals:['almoco','janta'], name:'Bife acebolado', desc:'Selado em fogo alto, com cebola dourada.', serves:4, time:30,
-  ing:[['bife',600,null,'em 4 bifes'],['alho',2,null,'amassados'],['sal',1.5,'cc'],['pimenta',.25,'cc'],['oleo',30],['cebola',2,null,'em rodelas']],
-  steps:[
-    {t:'Tempere', d:'Tempere {bife} com {alho}, {sal} e {pimenta}.', timer:900},
-    {t:'Sele os bifes', d:'Aqueça bem uma frigideira com metade de {oleo}. Frite os bifes em levas, sem amontoar e sem mexer até dourar. Vire, doure o outro lado e reserve.', timer:120},
-    {t:'Doure a cebola', d:'Na mesma frigideira, com o resto do óleo, doure {cebola} em fogo médio, raspando o fundo.', timer:300},
-    {t:'Junte', d:'Volte os bifes por 1 minuto, cobertos pela cebola, e sirva.'}],
-  tips:['Tire a carne da geladeira 20 minutos antes: fria, ela solta água.','Frigideira cheia demais cozinha em vez de selar.']});
-
 R({id:'carne-panela', cat:'carne', meals:['almoco','janta'], name:'Carne de panela', desc:'Na pressão, macia, com batata e cenoura.', serves:6, time:80,
   ing:[['carne_panela',1000,null,'em cubos grandes'],['sal',2,'cc'],['pimenta',.5,'cc'],['oleo',30],['cebola',1,null,'picada'],['alho',4,null,'picados'],['tomate',2,null,'picados'],['colorau',1,'cc'],['louro',2],['agua',500,null,'quente'],['batata',500,null,'em pedaços'],['cenoura',250,null,'em rodelas']],
   steps:[
@@ -1171,13 +1070,6 @@ R({id:'carne-panela', cat:'carne', meals:['almoco','janta'], name:'Carne de pane
     {t:'Refogue', d:'Na mesma panela, refogue {cebola}, {alho} e {tomate}, raspando o fundo.', timer:300},
     {t:'Cozinhe na pressão', d:'Volte a carne com {colorau}, {louro} e {agua}. Feche e conte a partir da pressão. Desligue e espere a pressão sair.', timer:2100},
     {t:'Legumes', d:'Junte {batata} e {cenoura} e cozinhe sem pressão, com tampa, até ficarem macios.', timer:900}]});
-
-R({id:'carne-moida', cat:'carne', meals:['almoco','janta'], name:'Carne moída refogada', desc:'Soltinha e bem temperada. Base para muitos pratos.', serves:4, time:25,
-  ing:[['oleo',15],['cebola',1,null,'picada'],['alho',3,null,'picados'],['carne_moida',500],['tomate',2,null,'picados'],['sal',1.5,'cc'],['pimenta',.25,'cc'],['cheiro',2,null,'?picado']],
-  steps:[
-    {t:'Refogue', d:'Aqueça {oleo} e refogue {cebola} e {alho}.', timer:180},
-    {t:'Doure a carne', d:'Aumente o fogo, junte {carne_moida} e mexa, desmanchando, até a água evaporar e a carne dourar.', timer:600},
-    {t:'Finalize', d:'Junte {tomate}, {sal} e {pimenta} e cozinhe até o tomate desmanchar. Misture {cheiro}.', timer:300}]});
 
 R({id:'almondegas', cat:'carne', meals:['almoco','janta'], name:'Almôndegas ao molho', desc:'Douradas e cozidas no molho de tomate.', serves:4, time:50,
   ing:[['carne_moida',500],['ovos',1],['farinha_rosca',40],['cebola',.5,null,'ralada'],['alho',2,null,'amassados'],['cheiro',2,null,'picado'],['sal',1.5,'cc'],['oleo',30],['passata',680]],
@@ -1214,14 +1106,6 @@ R({id:'frango-assado', cat:'frango', meals:['almoco','janta'], name:'Frango assa
     {t:'Tempere', d:'Tempere {frango_coxa} com {alho}, o suco de {limoes}, {sal}, {colorau}, {pimenta} e {oregano}.', timer:1800},
     {t:'Monte a assadeira', d:'Espalhe {batata} e {cebola} numa assadeira, regue com {azeite} e uma pitada de sal. Coloque o frango por cima, com a pele para cima, e cubra com papel-alumínio.'}],
   done:'Asse os primeiros 30 minutos coberto. Tire o papel e asse até a pele dourar e o caldo sair transparente ao furar a coxa.'});
-
-R({id:'frango-grelhado', cat:'frango', meals:['almoco','janta'], name:'Filé de frango grelhado', desc:'Suculento, dourado na frigideira.', serves:4, time:30,
-  ing:[['frango_peito',600,null,'em filés finos'],['alho',2,null,'amassados'],['limoes',.5],['sal',1.5,'cc'],['pimenta',.25,'cc'],['oregano',.5,'cc'],['azeite',15]],
-  steps:[
-    {t:'Tempere', d:'Abra {frango_peito} em filés de 1 cm e tempere com {alho}, o suco de {limoes}, {sal}, {pimenta} e {oregano}.', timer:900},
-    {t:'Grelhe', d:'Aqueça bem uma frigideira com {azeite}. Grelhe sem mexer até dourar, vire e doure o outro lado.', timer:240},
-    {t:'Descanse', d:'Deixe 2 minutos no prato antes de cortar, para o suco não escapar.'}],
-  tips:['Filé grosso resseca por fora antes de cozinhar por dentro: abra em filés finos.']});
 
 R({id:'strogonoff-frango', cat:'frango', meals:['almoco','janta'], name:'Strogonoff de frango', desc:'Rápido e cremoso.', serves:4, time:30,
   ing:[['frango_peito',600,null,'em cubos'],['sal',1.5,'cc'],['pimenta',.25,'cc'],['manteiga',20],['cebola',1,null,'picada'],['alho',2,null,'picados'],['ketchup',2],['mostarda',1],['champignon',100,null,'?'],['creme',200],['batata_palha',100,null,'?para servir']],
@@ -1277,13 +1161,6 @@ R({id:'peixe-empanado', cat:'peixe', meals:['almoco','janta'], name:'Filé de pe
     {t:'Frite', d:'Aqueça {oleo} a 170 °C: um pedacinho de pão deve dourar em 30 segundos. Frite em levas até dourar, virando na metade, e escorra em papel-toalha.', timer:360}],
   tips:['Na air fryer: borrife óleo e asse a 200 °C por 12 minutos, virando na metade.']});
 
-R({id:'omelete', cat:'peixe', meals:['cafe','janta'], name:'Omelete', desc:'Recheada e dobrada na frigideira.', serves:1, time:10,
-  ing:[['ovos',3],['sal',1,'pitada'],['manteiga',10],['queijo',30,null,'ralado'],['presunto',30,null,'?picado'],['tomate',.5,null,'?picado']],
-  steps:[
-    {t:'Bata', d:'Bata {ovos} com {sal} até espumar.'},
-    {t:'Cozinhe', d:'Derreta {manteiga} numa frigideira em fogo médio. Despeje os ovos e puxe as bordas para o centro com uma espátula enquanto firmam.', timer:60},
-    {t:'Recheie e dobre', d:'Cubra metade com {queijo}, {presunto} e {tomate}. Tampe em fogo baixo até o queijo derreter e dobre ao meio.', timer:120}]});
-
 R({id:'ovos-tomate', cat:'peixe', meals:['almoco','janta'], name:'Ovos ao molho de tomate', desc:'Ovos cozidos no molho, gema mole.', serves:2, time:20,
   ing:[['azeite',15],['cebola',.5,null,'picada'],['tomate',3,null,'picados'],['sal',.5,'cc'],['ovos',4],['cheiro',2,null,'?picado']],
   steps:[
@@ -1292,13 +1169,6 @@ R({id:'ovos-tomate', cat:'peixe', meals:['almoco','janta'], name:'Ovos ao molho 
     {t:'Sirva', d:'Polvilhe {cheiro} e sirva com pão ou arroz.'}]});
 
 /* ---------- Massas ---------- */
-R({id:'alho-oleo', cat:'massas', meals:['almoco','janta'], name:'Espaguete alho e óleo', desc:'Rápido, só com o que tem na despensa.', serves:4, time:20,
-  ing:[['esp',500],['sal',1,'cs','para a água'],['azeite',100],['alho',8,null,'em lâminas finas'],['cheiro',2,null,'?picado'],['parmesao',40,null,'?']],
-  steps:[
-    {t:'Cozinhe a massa', d:'Ferva 5 litros de água com {sal}. Cozinhe {esp} por 1 minuto a menos que o indicado na embalagem.', timer:540},
-    {t:'Doure o alho', d:'Enquanto isso, aqueça {azeite} em fogo baixo com {alho} até dourar levemente. Alho escuro amarga.', timer:180},
-    {t:'Junte', d:'Reserve 1 xícara da água do cozimento. Escorra a massa e misture no azeite com um pouco dessa água até envolver. Finalize com {cheiro} e {parmesao}.'}]});
-
 R({id:'bolonhesa', cat:'massas', meals:['almoco','janta'], name:'Espaguete à bolonhesa', desc:'Molho de carne cozido devagar.', serves:4, time:50,
   ing:[['oleo',15],['cebola',1,null,'picada'],['alho',3,null,'picados'],['cenoura',100,null,'ralada'],['carne_moida',400],['passata',680],['sal',1.5,'cc'],['oregano',.5,'cc'],['esp',500],['parmesao',40,null,'?']],
   steps:[
@@ -1410,12 +1280,6 @@ R({id:'sopa-ervilha', cat:'sopas', meals:['janta'], name:'Sopa de ervilha', desc
     {t:'Acerte', d:'Tire o louro, tempere com {sal} e ferva sem tampa até encorpar. Para mais cremosa, bata metade e devolva.', timer:300}]});
 
 /* ---------- Lanches ---------- */
-R({id:'misto-quente', cat:'lanches', meals:['lanche','cafe','janta'], name:'Misto-quente', desc:'Dourado na frigideira, queijo derretendo.', serves:2, time:10,
-  ing:[['pao_forma',4],['presunto',80,null,'fatiado'],['queijo',80,null,'fatiado'],['manteiga',15]],
-  steps:[
-    {t:'Monte', d:'Monte os sanduíches com {pao_forma}, {presunto} e {queijo}. Passe {manteiga} do lado de fora do pão.'},
-    {t:'Doure', d:'Doure numa frigideira tampada em fogo baixo até o queijo derreter, virando na metade.', timer:360}]});
-
 R({id:'sanduiche-natural', cat:'lanches', meals:['lanche','janta'], name:'Sanduíche natural de frango', desc:'Frango, cenoura e milho com requeijão.', serves:4, time:35,
   ing:[['frango_peito',300],['cenoura',100,null,'ralada'],['milho',85],['maionese',60],['requeijao',60],['sal',.5,'cc'],['cheiro',2,null,'?picado'],['pao_forma',8],['alface',4]],
   steps:[
@@ -1493,15 +1357,6 @@ R({id:'galeto', cat:'frango', meals:['almoco','janta'], name:'Galeto ao primo ca
     {t:'Arrume na assadeira', d:'Escorra o galeto e guarde a marinada. Arrume com a pele para cima, aberto e sem sobrepor, e pincele {azeite}.'}],
   done:'Na metade do tempo, regue com um pouco da marinada. Está pronto quando a pele estiver dourada e o caldo sair transparente ao furar a coxa.',
   tips:['Na Serra, vem acompanhado de polenta frita, radicci e sopa de capeletti.','Sem vinho: use 150 ml de água com o suco de 1 limão.']});
-
-R({id:'frango-desfiado', cat:'frango', meals:['almoco','janta','lanche'], name:'Frango desfiado temperado', desc:'Base para a semana: marmita, omelete, salada e tapioca.', serves:6, time:40,
-  ing:[['frango_peito',800],['agua',800],['sal',1.5,'cc'],['azeite',15],['cebola',.5,null,'picada'],['alho',3,null,'picados'],['tomate',2,null,'picados'],['colorau',1,'cc'],['cheiro',2,null,'?picado']],
-  steps:[
-    {t:'Cozinhe na pressão', d:'Cozinhe {frango_peito} com {agua} e metade de {sal} na panela de pressão. Conte o tempo depois que pegar pressão.', timer:900},
-    {t:'Desfie', d:'Escorra e guarde o caldo. Desfie o frango ainda quente com dois garfos.'},
-    {t:'Refogue', d:'Aqueça {azeite}, refogue {cebola} e {alho} e junte {tomate} e {colorau}.', timer:180},
-    {t:'Junte o frango', d:'Junte o frango, o resto do sal e meia concha do caldo. Cozinhe até secar um pouco e finalize com {cheiro}.', timer:300}],
-  tips:['Desfie na batedeira, em velocidade baixa, por 30 segundos.','Dura 4 dias na geladeira e 3 meses no congelador.']});
 
 R({id:'sobrecoxa-limao', cat:'frango', meals:['almoco','janta'], name:'Sobrecoxa assada com limão e alho', desc:'Pele crocante, carne suculenta. Sem trabalho.', serves:4, time:70,
   oven:{temp:220, bake:[35,40], pre:1},
@@ -1667,14 +1522,6 @@ R({id:'sopa-lentilha', cat:'sopas', meals:['janta','almoco'], name:'Sopa de lent
   tips:['Para mais proteína, junte frango desfiado no final.']});
 
 /* Saladas e leguminosas */
-R({id:'radicci-ovo', cat:'leves', meals:['almoco','janta'], name:'Radicci com ovo', desc:'A salada amarga da Serra, com ovo cozido e azeite.', serves:4, time:20,
-  ing:[['ovos',3],['radicci',200],['alho',1,null,'?bem picado'],['azeite',30],['vinagre',20],['sal',1,'cc']],
-  steps:[
-    {t:'Cozinhe os ovos', d:'Coloque {ovos} em água fervente e cozinhe. Passe para água fria e descasque.', timer:600},
-    {t:'Corte o radicci', d:'Lave {radicci}, seque bem e corte em tiras finas.'},
-    {t:'Tempere', d:'Tempere com {alho}, {azeite}, {vinagre} e {sal} na hora de servir. Cubra com os ovos em gomos.'}],
-  tips:['A versão clássica leva bacon frito. O amargor combina com galeto, polenta e churrasco.','Radite, radicci e almeirão são parentes: qualquer um serve.']});
-
 R({id:'salada-completa', cat:'leves', meals:['almoco','janta'], name:'Salada completa com molho de iogurte', desc:'Folhas, legumes e ovo, com molho cremoso.', serves:4, time:20,
   ing:[['ovos',2],['alface',8],['tomate',2,null,'em gomos'],['pepino',200,null,'em rodelas'],['cenoura',125,null,'ralada'],['iogurte',170],['limoes',.5],['mostarda',1],['azeite',15],['sal',1,'cc']],
   steps:[
@@ -1682,22 +1529,6 @@ R({id:'salada-completa', cat:'leves', meals:['almoco','janta'], name:'Salada com
     {t:'Monte', d:'Lave e seque bem {alface}. Arrume com {tomate}, {pepino}, {cenoura} e os ovos em gomos.'},
     {t:'Molho', d:'Misture {iogurte}, o suco de {limoes}, {mostarda}, {azeite} e {sal}. Sirva à parte.'}],
   tips:['Para virar refeição, junte frango desfiado ou atum.']});
-
-R({id:'legumes-assados', cat:'leves', meals:['almoco','janta'], name:'Legumes assados', desc:'Dourados no forno, acompanham qualquer carne.', serves:4, time:50,
-  oven:{temp:220, bake:[30,35], pre:0},
-  ing:[['abobora',400,null,'em cubos de 2 cm'],['abobrinha',250,null,'em meias-luas'],['berinjela',250,null,'em cubos'],['cebola',1,null,'em pétalas'],['pimentao',1,null,'em tiras'],['azeite',45],['sal',1.5,'cc'],['alecrim',1,null,'?'],['oregano',1,'cc']],
-  steps:[
-    {t:'Corte por igual', d:'Corte {abobora} um pouco menor que o resto, porque demora mais. Junte {abobrinha}, {berinjela}, {cebola} e {pimentao}.'},
-    {t:'Tempere e espalhe', d:'Misture com {azeite}, {sal}, {alecrim} e {oregano}. Espalhe numa assadeira grande, em uma camada só.'}],
-  done:'Mexa na metade do tempo. Estão prontos quando as bordas dourarem.',
-  tips:['Assadeira cheia demais cozinha no vapor e não doura. Use duas, se precisar.']});
-
-R({id:'brocolis-alho', cat:'leves', meals:['almoco','janta'], name:'Brócolis no alho', desc:'Verde, crocante e perfumado.', serves:4, time:15,
-  ing:[['brocolis',500,null,'em floretes'],['azeite',30],['alho',4,null,'em lâminas'],['sal',1,'cc'],['limoes',.5,null,'?']],
-  steps:[
-    {t:'Branqueie', d:'Cozinhe {brocolis} em água fervente com sal e passe para água gelada.', timer:120},
-    {t:'Doure o alho', d:'Aqueça {azeite} e doure {alho} em fogo médio, sem queimar.', timer:60},
-    {t:'Salteie', d:'Junte o brócolis escorrido e {sal} e salteie. Finalize com o suco de {limoes}.', timer:120}]});
 
 R({id:'salada-atum-grao', cat:'leves', meals:['almoco','janta','lanche'], name:'Salada de atum com grão-de-bico', desc:'Sem fogão, pronta em 15 minutos.', serves:3, time:15,
   ing:[['grao',240],['atum',240],['tomate',2,null,'em cubos'],['pepino',200,null,'em cubos'],['cebola',.5,null,'picada'],['cheiro',2,null,'picado'],['azeite',30],['limoes',1],['sal',1,'cc'],['pimenta',.25,'cc']],
@@ -1725,22 +1556,6 @@ R({id:'hummus', cat:'leves', meals:['lanche'], name:'Hummus', desc:'Pasta de gr�
   tips:['Tirar a pelinha do grão deixa mais liso.','Com palitos de cenoura e pepino, é lanche com pouco carboidrato.']});
 
 /* Básicos */
-R({id:'arroz-couve-flor', cat:'basicos', meals:['almoco','janta'], name:'Arroz de couve-flor', desc:'Acompanhamento com pouco carboidrato.', serves:4, time:15,
-  ing:[['couve_flor',600],['azeite',15],['alho',2,null,'picados'],['sal',1,'cc'],['cheiro',1,null,'?picado']],
-  steps:[
-    {t:'Rale', d:'Rale {couve_flor} no ralo grosso ou pulse no processador até ficar do tamanho de grãos de arroz.'},
-    {t:'Refogue', d:'Aqueça {azeite}, doure {alho} e junte a couve-flor e {sal}. Refogue sem tampa, mexendo, até ficar macia e soltinha.', timer:300},
-    {t:'Sirva', d:'Finalize com {cheiro}.'}],
-  tips:['Não cozinhe demais, ou vira papa.']});
-
-R({id:'chimichurri', cat:'basicos', meals:['almoco','janta'], name:'Chimichurri', desc:'Para carne, frango e legumes grelhados.', serves:8, time:40,
-  ing:[['oregano',2,'cc'],['agua',30,null,'quente'],['cheiro',6,null,'bem picado'],['alho',3,null,'bem picados'],['calabresa_seca',.5],['azeite',120],['vinagre',30],['sal',1,'cc']],
-  steps:[
-    {t:'Hidrate', d:'Misture {oregano} com {agua} quente e espere 5 minutos.', timer:300},
-    {t:'Misture', d:'Junte {cheiro}, {alho}, {calabresa_seca}, {azeite}, {vinagre} e {sal}.'},
-    {t:'Descanse', d:'Deixe descansar para os sabores se juntarem.', timer:1800}],
-  tips:['Dura 1 semana na geladeira, em vidro fechado.']});
-
 /* Café */
 R({id:'panqueca-banana', cat:'cafe', meals:['cafe','lanche'], name:'Panqueca de banana e aveia', desc:'Três ingredientes, sem açúcar e sem farinha.', serves:1, time:10,
   ing:[['banana',100,null,'bem madura'],['ovos',2],['aveia',30],['canela',.5,'cc'],['manteiga',5,null,'para untar']],
@@ -2791,7 +2606,7 @@ function swatch(c, cls=''){
   const t = c.scale==='forma' ? SR(c).top : null;
   return `<span class="swatch ${cls}" style="background:${tint(toneOf(c), .22)}" aria-hidden="true">${illus(c, t)}</span>`;
 }
-const CAT_ICON = {cafe:'pao-de-queijo', basicos:'arroz', carne:'bife-acebolado', frango:'frango-assado', peixe:'peixe-assado', massas:'bolonhesa', forno:'escondidinho', sopas:'canja', lanches:'hamburguer', leves:'salada-completa', bolos:'cenoura', doces:'pudim'};
+const CAT_ICON = {cafe:'pao-de-queijo', carne:'bife-chimichurri', frango:'frango-assado', peixe:'peixe-assado', massas:'bolonhesa', forno:'escondidinho', sopas:'canja', lanches:'hamburguer', leves:'salada-completa', bolos:'cenoura', doces:'pudim'};
 
 /* ---------- Folha (bottom sheet) ---------- */
 let SHEET = null;
