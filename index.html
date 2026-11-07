@@ -49,6 +49,21 @@ button{cursor:pointer}
 .cake-row b{display:block;color:var(--ink);font-size:17px;font-weight:600;letter-spacing:-.01em}
 .cake-row .txt>span{display:block;font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chev{width:8px;height:14px;flex:none;color:var(--line2)}
+.pantry{margin:0 0 8px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
+.pantry-toggle{display:flex;align-items:center;gap:10px;width:100%;height:54px;padding:0 16px;border:0;background:none;text-align:left;font-size:17px;font-weight:600}
+.pantry-toggle>span:first-child{flex:1}
+.pantry-count{font-size:15px;font-weight:500;color:var(--muted)}
+.pchev{width:13px;height:8px;color:var(--muted);transition:transform .2s}
+.pantry.open .pchev{transform:rotate(180deg)}
+.pantry-body{padding:2px 16px 16px;border-top:1px solid var(--line)}
+.pg h3{font-size:14px;font-weight:600;color:var(--muted);margin:16px 0 8px}
+.pchips{display:flex;flex-wrap:wrap;gap:8px}
+.pchips .chip{height:36px;padding:0 14px;font-size:15px}
+.pantry-actions{display:flex;gap:8px;margin-top:18px}
+.res-h{font-size:20px;font-weight:650;letter-spacing:-.015em;margin:28px 0 10px;display:flex;align-items:baseline;gap:8px}
+.res-h span{font-size:15px;font-weight:500;color:var(--muted)}
+.res-empty{margin:0;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:15px;color:var(--muted)}
+.cake-row .txt>span.miss{color:var(--warn);white-space:normal}
 .home-foot{margin-top:28px;font-size:13px;color:var(--muted);line-height:1.5}
 
 /* ---------- Recipe ---------- */
@@ -581,24 +596,93 @@ function route(){
   if(h[0] && CAKE(h[0])){
     renderCake(CAKE(h[0]));
     if(h[1]==='preparo') openCook(CAKE(h[0]), Number(h[2])||0);
-  } else renderHome();
+  } else { renderHome(); scrollTo(0,0) }
 }
 addEventListener('hashchange', route);
 
 /* ---------- Home ---------- */
+/* ---------- Filtro "O que tem em casa" ---------- */
+const PANTRY = [
+  {g:'Básicos', items:[['ovos','Ovos'],['farinha','Farinha de trigo'],['acucar','Açúcar'],['oleo','Óleo'],['leite','Leite'],['fermento','Fermento'],['manteiga','Manteiga']]},
+  {g:'Frutas e legumes', items:[['cenoura','Cenoura'],['banana','Banana'],['laranja','Laranja'],['limoes','Limão'],['maca','Maçã'],['aipim','Aipim'],['milho','Milho verde']]},
+  {g:'Despensa', items:[['fuba','Fubá'],['choc','Chocolate em pó'],['coco','Coco ralado'],['lcoco','Leite de coco'],['iogurte','Iogurte natural'],['mascavo','Açúcar mascavo'],['canela','Canela'],['baunilha','Baunilha'],['granulado','Granulado']]},
+  {g:'Para coberturas', items:[['lc','Leite condensado'],['creme','Creme de leite'],['meio','Chocolate meio amargo'],['conf','Açúcar de confeiteiro'],['goiabada','Goiabada']]}
+];
+const BASICS = PANTRY[0].items.map(i=>i[0]);
+const PNAME = Object.fromEntries(PANTRY.flatMap(g=>g.items));
+/* ingrediente da receita → item da despensa (null = não conta: sal, água, opcionais) */
+const PMAP = {suco:'limoes', tacucar:'acucar', tchoc:'choc', tmant:'manteiga', tleite:'leite', tlc:'lc', tcreme:'creme', tmeio:'meio', tconf:'conf', tgoia:'goiabada', tlcoco:'lcoco', tcoco:'coco', tcanela:'canela', sal:null, tagua:null};
+function pid(i, top){
+  if(i.opt) return null;
+  if(i.id==='tsuco') return top==='calda-laranja' ? 'laranja' : 'limoes';
+  const v = i.id in PMAP ? PMAP[i.id] : i.id;
+  return v && PNAME[v] ? v : null;
+}
+const needs = list => [...new Set(list.map(([i,t])=>pid(i,t)).filter(Boolean))];
+function avail(c, have){
+  const miss = needs(c.ing.map(i=>[i])).filter(x=>!have.has(x));
+  const tops = c.tops.filter(id=>id!=='nenhuma' && needs(TOP(id).ing.map(i=>[i,id])).every(x=>have.has(x)));
+  return {miss, tops};
+}
+
 function renderHome(){
   setTone(null); document.title = 'Fornada';
+  const have = new Set(DB.prefs.pantry || []), open = !!DB.prefs.pantryOpen, on = have.size > 0;
+  const row = (c, sub) => {
+    const st = DB.cakes[c.id], t = TOP(st ? st.top : c.tops[0]);
+    return `<li><a class="cake-row" href="#/${c.id}">
+      <span class="swatch" style="background:${c.tone}">${t.id!=='nenhuma'?`<i style="background:${topColor(t)}"></i>`:''}</span>
+      <span class="txt"><b>${c.name}</b><span class="${sub&&sub.cls||''}">${sub ? sub.txt : c.desc}</span></span>${CHEV}</a></li>`;
+  };
+  const lower = s => s.charAt(0).toLowerCase() + s.slice(1);
+  const join = a => a.length<2 ? a.join('') : a.slice(0,-1).join(', ') + ' e ' + a[a.length-1];
+
+  let list;
+  if(!on){
+    list = `<ul class="cake-list">${CAKES.map(c=>row(c)).join('')}</ul>`;
+  } else {
+    const rs = CAKES.map(c=>({c, ...avail(c,have)}));
+    const ok = rs.filter(r=>!r.miss.length), one = rs.filter(r=>r.miss.length===1), more = rs.filter(r=>r.miss.length>1).sort((a,b)=>a.miss.length-b.miss.length);
+    const okSub = r => ({txt: r.tops.length ? 'Cobertura: ' + join(r.tops.map(id=>lower(TOP(id).name))) : 'Sem ingredientes para as coberturas sugeridas'});
+    const missSub = r => ({txt: (r.miss.length>1?'Faltam: ':'Falta: ') + join(r.miss.map(x=>lower(PNAME[x]))), cls:'miss'});
+    const grp = (title, arr, sub, empty) => `<h2 class="res-h">${title} <span class="num">${arr.length}</span></h2>` +
+      (arr.length ? `<ul class="cake-list">${arr.map(r=>row(r.c, sub(r))).join('')}</ul>` : `<p class="res-empty">${empty}</p>`);
+    list = grp('Dá para fazer', ok, okSub, 'Nenhum bolo completo com o que você marcou. Os mais próximos estão abaixo.')
+      + (one.length ? grp('Falta 1 ingrediente', one, missSub) : '')
+      + (more.length ? grp('Faltam 2 ou mais', more, missSub) : '');
+  }
+
   $('#app').innerHTML = `<div class="wrap">
     <header class="home-head"><h1>Fornada</h1><p>Escolha o bolo de hoje.</p></header>
-    <ul class="cake-list">${CAKES.map(c=>{
-      const st = DB.cakes[c.id], t = TOP(st ? st.top : c.tops[0]);
-      return `<li><a class="cake-row" href="#/${c.id}">
-        <span class="swatch" style="background:${c.tone}">${t.id!=='nenhuma'?`<i style="background:${topColor(t)}"></i>`:''}</span>
-        <span class="txt"><b>${c.name}</b><span>${c.desc}</span></span>${CHEV}</a></li>`}).join('')}
-    </ul>
-    <p class="home-foot">Quantidades calibradas para forma retangular 20×30 cm e recalculadas para a sua forma. Medidas em gramas e mililitros; a medida caseira aparece como referência.</p>
+    <section class="pantry ${open?'open':''}">
+      <button class="pantry-toggle" data-act="ptoggle" aria-expanded="${open}" aria-controls="pantry-body">
+        <span>O que tem em casa</span>
+        <span class="pantry-count num">${on ? have.size + (have.size>1?' itens':' item') : 'Filtrar'}</span>
+        <svg class="pchev" viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div id="pantry-body" class="pantry-body" ${open?'':'hidden'}>
+        ${PANTRY.map(g=>`<div class="pg"><h3>${g.g}</h3><div class="pchips">${g.items.map(([id,n])=>`<button class="chip" data-p="${id}" aria-pressed="${have.has(id)}">${n}</button>`).join('')}</div></div>`).join('')}
+        <div class="pantry-actions">
+          <button class="tbtn" data-act="pbasics">${BASICS.every(b=>have.has(b))?'Desmarcar básicos':'Marcar básicos'}</button>
+          ${on?'<button class="tbtn" data-act="pclear">Limpar tudo</button>':''}
+        </div>
+      </div>
+    </section>
+    ${list}
+    <p class="home-foot">Quantidades calibradas para forma retangular 20×30 cm e recalculadas para a sua forma. Medidas em gramas e mililitros; a medida caseira aparece como referência.${on?' Sal, água e ingredientes opcionais não entram no filtro.':''}</p>
   </div>`;
-  scrollTo(0,0);
+
+  $('#app').onclick = e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    const set = new Set(DB.prefs.pantry || []);
+    if(b.dataset.p){ set.has(b.dataset.p) ? set.delete(b.dataset.p) : set.add(b.dataset.p) }
+    else if(b.dataset.act==='ptoggle'){ DB.prefs.pantryOpen = !DB.prefs.pantryOpen }
+    else if(b.dataset.act==='pbasics'){ const all = BASICS.every(x=>set.has(x)); BASICS.forEach(x=> all ? set.delete(x) : set.add(x)) }
+    else if(b.dataset.act==='pclear'){ set.clear() }
+    else return;
+    DB.prefs.pantry = [...set]; save();
+    const y = scrollY; renderHome(); scrollTo(0,y);
+  };
 }
 function topColor(t){ return ({casquinha:'#4A2C1E',brigadeiro:'#3E2418',ganache:'#2E1A12','calda-laranja':'#F7B34A','glace-limao':'#F6F4EC','calda-coco':'#F3EEE2','acucar-canela':'#A0642E',goiabada:'#9E2A2B'})[t.id]||'transparent' }
 
