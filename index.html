@@ -594,6 +594,9 @@ body.cookbar-on .spacer{height:220px}
 .catc.fav .chev{width:8px;height:14px;color:var(--muted)}
 .fav-badge{position:absolute;right:2px;top:8px;display:grid;place-items:center;width:26px;height:26px;border-radius:13px;background:#D9416A;color:#fff}
 .fav-badge svg{width:14px;height:14px}
+.fchip.fv svg{display:block;width:13px;height:13px}
+.fchip.fv[aria-pressed=true]{background:#FBE3EA;color:#C2305A}
+@media (prefers-color-scheme:dark){.fchip.fv[aria-pressed=true]{background:#3A1E28;color:#F28BA8}}
 </style>
 </head>
 <body>
@@ -3235,7 +3238,7 @@ function startCook(c, planId){
 /* =========================================================
    RECEITAS
    ========================================================= */
-const RQ = {q:'', meal:'all', now:false, prot:false, low:false};
+const RQ = {q:'', meal:'all', now:false, prot:false, low:false, fav:false};
 function recRow(c, sub){
   const s = status(c);
   return `<li><a class="cake-row" href="#/r/${c.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}${isFav(c.id) ? `<i class="row-fav" aria-label="Favorita">${ICON.heartOn}</i>` : ''}</b>
@@ -3252,15 +3255,15 @@ function renderRecipes(){
     <div class="fchips" id="rflt" role="group" aria-label="Filtros"></div>
     <div id="res"></div>
   </div>`;
-  const anyF = () => RQ.now || RQ.prot || RQ.low;
+  const anyF = () => RQ.fav || RQ.now || RQ.prot || RQ.low;
   const chips = () => {
     $('#rmeal').innerHTML = `<button data-meal="all" aria-pressed="${RQ.meal==='all'}">Tudo</button>${MEALS.map(([k])=>`<button data-meal="${k}" aria-pressed="${RQ.meal===k}">${MEAL_SHORT[k]}</button>`).join('')}`;
-    $('#rflt').innerHTML = [['now','Dá para fazer'],['prot','Proteicas'],['low','Pouco carbo']].map(([k,l])=>`<button class="fchip" data-f="${k}" aria-pressed="${!!RQ[k]}">${ICON.ok}${l}</button>`).join('')
+    $('#rflt').innerHTML = (DB.favs.length || RQ.fav ? `<button class="fchip fv" data-f="fav" aria-pressed="${RQ.fav}">${RQ.fav ? ICON.heartOn : ICON.heart}Favoritas</button>` : '') + [['now','Dá para fazer'],['prot','Proteicas'],['low','Pouco carbo']].map(([k,l])=>`<button class="fchip" data-f="${k}" aria-pressed="${!!RQ[k]}">${ICON.ok}${l}</button>`).join('')
       ;
   };
   const results = () => {
     const q = plain(RQ.q.trim());
-    const browse = !q && RQ.meal==='all' && !RQ.now && !RQ.prot && !RQ.low;
+    const browse = !q && RQ.meal==='all' && !anyF();
     if(browse){
       const mine = customs();
       const fv = favs();
@@ -3273,6 +3276,7 @@ function renderRecipes(){
     }
     let list = all.filter(c=>RQ.meal==='all' || c.meals.includes(RQ.meal));
     if(q) list = list.filter(c=>plain(c.name).includes(q) || plain(c.desc).includes(q) || plain(CATN(c.cat)).includes(q) || c.ing.some(i=>plain(i.n).includes(q)));
+    if(RQ.fav) list = favs().filter(c=>list.includes(c));
     if(RQ.now) list = list.filter(c=>{ const s = status(c); return s.ok || s.swapOnly });
     if(RQ.prot || RQ.low) list = list.filter(c=>{ const k = selos(c).map(x=>x[0]); return (!RQ.prot || k.includes('prot')) && (!RQ.low || k.includes('low')) });
     const desc = [RQ.meal!=='all' && MEALN[RQ.meal].toLowerCase(), RQ.now && 'dá para fazer', RQ.prot && 'proteicas', RQ.low && 'pouco carbo'].filter(Boolean);
@@ -3285,7 +3289,7 @@ function renderRecipes(){
     const b = e.target.closest('button'); if(!b) return;
     if(b.dataset.meal) RQ.meal = b.dataset.meal;
     else if(b.dataset.f) RQ[b.dataset.f] = !RQ[b.dataset.f];
-    else if(b.dataset.clear!=null){ RQ.now = RQ.prot = RQ.low = false; RQ.meal = 'all' }
+    else if(b.dataset.clear!=null){ RQ.now = RQ.prot = RQ.low = RQ.fav = false; RQ.meal = 'all' }
     else return;
     chips(); results();
   };
