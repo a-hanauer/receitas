@@ -515,6 +515,54 @@ html{touch-action:manipulation}
 .slot-add{display:inline-flex;align-items:center;gap:6px;height:32px;margin-left:auto;padding:0 12px 0 10px;border:0;border-radius:16px;background:var(--acc-soft);color:var(--acc);font-size:14px;font-weight:550}
 .slot-add svg{width:12px;height:12px}
 .slot .cake-list{border-top:0}
+.cook-top{gap:2px}
+.cook-ttl{flex:1;min-width:0;text-align:center}
+.cook-ttl b{display:block;overflow:hidden;font-size:15px;font-weight:650;white-space:nowrap;text-overflow:ellipsis}
+.cook-ttl span{display:block;color:var(--muted);font-size:13px}
+.cook-top .icon-btn svg{width:20px;height:20px}
+.segs{display:flex;gap:6px;margin:4px 20px 0}
+.segs .sg{display:flex;flex:var(--n,1);gap:2px}
+.segs i{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.segs i.done{background:color-mix(in srgb,var(--acc) 45%,var(--line))}
+.segs i.cur{background:var(--acc)}
+.mini button{display:inline-flex;align-items:center;gap:6px}
+.mini button svg{width:14px;height:14px}
+.cook-ph{display:flex;align-items:center;gap:8px}
+.phchip{padding:3px 10px;border-radius:12px;background:var(--acc-soft);color:var(--acc);font-size:13px;font-weight:650}
+.cook-ph .num{color:var(--muted);font-size:13px}
+.cook-body h2{display:flex;align-items:flex-start;gap:12px;margin:14px 0 12px}
+.stepn{flex:none;display:grid;place-items:center;width:36px;height:36px;margin-top:-1px;border-radius:18px;background:var(--ink);color:var(--bg);font-size:17px;font-weight:700;letter-spacing:0}
+.cook-body>p.cook-d{font-size:19px;line-height:1.5}
+.uses{margin-top:20px;padding:4px 16px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line)}
+.uses-h{padding:10px 0 4px;color:var(--muted);font-size:13px;font-weight:600}
+.use{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:16px}
+.use:first-of-type{border-top:0}
+.use b{flex:none;font-weight:650}
+.cook-foot{width:100%;max-width:600px;margin:0 auto;border-top:1px solid var(--line)}
+.cook-next{margin:10px 20px 0;color:var(--ink2);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cook-next span{margin-right:6px;color:var(--muted)}
+.cook-foot .cook-nav{padding-top:10px}
+.stl{border-top:1px solid var(--line)}
+.st-row{display:flex;align-items:center;gap:12px;width:100%;min-height:50px;padding:8px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;font-size:16px;color:var(--ink)}
+.st-n{flex:none;display:grid;place-items:center;width:28px;height:28px;border:1.5px solid var(--line2);border-radius:14px;color:var(--muted);font-size:13px;font-weight:650}
+.st-n svg{width:13px;height:13px}
+.st-row.done .st-n{border-color:transparent;background:color-mix(in srgb,var(--acc) 18%,var(--surface));color:var(--acc)}
+.st-row.done .st-t{color:var(--muted)}
+.st-row.cur .st-n{border-color:var(--acc);background:var(--acc);color:var(--on-acc)}
+.st-row.cur .st-t{font-weight:650}
+.st-t{flex:1;min-width:0}
+.st-d,.st-tm{flex:none;color:var(--muted);font-size:13px}
+.st-tm{color:var(--acc);font-weight:650}
+.cookbar{position:fixed;left:12px;right:12px;z-index:14;max-width:536px;margin:0 auto;border-radius:18px;background:var(--ink);color:var(--bg);box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.cb-go{display:flex;align-items:center;gap:12px;padding:9px 10px 9px 9px;color:inherit;text-decoration:none}
+.cb-go .swatch{border-radius:10px}
+.cb-t{flex:1;min-width:0}
+.cb-t b{display:block;overflow:hidden;font-size:15px;font-weight:650;white-space:nowrap;text-overflow:ellipsis}
+.cb-t small{display:flex;align-items:center;gap:4px;font-size:13px;opacity:.75;white-space:nowrap}
+.cb-t small svg{width:13px;height:13px}
+.cb-btn{flex:none;height:34px;padding:0 14px;border-radius:17px;background:var(--acc);color:var(--on-acc);font-size:14px;font-weight:650;line-height:34px}
+body.cookbar-on .wrap{padding-bottom:calc(170px + var(--safe-b))}
+body.cookbar-on .spacer{height:220px}
 </style>
 </head>
 <body>
@@ -527,6 +575,7 @@ html{touch-action:manipulation}
   <a href="#/compras" data-tab="compras"><svg viewBox="0 0 24 24" fill="none"><path d="M4 9h16l-1.4 10.2a1.5 1.5 0 0 1-1.5 1.3H6.9a1.5 1.5 0 0 1-1.5-1.3L4 9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 9 11 4M15.5 9 13 4M9.5 13v4M14.5 13v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Compras<span class="badge" hidden></span></a>
 </nav>
 <div id="cook" class="cook" hidden></div>
+<div id="cookbar" class="cookbar" hidden></div>
 <div id="ring" class="ring" hidden></div>
 <script>
 'use strict';
@@ -2161,11 +2210,12 @@ function fmt(ing, k){
 }
 const qMain = (i, r) => i.u==='un' ? (r.txt || nf(r.n)) : r.main;
 function inline(ing, k){ const r = fmt(ing,k); return ing.u==='un' ? `<b class="q">${r.main}</b>` : `<b class="q">${r.main}</b> ${ing.s}` }
-function render_text(txt, c, cc, extra){
+function render_text(txt, c, cc, extra, uses){
+  const use = (i, k) => { if(uses && !uses.some(u=>u.i===i)) uses.push({i, k}) };
   return txt.replace(/\{(\w+)\}/g, (m,id)=>{
     if(id==='time') return `<b class="q">${cc.time[0]} a ${cc.time[1]} min</b>`;
-    let i = c.ing.find(x=>x.id===id); if(i) return inline(i, cc.f);
-    i = extra && extra.ing && extra.ing.find(x=>x.id===id); if(i) return inline(i, cc.ft);
+    let i = c.ing.find(x=>x.id===id); if(i){ use(i, cc.f); return inline(i, cc.f) }
+    i = extra && extra.ing && extra.ing.find(x=>x.id===id); if(i){ use(i, cc.ft); return inline(i, cc.ft) }
     return m;
   });
 }
@@ -2173,7 +2223,7 @@ function render_text(txt, c, cc, extra){
 /* Passo a passo completo */
 function buildSteps(c, cc, top){
   const out = [], O = DB.prefs.oven;
-  const P = (ph, s, extra, more) => out.push(Object.assign({ph, t:s.t, d:render_text(s.d, c, cc, extra), timer:s.timer || 0}, more || {}));
+  const P = (ph, s, extra, more) => { const uses = []; out.push(Object.assign({ph, t:s.t, d:render_text(s.d, c, cc, extra, uses), uses, timer:s.timer || 0}, more || {})) };
   P('Antes de começar', {t:'Separe tudo', d: c.ing.some(i=>i.egg)
     ? 'Marque cada ingrediente ao separar. Deixe os ovos fora da geladeira: em temperatura ambiente, rendem melhor.'
     : 'Marque cada ingrediente ao separar.'}, null, {mise:true});
@@ -2381,6 +2431,10 @@ const ICON = {
   gear:'<svg viewBox="0 0 20 20" fill="none"><path d="M3 5.5h8M15 5.5h2M3 14.5h2M9 14.5h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="13" cy="5.5" r="2" stroke="currentColor" stroke-width="1.8"/><circle cx="7" cy="14.5" r="2" stroke="currentColor" stroke-width="1.8"/></svg>',
   list:'<svg viewBox="0 0 20 20" fill="none"><path d="M7.5 5.5H17M7.5 10H17M7.5 14.5H17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="3.8" cy="5.5" r="1.2" fill="currentColor"/><circle cx="3.8" cy="10" r="1.2" fill="currentColor"/><circle cx="3.8" cy="14.5" r="1.2" fill="currentColor"/></svg>',
   cart:'<svg viewBox="0 0 20 20" fill="none"><path d="M3 7.5h14l-1.2 8.6a1.4 1.4 0 0 1-1.4 1.2H5.6a1.4 1.4 0 0 1-1.4-1.2L3 7.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M7 7.5 9 3.5M13 7.5l-2-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+  down:'<svg viewBox="0 0 18 18" fill="none"><path d="M3.5 6.5 9 12l5.5-5.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  steps:'<svg viewBox="0 0 20 20" fill="none"><circle cx="4.5" cy="5" r="1.6" fill="currentColor"/><circle cx="4.5" cy="10" r="1.6" fill="currentColor"/><circle cx="4.5" cy="15" r="1.6" fill="currentColor"/><path d="M8.5 5H17M8.5 10H17M8.5 15H14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  bowl:'<svg viewBox="0 0 20 20" fill="none"><path d="M2.5 9.5h15a7.5 6 0 0 1-15 0Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M7 17h6M12.5 9.5l4-6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+  clock:'<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8.6" r="5.6" stroke="currentColor" stroke-width="1.6"/><path d="M8 5.8v3l2 1.4M6.4 1.8h3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
   plus:'<svg viewBox="0 0 16 16" fill="none"><path d="M8 2.5v11M2.5 8h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   trash:'<svg viewBox="0 0 16 16" fill="none"><path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   star:'<svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9L12 2.8Z" fill="currentColor"/></svg>',
@@ -2445,6 +2499,22 @@ function setTabbar(tab){
   bar.querySelectorAll('a').forEach(a=>{ if(a.dataset.tab===tab) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current') });
   const n = buyCount(), b = bar.querySelector('.badge');
   b.hidden = !n; b.textContent = n;
+  updateCookbar();
+}
+function updateCookbar(){
+  const el = $('#cookbar'); if(!el) return;
+  const h = parts(), here = h[0]==='r' ? h[1] : null;
+  const list = ALL().filter(c=>resumeIdx(c)!=null).sort((a,b)=>(S(b).cookTs||0) - (S(a).cookTs||0));
+  const c = list[0];
+  if(!c || COOK || here===c.id){ el.hidden = true; document.body.classList.remove('cookbar-on'); return }
+  const st = S(c), cc = calc(c, st), steps = buildSteps(c, cc, topOf(c, st)), i = Math.min(st.cookAt, steps.length - 1);
+  const run = Object.entries(DB.timers).filter(([k,T])=>k.startsWith(c.id + ':')).sort((a,b)=>remain(a[1]) - remain(b[1]))[0];
+  el.innerHTML = `<a class="cb-go" href="#/r/${c.id}/preparo/${i}">${swatch(c,'sm')}<span class="cb-t"><b>${esc(c.name)}</b><small>${run ? `${ICON.clock}<span data-clock="${run[0]}">${mm(remain(run[1]))}</span> · ` : ''}Passo ${i+1} de ${steps.length}${list.length > 1 ? ` · +${list.length-1} em preparo` : ''}</small></span><span class="cb-btn">Continuar</span></a>`;
+  el.hidden = false; document.body.classList.add('cookbar-on');
+  const tb = $('#tabbar'), cta = document.querySelector('.cta-bar');
+  const tbh = tb.hidden ? 0 : tb.offsetHeight;
+  el.style.bottom = (cta ? tbh + cta.offsetHeight - 6 : tbh + 8) + 'px';
+  if(run) tick();
 }
 function render(){
   const h = parts();
@@ -2500,9 +2570,6 @@ function renderToday(){
   $('#app').innerHTML = `<div class="wrap">
     <header class="home-head"><div class="hh-row"><h1>Hoje</h1><a class="icon-btn" href="#/ajustes" aria-label="Ajustes">${ICON.gear}</a></div>
       <p>${today.charAt(0).toUpperCase() + today.slice(1)}</p></header>
-    ${cooking.map(c=>{ const st = SR(c), cc = calc(c), n = buildSteps(c, cc, topOf(c)).length;
-      return `<div class="cook-card"><a class="txt" href="#/r/${c.id}/preparo/${st.cookAt}"><b>${esc(c.name)}</b><small>Preparando: passo ${st.cookAt+1} de ${n}</small></a>
-        <button class="cc-drop" data-drop="${c.id}">Abandonar</button><a class="go" href="#/r/${c.id}/preparo/${st.cookAt}">Continuar</a></div>` }).join('')}
     <h2 class="sec-h">Cardápio de hoje</h2>
     ${MEALS.map(([k,l])=>{ const ps = todays.filter(p=>p.meal===k), now = k===meal;
       return `<section class="slot ${now ? 'is-now' : ''}"><div class="slot-h"><b>${l}</b>${now ? '<span class="tag">Agora</span>' : ''}<button class="slot-add" data-add="${t}" data-meal="${k}" aria-label="Adicionar ao ${l.toLowerCase()}">${ICON.plus}${ps.length ? 'Adicionar' : 'Planejar'}</button></div>
@@ -3448,7 +3515,7 @@ function openCook(c, idx){
   const st = S(c), cc = calc(c, st), top = topOf(c, st), steps = buildSteps(c, cc, top);
   idx = Math.min(Math.max(0, idx), steps.length - 1);
   COOK = {c, cc, top, steps, idx}; st.cookAt = idx; st.cookTs = Date.now(); save();
-  $('#cook').hidden = false; $('#tabbar').hidden = true; document.body.style.overflow = 'hidden';
+  $('#cook').hidden = false; $('#tabbar').hidden = true; $('#cookbar').hidden = true; document.body.style.overflow = 'hidden';
   if(DB.prefs.wake) requestWake();
   drawCook();
 }
@@ -3457,28 +3524,53 @@ function closeCook(){
   COOK = null; $('#cook').hidden = true; document.body.style.overflow = ''; releaseWake();
 }
 function drawCook(){
-  const {c, cc, top, steps, idx} = COOK, s = steps[idx], key = c.id + ':' + idx, st = S(c), last = idx===steps.length - 1;
+  const {c, cc, top, steps, idx} = COOK, s = steps[idx], key = c.id + ':' + idx, st = S(c), last = idx===steps.length - 1, nx = steps[idx+1];
   const others = Object.entries(DB.timers).filter(([k])=>k.startsWith(c.id + ':') && k!==key && steps[+k.split(':')[1]]);
+  const phases = [...new Set(steps.map(x=>x.ph))], phN = steps.filter(x=>x.ph===s.ph), phI = phN.indexOf(s) + 1;
   $('#cook').innerHTML = `
     <div class="cook-top">
-      <button class="icon-btn" data-act="x" aria-label="Sair do preparo">${ICON.close}</button>
-      <span class="cook-count num">Passo ${idx+1} de ${steps.length}</span>
-      <button class="icon-btn" data-act="ings" aria-label="Ver ingredientes">${ICON.list}</button>
+      <button class="icon-btn" data-act="min" aria-label="Minimizar preparo">${ICON.down}</button>
+      <div class="cook-ttl"><b>${esc(title(c))}</b><span class="num">Passo ${idx+1} de ${steps.length}</span></div>
+      <button class="icon-btn" data-act="steps" aria-label="Todos os passos">${ICON.steps}</button>
+      <button class="icon-btn" data-act="ings" aria-label="Ingredientes">${ICON.bowl}</button>
     </div>
-    <div class="bar"><i style="width:${(idx+1)/steps.length*100}%"></i></div>
-    ${others.length ? `<div class="mini">${others.map(([k,t])=>`<button data-go="${k.split(':')[1]}">${esc(steps[+k.split(':')[1]].t)}: <span data-clock="${k}">${mm(remain(t))}</span></button>`).join('')}</div>` : ''}
+    <div class="segs" aria-hidden="true">${phases.map(ph=>`<span class="sg" style="--n:${steps.filter(x=>x.ph===ph).length}">${steps.map((x,i)=>x.ph===ph ? `<i class="${i < idx ? 'done' : i===idx ? 'cur' : ''}"></i>` : '').join('')}</span>`).join('')}</div>
+    ${others.length ? `<div class="mini">${others.map(([k,t])=>`<button data-go="${k.split(':')[1]}">${ICON.clock}${esc(steps[+k.split(':')[1]].t)} <span data-clock="${k}">${mm(remain(t))}</span></button>`).join('')}</div>` : ''}
     <div class="cook-body">
-      <div class="cook-ph">${s.ph}</div>
-      <h2>${esc(s.t)}</h2>
-      <p>${s.d}</p>
+      <div class="cook-ph"><span class="phchip">${esc(s.ph)}</span>${phN.length > 1 ? `<span class="num">${phI} de ${phN.length}</span>` : ''}</div>
+      <h2><span class="stepn num">${idx+1}</span>${esc(s.t)}</h2>
+      <p class="cook-d">${s.d}</p>
       ${s.mise ? `<div class="mise">${ingList(c, cc, top, st)}</div>` : ''}
+      ${!s.mise && s.uses && s.uses.length ? `<div class="uses"><div class="uses-h">Neste passo</div>${s.uses.map(({i,k})=>{ const r = fmt(i,k); return `<div class="use"><span>${esc(i.n)}</span><b class="num">${qMain(i,r)}</b></div>` }).join('')}</div>` : ''}
       ${(s.mise || s.bake) ? noteCall(st.note) : ''}
       ${s.timer ? timerBlock(key, s) : ''}
     </div>
-    <div class="cook-nav">
-      <button class="prev" data-act="prev" ${idx===0 ? 'disabled' : ''}>${ICON.back}Voltar</button>
-      <button class="next" data-act="next">${last ? 'Concluir' : 'Próximo passo'}</button>
+    <div class="cook-foot">
+      <p class="cook-next">${nx ? `<span>A seguir</span>${esc(nx.t)}` : '<span>Último passo</span>Depois é só concluir'}</p>
+      <div class="cook-nav">
+        <button class="prev" data-act="prev" ${idx===0 ? 'disabled' : ''}>${ICON.back}Voltar</button>
+        <button class="next" data-act="next">${last ? 'Concluir' : 'Próximo passo'}</button>
+      </div>
     </div>`;
+}
+function openStepsSheet(){
+  const {c, steps, idx} = COOK;
+  const phases = [...new Set(steps.map(x=>x.ph))];
+  openSheet(`<div class="sh-head"><h2>Passos</h2><button class="sh-done" data-close>Fechar</button></div>
+    <div class="sh-body">${phases.map(ph=>`<p class="sh-sub">${esc(ph)}</p><div class="stl">${steps.map((x,i)=>x.ph!==ph ? '' : `<button class="st-row ${i < idx ? 'done' : i===idx ? 'cur' : ''}" data-jump="${i}">
+        <span class="st-n num">${i < idx ? ICON.ok : i+1}</span><span class="st-t">${esc(x.t)}</span>${DB.timers[c.id + ':' + i] ? `<span class="st-tm num" data-clock="${c.id}:${i}">${mm(remain(DB.timers[c.id + ':' + i]))}</span>` : x.timer ? `<span class="st-d">${durLabel(x.timer)}</span>` : ''}</button>`).join('')}</div>`).join('')}
+      <button class="btn ghost block danger-t" data-drop style="margin-top:18px">Abandonar preparo</button></div>`, el=>{
+    el.addEventListener('click', e=>{
+      const j = e.target.closest('[data-jump]'); if(j){ closeSheet(true); go(+j.dataset.jump); return }
+      if(e.target.closest('[data-drop]')){ closeSheet(true); const cc = COOK.c; abandonCook(cc); location.hash = '#/r/' + cc.id }
+    });
+  }, {label:'Passos'});
+}
+function minimizeCook(){
+  if(!COOK) return;
+  const c = COOK.c, st = S(c); st.cookAt = COOK.idx; st.cookTs = Date.now(); save();
+  const back = LAST_LIST && !LAST_LIST.startsWith('#/r/' + c.id + '/preparo') ? LAST_LIST : '#/r/' + c.id;
+  location.hash = back;
 }
 function timerBlock(key, s){
   const T = DB.timers[key], r = T ? remain(T) : s.timer, done = T && !T.paused && r <= 0;
@@ -3504,10 +3596,8 @@ function cookClick(e){
   if(b.dataset.go!=null) return go(+b.dataset.go);
   const T = DB.timers[key];
   switch(b.dataset.act){
-    case 'x':
-      if(COOK.idx===0 && !Object.keys(DB.timers).some(k=>k.startsWith(c.id + ':')) && !Object.values(st.checks).some(Boolean)){ st.cookAt = null; save(); location.hash = '#/r/' + c.id }
-      else openExitSheet();
-      break;
+    case 'min': minimizeCook(); break;
+    case 'steps': openStepsSheet(); break;
     case 'ings': openIngSheet(); break;
     case 'prev': go(COOK.idx - 1); break;
     case 'next': COOK.idx===steps.length - 1 ? openFinish() : go(COOK.idx + 1); break;
