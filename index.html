@@ -631,6 +631,18 @@ body.cookbar-on .spacer{height:220px}
 .pk-fav svg{display:block;width:100%;height:100%}
 .pick .sels-row{margin:3px 0 1px}
 .sheet .now-row{padding:8px 10px 8px 14px}
+.acts{grid-column:2;margin:4px 0 0;padding-left:20px;color:var(--ink2);font-size:16px}
+.acts li{margin:3px 0;padding-left:2px}
+.acts li::marker{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+.cook-acts{margin:0;padding:0;list-style:none}
+.cook-acts li+li{margin-top:2px}
+.act{display:flex;align-items:flex-start;gap:12px;width:100%;padding:10px 0;border:0;background:none;color:var(--ink2);text-align:left;font-size:19px;line-height:1.45}
+.an{flex:none;display:grid;place-items:center;width:28px;height:28px;margin-top:1px;border:1.5px solid var(--line2);border-radius:14px;color:var(--muted);font-size:14px;font-weight:650;line-height:1}
+.an svg{width:13px;height:13px}
+.act.on .an{border-color:transparent;background:color-mix(in srgb,var(--acc) 18%,var(--surface));color:var(--acc)}
+.act.on .at{color:var(--muted)}
+.act.on .at b{color:var(--muted)}
+.cook-acts+.uses,.cook-acts+.timer{margin-top:16px}
 </style>
 </head>
 <body>
@@ -2735,6 +2747,36 @@ function render_text(txt, c, cc, extra, uses){
   });
 }
 
+/* Quebra uma instrução em ações, uma por frase. */
+const ACT_VERBS = 'abaixe abra acrescente adicione adoce afunde amasse apague aperte arrume asse aumente bata branqueie coloque corte cozinhe cubra derreta descanse descasque deslize desligue desfie despeje dissolva distribua divida dobre doure enrole envolva escorra esfregue esfrie espalhe esprema faça fatie feche ferva finalize forre frite gire grelhe guarde junte lave leve marine mergulhe mexa misture modele monte passe pincele pique polvilhe ponha processe prove pulse quebre rale raspe recheie refogue regue reserve retire risque sacuda salgue salteie seque sele separe sirva tampe tempere tire toste unte vire volte'.split(' ');
+const ACT_RE = new RegExp('(,| e) (?=(' + ACT_VERBS.join('|') + ')\\b)', 'gi');
+function splitActs(html){
+  const sent = html.split(/(?<=[.!?])\s+(?=[A-ZÀ-ÖØ-Þ<])/).map(x=>x.trim()).filter(Boolean);
+  const parts = [];
+  for(const se of sent){
+    // não quebra dentro de parênteses
+    let depth = 0, buf = '', out = [];
+    const marked = se.replace(ACT_RE, (m, sep, v, off)=>{ const before = se.slice(0, off); const open = (before.match(/\(/g)||[]).length - (before.match(/\)/g)||[]).length; return open > 0 ? m : '\u0001' });
+    marked.split('\u0001').forEach(x=>{ x = x.trim().replace(/,$/, ''); if(x) parts.push(x.charAt(0).toUpperCase() + x.slice(1)) });
+  }
+  // frase que começa com complemento ("Na mesma panela", "Com as mãos untadas") vai junto da ação seguinte
+  const LEAD = /^(na|no|nas|nos|numa|num|com|em|à|ao|às|depois|sem|quando|faltando|enquanto|ainda|assim)(?=[\s,])/i;
+  const merged = [];
+  for(let i = 0; i < parts.length; i++){
+    let p = parts[i];
+    while(i + 1 < parts.length && LEAD.test(p.replace(/<[^>]+>/g,'')) && !/[.!?:]$/.test(p) && p.replace(/<[^>]+>/g,'').split(' ').length <= 6){
+      const nx = parts[++i]; p = p + ', ' + nx.charAt(0).toLowerCase() + nx.slice(1);
+    }
+    merged.push(p);
+  }
+  const out = [];
+  for(let p of merged){
+    if(!/[.!?:]$/.test(p.replace(/<[^>]+>$/,''))) p += '.';
+    if(out.length && p.replace(/<[^>]+>/g,'').length < 5) out[out.length-1] = out[out.length-1].replace(/\.$/, ',') + ' ' + p.charAt(0).toLowerCase() + p.slice(1);
+    else out.push(p);
+  }
+  return out;
+}
 /* Passo a passo completo */
 function buildSteps(c, cc, top){
   const out = [], O = DB.prefs.oven;
@@ -3523,7 +3565,7 @@ function renderRecipe(c){
       ${top && top.ing.length ? `<div class="grp">Cobertura <small>${top.name}</small></div>${top.ing.map(i=>haveRow('c', i, cc.ft, top.id)).join('')}` : ''}
       <p class="cap">O status vem da sua despensa. ${plans.length ? 'O que falta já está na lista de compras.' : 'Ao tocar em Vou fazer, o que falta vai para a lista de compras.'}</p>`;
   } else if(st.tab==='prep'){
-    body = `${noteCall(st.note)}<ol class="steps">${steps.map((x,n)=>`<li><span class="n">${n+1}</span><span class="ph">${x.ph}</span><h3>${esc(x.t)}</h3><p>${x.d}</p>${x.timer ? `<span class="t">${x.bake ? 'Timer de forno' : 'Timer'}: ${durLabel(x.timer)}</span>` : ''}</li>`).join('')}</ol>
+    body = `${noteCall(st.note)}<ol class="steps">${steps.map((x,n)=>`<li><span class="n">${n+1}</span><span class="ph">${x.ph}</span><h3>${esc(x.t)}</h3>${(a=>a.length > 1 ? `<ol class="acts">${a.map(t=>`<li>${t}</li>`).join('')}</ol>` : `<p>${x.d}</p>`)(splitActs(x.d))}${x.timer ? `<span class="t">${x.bake ? 'Timer de forno' : 'Timer'}: ${durLabel(x.timer)}</span>` : ''}</li>`).join('')}</ol>
       ${c.tips && c.tips.length ? `<div class="tips"><h3>Para acertar</h3><ul>${c.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>` : ''}`;
   } else {
     const h = hist(c.id).slice().reverse();
@@ -4136,7 +4178,7 @@ function drawCook(){
     <div class="cook-body">
       <div class="cook-ph"><span class="phchip">${esc(s.ph)}</span>${phN.length > 1 ? `<span class="num">${phI} de ${phN.length}</span>` : ''}</div>
       <h2><span class="stepn num">${idx+1}</span>${esc(s.t)}</h2>
-      <p class="cook-d">${s.d}</p>
+      ${(a=>a.length > 1 ? `<ol class="cook-acts">${a.map((t,i)=>{ const on = COOK.done && COOK.done[idx + ':' + i]; return `<li><button class="act ${on ? 'on' : ''}" data-actn="${i}" aria-pressed="${!!on}"><span class="an num">${on ? ICON.ok : i+1}</span><span class="at">${t}</span></button></li>` }).join('')}</ol>` : `<p class="cook-d">${s.d}</p>`)(splitActs(s.d))}
       ${s.mise ? `<div class="mise">${ingList(c, cc, top, st)}</div>` : ''}
       ${!s.mise && s.uses && s.uses.length ? `<div class="uses"><div class="uses-h">Neste passo</div>${s.uses.map(({i,k})=>{ const r = fmt(i,k); return `<div class="use"><span>${esc(i.n)}</span><b class="num">${qMain(i,r)}</b></div>` }).join('')}</div>` : ''}
       ${(s.mise || s.bake) ? noteCall(st.note) : ''}
@@ -4188,6 +4230,7 @@ function timerBlock(key, s){
 }
 function cookClick(e){
   const b = e.target.closest('button'); if(!b || !COOK) return;
+  if(b.dataset.actn!=null){ COOK.done = COOK.done || {}; const k = COOK.idx + ':' + b.dataset.actn; COOK.done[k] = !COOK.done[k]; drawCook(); return }
   const {c, steps} = COOK, key = c.id + ':' + COOK.idx, s = steps[COOK.idx], st = S(c);
   if(ingClick(b, c)) return drawCook();
   if(b.dataset.go!=null) return go(+b.dataset.go);

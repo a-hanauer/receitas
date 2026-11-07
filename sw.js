@@ -1,6 +1,6 @@
 // Receitas: funciona offline. Página sempre busca a versão nova primeiro;
 // sem internet, usa a cópia salva.
-const CACHE = 'receitas-v30';
+const CACHE = 'receitas-v32';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
