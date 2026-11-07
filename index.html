@@ -3266,8 +3266,7 @@ function renderRecipes(){
     const browse = !q && RQ.meal==='all' && !anyF();
     if(browse){
       const mine = customs();
-      const fv = favs();
-      $('#res').innerHTML = `<div class="cats">${fv.length ? `<a class="catc fav" href="#/receitas/favoritas" style="--tone:#D9416A"><span class="ci">${illus(fv[0], fv[0].tops[0])}</span><span class="t"><b>${ICON.heartOn}Favoritas</b><small>${fv.length} ${fv.length===1 ? 'receita' : 'receitas'}</small></span>${ICON.chev}</a>` : ''}${CATS.map(k=>{ const n = all.filter(c=>c.cat===k.id).length;
+      $('#res').innerHTML = `<div class="cats">${CATS.map(k=>{ const n = all.filter(c=>c.cat===k.id).length;
           const ic = REC(CAT_ICON[k.id]);
           return `<a class="catc" href="#/receitas/${k.id}" style="--tone:${k.tone}"><span class="ci">${ic ? illus(ic, ic.tops[0]) : ''}</span><b>${k.n}</b><small>${n} ${n===1 ? 'receita' : 'receitas'}</small></a>` }).join('')}
           ${mine.length ? `<a class="catc" href="#/receitas/minhas" style="--tone:#C9B79C"><span class="ci"><svg viewBox="0 0 64 64">${ILL.GENERIC('#C9B79C')}</svg></span><b>Minhas receitas</b><small>${mine.length} ${mine.length===1 ? 'receita' : 'receitas'}</small></a>` : ''}</div>
