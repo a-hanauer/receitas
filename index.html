@@ -509,7 +509,8 @@ html{touch-action:manipulation}
   <a href="#/" data-tab="hoje"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Hoje</a>
   <a href="#/calendario" data-tab="calendario"><svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5" width="17" height="15.5" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="8.5" cy="14" r="1.2" fill="currentColor"/><circle cx="12" cy="14" r="1.2" fill="currentColor"/><circle cx="15.5" cy="14" r="1.2" fill="currentColor"/><circle cx="8.5" cy="17.3" r="1.2" fill="currentColor"/></svg>Calendário</a>
   <a href="#/receitas" data-tab="receitas"><svg viewBox="0 0 24 24" fill="none"><path d="M5 4.5h10.5a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3v-12Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M5 16.5a3 3 0 0 1 3-3h10.5M9 8.5h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Receitas</a>
-  <a href="#/despensa" data-tab="despensa"><svg viewBox="0 0 24 24" fill="none"><path d="M4 9h16l-1.4 10.2a1.5 1.5 0 0 1-1.5 1.3H6.9a1.5 1.5 0 0 1-1.5-1.3L4 9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 9 11 4M15.5 9 13 4M9.5 13v4M14.5 13v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Despensa<span class="badge" hidden></span></a>
+  <a href="#/despensa" data-tab="despensa"><svg viewBox="0 0 24 24" fill="none"><rect x="6.5" y="3" width="11" height="3.5" rx="1.2" stroke="currentColor" stroke-width="1.8"/><path d="M7.5 6.5C5.6 7.6 5 9 5 11v7.2A2.8 2.8 0 0 0 7.8 21h8.4a2.8 2.8 0 0 0 2.8-2.8V11c0-2-.6-3.4-2.5-4.5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M5 12.5h14M5 17h14" stroke="currentColor" stroke-width="1.8"/></svg>Despensa</a>
+  <a href="#/compras" data-tab="compras"><svg viewBox="0 0 24 24" fill="none"><path d="M4 9h16l-1.4 10.2a1.5 1.5 0 0 1-1.5 1.3H6.9a1.5 1.5 0 0 1-1.5-1.3L4 9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 9 11 4M15.5 9 13 4M9.5 13v4M14.5 13v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Compras<span class="badge" hidden></span></a>
 </nav>
 <div id="cook" class="cook" hidden></div>
 <div id="ring" class="ring" hidden></div>
@@ -1989,7 +1990,7 @@ function closeSheet(silent){
    ========================================================= */
 let LAST_LIST = '';
 function parts(){ return (location.hash || '#/').replace(/^#\/?/,'').split('/').map(decodeURIComponent) }
-function tabFor(h){ return h[0]==='receitas' ? 'receitas' : h[0]==='despensa' ? 'despensa' : h[0]==='calendario' ? 'calendario' : (!h[0] || h[0]==='ajustes') ? 'hoje' : null }
+function tabFor(h){ return h[0]==='receitas' ? 'receitas' : h[0]==='despensa' ? 'despensa' : h[0]==='compras' ? 'compras' : h[0]==='calendario' ? 'calendario' : (!h[0] || h[0]==='ajustes') ? 'hoje' : null }
 function setTabbar(tab){
   const bar = $('#tabbar'), show = !!tab;
   bar.hidden = !show; document.body.classList.toggle('tabs-on', show);
@@ -2002,7 +2003,9 @@ function render(){
   if(!['nova','editar','versao'].includes(h[0])) ED = null;
   if(!h[0]) return renderToday(), 'hoje';
   if(h[0]==='receitas') return (h[1] ? renderCategory(h[1]) : renderRecipes()), 'receitas';
-  if(h[0]==='despensa') return renderPantry(h[1]==='comprar' ? 'buy' : 'home'), 'despensa';
+  if(h[0]==='despensa' && h[1]==='comprar'){ location.replace('#/compras'); return }
+  if(h[0]==='despensa') return renderPantry('home'), 'despensa';
+  if(h[0]==='compras') return renderPantry('buy'), 'compras';
   if(h[0]==='calendario') return renderCalendar(), 'calendario';
   if(h[0]==='ajustes') return renderSettings(), 'hoje';
   if(h[0]==='nova') return renderEditor(null, 'new'), null;
@@ -2014,7 +2017,7 @@ function render(){
 function route(){
   const h = parts();
   closeSheet(true); closeCook();
-  if(h[0] && h[0]!=='r' && !['receitas','despensa','calendario','ajustes','nova','editar','versao'].includes(h[0]) && REC(h[0])){ location.replace('#/r/' + h[0]); return }
+  if(h[0] && h[0]!=='r' && !['receitas','despensa','compras','calendario','ajustes','nova','editar','versao'].includes(h[0]) && REC(h[0])){ location.replace('#/r/' + h[0]); return }
   const tab = render();
   if(tab==='redirect'){ location.replace('#/'); return }
   setTabbar(tab);
@@ -2057,7 +2060,7 @@ function renderToday(){
       : `<div class="empty-card"><p>Nada planejado para hoje.</p><button class="btn secondary" data-add="${t}">${ICON.plus}Adicionar receita</button></div>`}
     ${late.length ? `<h3 class="day-h">Ficou para trás</h3><ul class="cake-list">${late.map(planRow).join('')}</ul>` : ''}
     <a class="link-card" href="#/calendario"><span class="txt"><b>Próximos dias</b><small>${next.length ? `${next.length} ${next.length===1 ? 'refeição planejada' : 'refeições planejadas'}` : 'Nada planejado ainda'}</small></span>${ICON.chev}</a>
-    <a class="link-card" style="margin-top:10px" href="#/despensa/comprar"><span class="txt"><b>Lista de compras</b><small>${nBuy ? `${nBuy} ${nBuy===1 ? 'item' : 'itens'} para comprar` : 'Nada para comprar'}</small></span>${ICON.chev}</a>
+    <a class="link-card" style="margin-top:10px" href="#/compras"><span class="txt"><b>Lista de compras</b><small>${nBuy ? `${nBuy} ${nBuy===1 ? 'item' : 'itens'} para comprar` : 'Nada para comprar'}</small></span>${ICON.chev}</a>
     ${sug.length ? `<h2 class="sec-h">${MEALN[meal]} com o que tem em casa</h2>
       <ul class="cake-list">${sug.map(c=>`<li><a class="cake-row" href="#/r/${c.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}</b><span>${minTxt(totalMin(c, calc(c), topOf(c)))}, ${esc(CATN(c.cat).toLowerCase())}</span></span>${ICON.chev}</a></li>`).join('')}</ul>` : ''}
   </div>`;
@@ -2182,7 +2185,7 @@ function openMarketSheet(){
       ${inR.length ? `<div class="picks">${inR.sort((a,b)=>(a.date||'9').localeCompare(b.date||'9') || MEAL_IDX(a.meal) - MEAL_IDX(b.meal)).map(p=>{ const c = REC(p.rid);
         return `<div class="pick static">${swatch(c,'sm')}<span class="txt"><b>${esc(c.name)}</b><small>${[p.date ? dayLabel(p.date) : 'Sem data', p.meal && MEALN[p.meal].toLowerCase()].filter(Boolean).join(', ')}</small></span></div>` }).join('')}</div>`
         : '<p class="empty">Nenhuma receita planejada nesse período. Adicione pelo calendário.</p>'}
-      <a class="btn primary block" href="#/despensa/comprar">Ver lista de compras</a>`;
+      <a class="btn primary block" href="#/compras">Ver lista de compras</a>`;
   };
   openSheet(`<div class="sh-head"><h2>Planejar o mercado</h2><button class="sh-done" data-close>Pronto</button></div><div class="sh-body"></div>`, el=>{
     draw(el);
@@ -2527,17 +2530,12 @@ function shareText(txt){
    ========================================================= */
 const PQ = {q:'', f:'all', edit:null};
 function renderPantry(mode){
-  document.title = 'Despensa';
-  const nHave = Object.keys(DB.pantry).length, nBuy = buyCount();
+  const T = mode==='home' ? 'Despensa' : 'Compras';
+  document.title = T;
   $('#app').innerHTML = `<div class="wrap">
-    <header class="home-head"><div class="hh-row"><h1>Despensa</h1></div></header>
-    <div class="seg" role="tablist">
-      <button role="tab" aria-selected="${mode==='home'}" data-go="#/despensa">Em casa <span class="num">${nHave}</span></button>
-      <button role="tab" aria-selected="${mode==='buy'}" data-go="#/despensa/comprar">Comprar <span class="num">${nBuy}</span></button>
-    </div>
+    <header class="home-head"><div class="hh-row"><h1>${T}</h1></div></header>
     <div id="pbody"></div>
   </div>`;
-  $('#app').querySelectorAll('[data-go]').forEach(b=>b.onclick = ()=>location.replace(b.dataset.go));
   mode==='home' ? pantryHome() : pantryBuy();
 }
 /* ---------- Despensa: em casa ---------- */
@@ -2606,7 +2604,7 @@ function pantryBuy(){
   const nPlan = DB.plan.filter(p=>REC(p.rid) && inMarket(p)).length, nAll = DB.plan.filter(p=>REC(p.rid)).length;
   const extras = DB.extras;
   $('#pbody').innerHTML = `
-    <div class="mkt"><span class="t"><b>${DB.market.to ? 'Compras ' + marketTxt(true) : 'Compras para todo o cardápio'}</b><small>${nPlan ? `${nPlan} ${nPlan===1 ? 'receita' : 'receitas'}, descontando o que tem em casa. Ao marcar um item, ele vai para a despensa.` : nAll ? 'Nenhuma receita nesse período.' : 'Planeje receitas no calendário: o que faltar aparece aqui.'}</small></span><button class="tbtn" data-act="mkt">Período</button></div>
+    <div class="mkt"><span class="t"><b>${DB.market.to ? cap(marketTxt(true)) : 'Para todo o cardápio'}</b><small>${nPlan ? `${nPlan} ${nPlan===1 ? 'receita' : 'receitas'}, descontando o que tem em casa. Ao marcar um item, ele vai para a despensa.` : nAll ? 'Nenhuma receita nesse período.' : 'Planeje receitas no calendário: o que faltar aparece aqui.'}</small></span><button class="tbtn" data-act="mkt">Período</button></div>
     ${bySec.map(([l,arr])=>`<h3 class="grp">${l}</h3>${arr.map(r=>`<div class="prow"><button class="pbtn" role="checkbox" aria-checked="false" data-buy="${r.p}">
         <span class="box">${ICON.check}</span><span class="pn">${esc(pname(r.p))}<span class="buy-from">${esc([r.note, r.from.length ? 'Para ' + join(r.from.map(lowerFirst)) + (r.manual ? ' e pedido por você' : '') : 'Adicionado por você'].filter(Boolean).join('. '))}</span></span>
         <span class="bq">${r.buy > 0 ? packTxt(r.p, r.buy) : ''}</span></button>${r.manual && !r.from.length ? `<button class="icon-btn sm" data-exdel="${r.manual}" aria-label="Tirar ${esc(pname(r.p).toLowerCase())} da lista">${ICON.close}</button>` : ''}</div>`).join('')}`).join('')}
@@ -2620,7 +2618,7 @@ function pantryBuy(){
       ${rows.length || extras.some(x=>!x.p && !x.done) ? '<button class="btn primary block" data-act="send">Enviar lista</button>' : ''}
       ${DB.bought.length || extras.some(x=>x.done) ? '<button class="btn ghost block" data-act="clean">Limpar comprados</button>' : ''}
     </div>`;
-  const re = () => { save(); const y = scrollY; renderPantry('buy'); scrollTo(0,y); setTabbar('despensa') };
+  const re = () => { save(); const y = scrollY; renderPantry('buy'); scrollTo(0,y); setTabbar('compras') };
   $('#exf').onsubmit = e=>{ e.preventDefault(); const n = $('#exn').value.trim(); if(!n) return;
     const p = CAT_ORDER.find(k=>!CAT[k].skip && !CAT[k].noBuy && plain(CAT[k].n)===plain(n));
     if(p){ if(!manualOf(p)) toggleBuy(p) } else DB.extras.push({id:uid(), n, done:false});
