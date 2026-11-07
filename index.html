@@ -508,6 +508,13 @@ html{touch-action:manipulation}
 .nutri{margin-top:14px;padding:12px 14px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--line)}
 .nutri .sels{display:flex;gap:6px;margin-bottom:6px}.nutri .sel{margin:0;font-size:13px;padding:2px 9px 3px}
 .nutri p{margin:0;color:var(--muted);font-size:14px;line-height:1.4}.nutri b{color:var(--ink);font-weight:650}
+.slot{margin-top:6px}
+.slot-h{display:flex;align-items:center;gap:8px;min-height:50px;border-bottom:1px solid var(--line)}
+.slot-h b{font-size:16px;font-weight:600}
+.slot-h .tag{background:var(--acc-soft);color:var(--acc)}
+.slot-add{display:inline-flex;align-items:center;gap:6px;height:32px;margin-left:auto;padding:0 12px 0 10px;border:0;border-radius:16px;background:var(--acc-soft);color:var(--acc);font-size:14px;font-weight:550}
+.slot-add svg{width:12px;height:12px}
+.slot .cake-list{border-top:0}
 </style>
 </head>
 <body>
@@ -2472,10 +2479,10 @@ addEventListener('hashchange', route);
 /* =========================================================
    HOJE
    ========================================================= */
-function planRow(p){
+function planRow(p, noMeal){
   const c = REC(p.rid), s = status(c, cfgOf(c,p));
   return `<li><button class="cake-row" data-plan="${p.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}</b>
-    <span>${[p.meal && MEALN[p.meal], portionTxt(c,p)].filter(Boolean).join(', ')}</span><span class="${s.ok ? 'okt' : s.swapOnly ? 'swap' : 'miss'}">${esc(statusTxt(s))}</span></span>${ICON.chev}</button></li>`;
+    <span>${[!noMeal && p.meal && MEALN[p.meal], portionTxt(c,p)].filter(Boolean).join(', ')}</span><span class="${s.ok ? 'okt' : s.swapOnly ? 'swap' : 'miss'}">${esc(statusTxt(s))}</span></span>${ICON.chev}</button></li>`;
 }
 function renderToday(){
   document.title = 'Receitas';
@@ -2497,8 +2504,10 @@ function renderToday(){
       return `<div class="cook-card"><a class="txt" href="#/r/${c.id}/preparo/${st.cookAt}"><b>${esc(c.name)}</b><small>Preparando: passo ${st.cookAt+1} de ${n}</small></a>
         <button class="cc-drop" data-drop="${c.id}">Abandonar</button><a class="go" href="#/r/${c.id}/preparo/${st.cookAt}">Continuar</a></div>` }).join('')}
     <h2 class="sec-h">Cardápio de hoje</h2>
-    ${todays.length ? `<ul class="cake-list">${todays.map(planRow).join('')}</ul>`
-      : `<div class="empty-card"><p>Nada planejado para hoje.</p><button class="btn secondary" data-add="${t}">${ICON.plus}Adicionar receita</button></div>`}
+    ${MEALS.map(([k,l])=>{ const ps = todays.filter(p=>p.meal===k), now = k===meal;
+      return `<section class="slot ${now ? 'is-now' : ''}"><div class="slot-h"><b>${l}</b>${now ? '<span class="tag">Agora</span>' : ''}<button class="slot-add" data-add="${t}" data-meal="${k}" aria-label="Adicionar ao ${l.toLowerCase()}">${ICON.plus}${ps.length ? 'Adicionar' : 'Planejar'}</button></div>
+        ${ps.length ? `<ul class="cake-list">${ps.map(p=>planRow(p, true)).join('')}</ul>` : ''}</section>` }).join('')}
+    ${todays.some(p=>!MEALN[p.meal]) ? `<section class="slot"><div class="slot-h"><b>Sem refeição definida</b></div><ul class="cake-list">${todays.filter(p=>!MEALN[p.meal]).map(p=>planRow(p)).join('')}</ul></section>` : ''}
     ${late.length ? `<h3 class="day-h">Ficou para trás</h3><ul class="cake-list">${late.map(planRow).join('')}</ul>` : ''}
     <a class="link-card" href="#/calendario"><span class="txt"><b>Próximos dias</b><small>${next.length ? `${next.length} ${next.length===1 ? 'refeição planejada' : 'refeições planejadas'}` : 'Nada planejado ainda'}</small></span>${ICON.chev}</a>
     <a class="link-card" style="margin-top:10px" href="#/compras"><span class="txt"><b>Lista de compras</b><small>${nBuy ? `${nBuy} ${nBuy===1 ? 'item' : 'itens'} para comprar` : 'Nada para comprar'}</small></span>${ICON.chev}</a>
@@ -2507,7 +2516,7 @@ function renderToday(){
   </div>`;
   $('#app').onclick = e=>{
     const d = e.target.closest('[data-drop]'); if(d){ abandonCook(REC(d.dataset.drop)); refresh(); return }
-    const a = e.target.closest('[data-add]'); if(a){ openAddSheet(a.dataset.add); return }
+    const a = e.target.closest('[data-add]'); if(a){ openAddSheet(a.dataset.add, a.dataset.meal); return }
     const b = e.target.closest('[data-plan]'); if(!b) return;
     const pl = DB.plan.find(x=>x.id===b.dataset.plan); if(pl) openPlanSheet(REC(pl.rid), pl.id);
   };
