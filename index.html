@@ -962,6 +962,18 @@ I('gergelim','Gergelim','mer','g',{sp:9});
 I('pasta_amendoim','Pasta de amendoim integral','mer','g',{sp:16});
 I('cacau','Cacau em pó 100%','mer','g',{sp:6});
 I('dende','Azeite de dendê','mer','ml');
+I('quinoa','Quinoa','mer','g',{hint:'pacote = 250 g'});
+I('feta','Queijo feta','lat','g');
+I('queijo_coalho','Queijo coalho','lat','g');
+I('alho_poro','Alho-poró','hort','g',{each:{g:250,one:'talo',many:'talos'}});
+I('quiabo','Quiabo','hort','g');
+I('manga','Manga','hort','g',{each:{g:400,one:'manga',many:'mangas'}});
+I('pessego','Pêssego','hort','g',{each:{g:150,one:'pêssego',many:'pêssegos'}});
+I('tomate_cereja','Tomate-cereja','hort','g',{hint:'bandeja ≈ 250 g'});
+I('carne_sol','Carne de sol','carn','g');
+I('feijao_corda','Feijão-de-corda','mer','g',{hint:'pacote = 500 g'});
+I('arroz_integral','Arroz integral','mer','g',{hint:'pacote = 1 kg'});
+I('grao_seco','Grão-de-bico seco','mer','g',{hint:'pacote = 500 g'});
 I('agua','Água',null,'ml',{skip:true});
 const SEED = ['sal','pimenta','oleo','acucar'];
 
@@ -985,6 +997,8 @@ const NUT = {
   sagu:[.5,86], suco_uva:[.2,15], vinho_branco:[.1,2.6], chia:[17,42], mel:[.4,82], batata_doce:[1.3,20], abacate:[1.5,6], espinafre:[2.9,3.6], cogumelo:[3,3], repolho:[1.3,5], manjericao:[3,3], frutas_vermelhas:[1,10], pinhao:[3,44],
   ricota:[11,3], pao_fermentacao:[9,50,50], tortilla:[8,50,40], cuscuz_marroquino:[13,72], arboreo:[7,79], macarrao_integral:[13,65], macarrao_yakisoba:[11,70],
   castanha:[18,30], nozes:[15,14], gergelim:[18,12], pasta_amendoim:[25,20], cacau:[20,40], dende:[0,0], coentro:[2,4],
+  quinoa:[14,64], feta:[14,4], queijo_coalho:[23,2], alho_poro:[1.5,14], quiabo:[2,6], manga:[.5,15], pessego:[.9,10], tomate_cereja:[1,4],
+  carne_sol:[26,0], feijao_corda:[23,60], arroz_integral:[7,77], grao_seco:[19,61],
   mostarda:[4,6], ketchup:[1,25], shoyu:[8,8], oleo:[0,0], azeite:[0,0], fermento:[0,0], vinagre:[0,0]
 };
 const CS_G = {cs:15, cc:5, pitada:0};
@@ -1846,6 +1860,226 @@ R({id:'bolinho-atum', cat:'lanches', meals:['lanche','janta'], name:'Bolinho de 
   done:'Vire na metade. Estão prontos quando dourarem dos dois lados.',
   tips:['Com o molho de iogurte da kafta, vira almoço leve.']});
 
+/* ---------- Leva 4 ---------- */
+
+/* Gaúchas */
+R({id:'xis-frango', cat:'lanches', meals:['lanche','janta'], name:'Xis de frango caseiro', desc:'O xis gaúcho em casa: frango, ovo, queijo e salada, prensado na frigideira.', serves:2, time:30,
+  ing:[['frango_peito',300,null,'em filés finos'],['sal',1,'cc'],['pimenta',.25,'cc'],['oleo',10],['ovos',2],['pao_hamb',2,null,'grandes, de xis'],['maionese',30],['queijo',80,null,'fatiado'],['milho',60],['alface',4],['tomate',1,null,'em rodelas']],
+  steps:[
+    {t:'Frango', d:'Tempere {frango_peito} com {sal} e {pimenta} e grelhe em metade de {oleo} até dourar. Desfie grosseiramente ou fatie.', timer:480},
+    {t:'Ovos', d:'No resto do óleo, frite {ovos} com a gema estourada, achatando.', timer:180},
+    {t:'Monte', d:'Abra {pao_hamb}, passe {maionese} nos dois lados e recheie com frango, ovo, {queijo}, {milho}, {alface} e {tomate}.'},
+    {t:'Prense', d:'Leve à frigideira em fogo baixo e aperte com outra panela pesada por cima. Vire e prense o outro lado, até o pão ficar crocante e o queijo derreter.', timer:240}],
+  tips:['O xis de verdade é grande e achatado: use o pão maior que encontrar e não economize na prensa.']});
+
+R({id:'pacoca-pinhao', cat:'carne', meals:['almoco','janta'], name:'Paçoca de pinhão com carne', desc:'Pinhão moído com alcatra desfiada. Prato de inverno da Serra e dos Campos de Cima.', serves:5, time:60,
+  ing:[['pinhao',600,null,'cozido e descascado'],['carne_panela',600,null,'acém ou músculo'],['agua',800],['sal',2.5,'cc'],['azeite',30],['cebola',2,null,'picadas'],['alho',4,null,'picados'],['pimentao',1,null,'picado'],['cheiro',4,null,'picado']],
+  steps:[
+    {t:'Carne na pressão', d:'Cozinhe {carne_panela} com {agua} e metade de {sal} na pressão até desmanchar. Conte depois que pegar pressão.', timer:2100},
+    {t:'Desfie', d:'Desfie a carne e guarde um pouco do caldo.'},
+    {t:'Moa o pinhão', d:'Pulse {pinhao} no processador até virar uma farofa grossa, sem virar pasta.'},
+    {t:'Refogue', d:'Aqueça {azeite}, refogue {cebola}, {alho} e {pimentao} e junte a carne.', timer:300},
+    {t:'Junte o pinhão', d:'Junte o pinhão e o resto do sal e mexa até soltar e dourar levemente, umedecendo com o caldo se secar. Finalize com {cheiro}.', timer:480}],
+  tips:['Safra de abril a julho. Pinhão: 40 minutos na pressão com água e sal, descasque morno.','A tradicional leva carnes de porco e bacon; esta é só com carne de gado.']});
+
+/* Pratos completos */
+R({id:'frango-tikka', cat:'frango', meals:['almoco','janta'], name:'Frango tikka com salada de pepino', desc:'Marinado no iogurte com especiarias e assado em forno alto.', serves:4, time:50,
+  oven:{temp:230, bake:[18,22], pre:1},
+  ing:[['frango_coxa',900,null,'sobrecoxas sem pele e sem osso'],['iogurte',170],['alho',3,null,'ralados'],['gengibre',2,null,'ralado'],['curry',2,'cc'],['paprica',2,'cc'],['cominho',1,'cc'],['sal',2,'cc'],['limoes',1],['pepino',300,null,'em meias-luas'],['cebola',1,null,'roxa, em fatias finas'],['hortela',2,null,'picada'],['coentro',2,null,'?picado']],
+  steps:[
+    {t:'Marinada', d:'Misture {iogurte}, {alho}, {gengibre}, {curry}, {paprica}, {cominho}, metade de {sal} e o suco de metade de {limoes}. Envolva {frango_coxa} e deixe na geladeira.', timer:1800},
+    {t:'Arrume', d:'Escorra o excesso da marinada e arrume o frango numa assadeira com papel-manteiga, sem sobrepor.'},
+    {t:'Salada', d:'Misture {pepino}, {cebola}, {hortela}, o resto do limão e do sal. Deixe na geladeira até servir.'}],
+  done:'Está pronto quando as bordas tostarem. Polvilhe {coentro} e sirva com a salada.',
+  tips:['Sobrecoxa fica suculenta no forno alto; peito resseca.','Com arroz basmati ou pão sírio, se quiser carboidrato.']});
+
+R({id:'berinjela-recheada', cat:'forno', meals:['almoco','janta'], name:'Berinjela recheada com carne e iogurte', desc:'Ao estilo turco: berinjela assada, carne com tomate e molho de iogurte com alho.', serves:4, time:60,
+  oven:{temp:200, bake:[20,25], pre:0},
+  ing:[['berinjela',1000,null,'4 médias'],['azeite',40],['sal',2,'cc'],['cebola',1,null,'picada'],['alho',3,null,'picados'],['carne_moida',400],['tomate',3,null,'picados'],['paprica',1,'cc'],['cominho',.5,'cc'],['cheiro',3,null,'picado'],['iogurte',170],['alho',1,null,'ralado','alho2']],
+  steps:[
+    {t:'Pré-asse a berinjela', d:'Corte {berinjela} ao meio no comprimento, risque a polpa em xadrez, pincele metade de {azeite} e uma pitada de {sal}. Asse com o corte para baixo até amaciar.', timer:1200},
+    {t:'Recheio', d:'No resto do azeite, refogue {cebola} e {alho}, doure {carne_moida} e junte {tomate}, {paprica}, {cominho} e o resto do sal. Cozinhe até secar e junte {cheiro}.', timer:720},
+    {t:'Recheie', d:'Vire as berinjelas, afunde a polpa com uma colher e recheie com a carne.'}],
+  done:'Volte ao forno até o recheio dourar por cima.',
+  after:[{t:'Molho', d:'Misture {iogurte} com {alho2} e sirva por cima.'}]});
+
+R({id:'salmao-gergelim', cat:'peixe', meals:['almoco','janta'], name:'Salmão com crosta de gergelim', desc:'Selado na frigideira, com salada de pepino e repolho.', serves:2, time:25,
+  ing:[['salmao',350,null,'2 postas sem pele'],['sal',.5,'cc'],['gergelim',30,null,'branco e preto'],['oleo',10],['pepino',200,null,'em fatias finas'],['repolho',150,null,'bem fino'],['shoyu',20],['vinagre',15,null,'de arroz ou maçã'],['mel',10],['gengibre',1,null,'ralado']],
+  steps:[
+    {t:'Molho e salada', d:'Misture {shoyu}, {vinagre}, {mel} e {gengibre}. Tempere {pepino} e {repolho} com metade do molho.'},
+    {t:'Crosta', d:'Seque {salmao}, tempere com {sal} e pressione os lados de cima e de baixo em {gergelim}.'},
+    {t:'Sele', d:'Aqueça {oleo} em fogo médio e doure o salmão 2 minutos de cada lado, para ficar rosado no centro.', timer:240},
+    {t:'Sirva', d:'Fatie o salmão e sirva sobre a salada, com o resto do molho.'}],
+  tips:['Fogo alto queima o gergelim antes de o peixe cozinhar: médio é o ponto.']});
+
+R({id:'peixe-papelote', cat:'peixe', meals:['almoco','janta'], name:'Peixe em papelote com tomate-cereja', desc:'Cozido no próprio vapor, com abobrinha, azeite e ervas.', serves:4, time:35,
+  oven:{temp:200, bake:[15,18], pre:0},
+  ing:[['peixe',600,null,'4 filés de pescada ou tilápia'],['sal',1.5,'cc'],['pimenta',.25,'cc'],['abobrinha',300,null,'em lâminas finas'],['tomate_cereja',250,null,'ao meio'],['alho',2,null,'em lâminas'],['limoes',1,null,'em rodelas'],['azeite',40],['manjericao',10,null,'folhas']],
+  steps:[
+    {t:'Prepare o papel', d:'Corte 4 folhas grandes de papel-manteiga.'},
+    {t:'Monte', d:'No centro de cada uma, faça uma cama de {abobrinha}, coloque um filé de {peixe} temperado com {sal} e {pimenta}, e cubra com {tomate_cereja}, {alho}, {limoes} e {manjericao}. Regue com {azeite}.'},
+    {t:'Feche', d:'Dobre as bordas por cima, fechando bem para o vapor não escapar, e arrume numa assadeira.'}],
+  done:'Abra um papelote para conferir: o peixe deve lascar com o garfo.',
+  tips:['Sirva no próprio papel, aberto no prato.']});
+
+R({id:'salada-lentilha', cat:'leves', meals:['almoco','janta'], name:'Salada morna de lentilha com frango', desc:'Lentilha al dente, frango, espinafre e vinagrete de mostarda.', serves:4, time:35,
+  ing:[['lentilha',200],['agua',1000],['louro',1],['sal',2,'cc'],['frango_peito',500,null,'em filés'],['azeite',50],['espinafre',100],['tomate_cereja',200,null,'ao meio'],['cebola',.5,null,'roxa, picada'],['mostarda',1],['vinagre',20],['minas',100,null,'?ou feta, em cubos']],
+  steps:[
+    {t:'Lentilha', d:'Cozinhe {lentilha} em {agua} com {louro} e metade de {sal} até ficar macia e inteira. Escorra.', timer:1200},
+    {t:'Frango', d:'Tempere {frango_peito} com um pouco de sal e grelhe num fio de {azeite}. Fatie.', timer:480},
+    {t:'Vinagrete', d:'Misture o resto do azeite, {mostarda}, {vinagre} e o resto do sal.'},
+    {t:'Monte', d:'Ainda morna, misture a lentilha com o vinagrete, {espinafre}, {tomate_cereja} e {cebola}. Cubra com o frango e {minas}.'}]});
+
+R({id:'pimentao-recheado', cat:'forno', meals:['almoco','janta'], name:'Pimentão recheado com carne e arroz integral', desc:'Pimentões coloridos, recheio de carne e arroz, queijo por cima.', serves:4, time:60,
+  oven:{temp:200, bake:[30,35], pre:2},
+  ing:[['arroz_integral',100],['pimentao',4,null,'grandes, coloridos'],['azeite',20],['cebola',1,null,'picada'],['alho',2,null,'picados'],['carne_moida',400],['tomate',2,null,'picados'],['sal',2,'cc'],['oregano',1,'cc'],['queijo',100,null,'ralado']],
+  steps:[
+    {t:'Arroz', d:'Cozinhe {arroz_integral} até ficar quase macio.', timer:1500},
+    {t:'Pimentões', d:'Corte a tampa de {pimentao} e tire as sementes. Pique as tampas.'},
+    {t:'Recheio', d:'Refogue {cebola}, {alho} e as tampas picadas em {azeite}, doure {carne_moida} e junte {tomate}, {sal} e {oregano}. Misture o arroz.', timer:600},
+    {t:'Recheie', d:'Recheie os pimentões, arrume em pé num refratário com um dedo de água e cubra com papel-alumínio.'}],
+  done:'Tire o papel, cubra com {queijo} e volte por mais 10 minutos, até dourar.'});
+
+R({id:'bobo-camarao', cat:'peixe', meals:['almoco','janta'], name:'Bobó de camarão', desc:'Creme de aipim com leite de coco, dendê e camarão.', serves:5, time:60,
+  ing:[['aipim',600],['camarao',600],['limoes',1],['sal',2,'cc'],['azeite',30],['cebola',1,null,'picada'],['alho',3,null,'picados'],['pimentao',1,null,'picado'],['tomate',2,null,'picados'],['lcoco',200],['dende',30],['coentro',3,null,'picado']],
+  steps:[
+    {t:'Aipim', d:'Cozinhe {aipim} na pressão até ficar bem macio. Bata no liquidificador com {lcoco} e um pouco da água do cozimento até virar um creme.', timer:900},
+    {t:'Camarão', d:'Tempere {camarao} com o suco de {limoes} e metade de {sal}.'},
+    {t:'Refogue', d:'Aqueça {azeite}, refogue {cebola}, {alho}, {pimentao} e {tomate} até murchar.', timer:300},
+    {t:'Junte', d:'Junte o creme de aipim e o resto do sal e cozinhe, mexendo. Junte o camarão e {dende} e cozinhe só até o camarão ficar rosado. Finalize com {coentro}.', timer:240}],
+  tips:['Sirva com arroz branco. Para menos carboidrato, salada verde basta.']});
+
+R({id:'frango-quiabo', cat:'frango', meals:['almoco','janta'], name:'Frango com quiabo e angu', desc:'O clássico mineiro, com o angu junto.', serves:5, time:70,
+  ing:[['frango_coxa',1200,null,'coxas e sobrecoxas'],['limoes',1],['sal',2.5,'cc'],['alho',4,null,'amassados'],['oleo',20],['cebola',1,null,'picada'],['tomate',2,null,'picados'],['colorau',1,'cc'],['agua',500,null,'quente'],['quiabo',400,null,'em rodelas'],['fuba',200],['agua',1000,null,'para o angu','agua2'],['cheiro',3,null,'picado']],
+  steps:[
+    {t:'Tempere', d:'Tempere {frango_coxa} com o suco de {limoes}, {alho} e metade de {sal}.', timer:900},
+    {t:'Doure', d:'Doure o frango em {oleo} em levas. Junte {cebola}, {tomate} e {colorau} e refogue.', timer:720},
+    {t:'Cozinhe', d:'Junte {agua} e cozinhe tampado até o frango ficar macio.', timer:1500},
+    {t:'Quiabo', d:'Doure {quiabo} numa frigideira seca, sem mexer muito, para não babar. Junte ao frango nos últimos 10 minutos.', timer:600},
+    {t:'Angu', d:'Dissolva {fuba} em parte de {agua2} fria, junte ao resto fervente com o resto do sal e cozinhe mexendo até soltar da panela.', timer:1200},
+    {t:'Sirva', d:'Finalize o frango com {cheiro} e sirva com o angu.'}],
+  tips:['Quiabo bem seco e dourado antes de ir para a panela não fica babento.']});
+
+R({id:'vaca-atolada', cat:'carne', meals:['almoco','janta'], name:'Vaca atolada com músculo', desc:'Carne desmanchando no caldo grosso de mandioca.', serves:6, time:80,
+  ing:[['carne_panela',1000,null,'músculo em cubos'],['sal',2.5,'cc'],['pimenta',.5,'cc'],['oleo',20],['cebola',1,null,'picada'],['alho',4,null,'picados'],['tomate',3,null,'picados'],['louro',2],['agua',1000,null,'quente'],['aipim',800,null,'em pedaços'],['cheiro',4,null,'picado']],
+  steps:[
+    {t:'Sele a carne', d:'Tempere {carne_panela} com metade de {sal} e {pimenta} e doure em {oleo} na panela de pressão, em levas.', timer:600},
+    {t:'Refogue', d:'Junte {cebola}, {alho} e {tomate} e raspe o fundo.', timer:240},
+    {t:'Pressão', d:'Junte {louro} e {agua}, feche e cozinhe. Conte depois que pegar pressão.', timer:1800},
+    {t:'Aipim', d:'Abra, junte {aipim} e o resto do sal e cozinhe sem pressão até a mandioca desmanchar nas bordas e engrossar o caldo. Finalize com {cheiro}.', timer:1200}],
+  tips:['A tradicional é de costela; músculo dá o mesmo caldo gelatinoso com menos gordura.']});
+
+R({id:'baiao-de-dois', cat:'carne', meals:['almoco','janta'], name:'Baião de dois', desc:'Arroz e feijão-de-corda com carne de sol e queijo coalho, numa panela.', serves:6, time:60,
+  ing:[['feijao_corda',250],['agua',1500],['carne_sol',400,null,'dessalgada, em cubos'],['oleo',20],['cebola',1,null,'picada'],['alho',3,null,'picados'],['pimentao',1,null,'picado'],['arroz',250],['sal',1,'cc'],['queijo_coalho',200,null,'em cubos'],['coentro',3,null,'?ou cheiro-verde']],
+  steps:[
+    {t:'Feijão', d:'Cozinhe {feijao_corda} em {agua} até ficar macio e inteiro. Guarde o caldo.', timer:1500},
+    {t:'Carne de sol', d:'Doure {carne_sol} em {oleo}. Junte {cebola}, {alho} e {pimentao} e refogue.', timer:600},
+    {t:'Arroz', d:'Junte {arroz} e refogue 1 minuto. Junte o feijão com 500 ml do caldo e {sal}, tampe e cozinhe até o arroz ficar macio.', timer:1080},
+    {t:'Queijo', d:'Doure {queijo_coalho} numa frigideira e misture ao baião na hora de servir, com {coentro}.'}],
+  tips:['Carne de sol: deixe de molho na geladeira por 6 horas, trocando a água 2 vezes.']});
+
+R({id:'hamburguer-prato', cat:'carne', meals:['almoco','janta'], name:'Hambúrguer de patinho no prato', desc:'Sem pão: com batata-doce assada e salada.', serves:4, time:45,
+  oven:{temp:220, bake:[30,35], pre:0},
+  ing:[['batata_doce',600,null,'em gomos'],['azeite',30],['sal',2,'cc'],['paprica',1,'cc'],['carne_moida',600,null,'patinho moído uma vez'],['pimenta',.5,'cc'],['queijo',100,null,'?fatiado'],['alface',8],['tomate',2,null,'em rodelas'],['cebola',.5,null,'roxa, em rodelas'],['mostarda',1]],
+  steps:[
+    {t:'Batata-doce', d:'Misture {batata_doce} com {azeite}, {paprica} e um pouco de {sal} e espalhe numa assadeira.'},
+    {t:'Modele', d:'Divida {carne_moida} em 4 bolas e achate com 2 cm de altura, sem sovar. Faça uma leve depressão no centro.'},
+    {t:'Salada', d:'Arrume {alface}, {tomate} e {cebola} nos pratos.'}],
+  done:'Faltando 10 minutos, aqueça bem uma frigideira, tempere os hambúrgueres com o resto do sal e {pimenta} só na hora e grelhe 3 minutos de cada lado. Cubra com {queijo} no final. Sirva com a batata, a salada e {mostarda}.',
+  tips:['Sal só na hora de grelhar: antes, ele deixa a carne firme como linguiça.']});
+
+R({id:'tabule-quinoa', cat:'leves', meals:['almoco','janta'], name:'Tabule de quinoa com frango', desc:'Muita salsa e hortelã, limão e azeite. Vai bem na marmita.', serves:4, time:35,
+  ing:[['quinoa',200,null,'lavada'],['agua',400],['sal',2,'cc'],['frango_peito',500],['azeite',60],['tomate',3,null,'em cubinhos'],['pepino',200,null,'em cubinhos'],['cebola',.5,null,'roxa, picada'],['cheiro',8,null,'salsinha bem picada'],['hortela',4,null,'picada'],['limoes',2]],
+  steps:[
+    {t:'Quinoa', d:'Cozinhe {quinoa} em {agua} com um pouco de {sal}, tampada, até a água secar. Solte com um garfo e espalhe para esfriar.', timer:900},
+    {t:'Frango', d:'Tempere {frango_peito} com sal e grelhe num fio de {azeite}. Corte em cubos.', timer:600},
+    {t:'Misture', d:'Junte a quinoa fria, {tomate}, {pepino}, {cebola}, {cheiro}, {hortela} e o frango. Tempere com o suco de {limoes}, o resto do azeite e do sal.'}],
+  tips:['Lave a quinoa antes: tira o amargor da casca.']});
+
+/* Café */
+R({id:'shakshuka-verde', cat:'cafe', meals:['cafe','janta'], name:'Shakshuka verde', desc:'Ovos cozidos em abobrinha, espinafre e ervas, com queijo feta.', serves:2, time:25,
+  ing:[['azeite',20],['cebola',.5,null,'picada'],['alho',2,null,'picados'],['abobrinha',250,null,'em cubinhos'],['espinafre',150],['cominho',.5,'cc'],['sal',1,'cc'],['ovos',4],['feta',60,null,'esfarelado'],['cheiro',2,null,'?ou endro'],['pao_fermentacao',2,null,'?para servir']],
+  steps:[
+    {t:'Refogue', d:'Numa frigideira com tampa, refogue {cebola}, {alho} e {abobrinha} em {azeite}.', timer:300},
+    {t:'Verdes', d:'Junte {espinafre}, {cominho} e {sal} e cozinhe até murchar.', timer:120},
+    {t:'Ovos', d:'Abra 4 covas e quebre {ovos} nelas. Tampe e cozinhe em fogo baixo até a clara firmar.', timer:300},
+    {t:'Sirva', d:'Cubra com {feta} e {cheiro} e sirva na frigideira, com {pao_fermentacao}.'}]});
+
+R({id:'ovos-cocotte', cat:'cafe', meals:['cafe','lanche'], name:'Ovos em cocotte com espinafre', desc:'Em potinhos no forno: gema mole, creme e queijo.', serves:2, time:25,
+  oven:{temp:190, bake:[12,14], pre:0},
+  ing:[['manteiga',10],['espinafre',80],['sal',.5,'cc'],['creme',60],['ovos',4],['parmesao',20],['pimenta',.25,'cc']],
+  steps:[
+    {t:'Espinafre', d:'Murche {espinafre} em {manteiga} com {sal}. Divida entre 4 potinhos refratários untados.', timer:120},
+    {t:'Monte', d:'Distribua {creme}, quebre um de {ovos} em cada potinho e polvilhe {parmesao} e {pimenta}.'},
+    {t:'Banho-maria', d:'Arrume os potinhos numa assadeira e coloque água quente até a metade da altura deles.'}],
+  done:'Está pronto quando a clara firmar e a gema ainda tremer.',
+  tips:['Tire um minuto antes do ponto: o calor do pote termina de cozinhar.']});
+
+R({id:'pudim-chia', cat:'cafe', meals:['cafe','lanche'], name:'Pudim de chia com manga', desc:'Chia no iogurte com manga madura por cima. Monte na véspera.', serves:2, time:10,
+  ing:[['chia',40],['iogurte',250],['leite',100],['mel',15,null,'?'],['manga',250,null,'em cubos'],['castanha',20,null,'?picada']],
+  steps:[
+    {t:'Misture', d:'Misture {chia}, {iogurte}, {leite} e {mel}. Espere 5 minutos e mexa de novo, para não empelotar.', timer:300},
+    {t:'Geladeira', d:'Divida em potes e leve à geladeira por pelo menos 4 horas.'},
+    {t:'Sirva', d:'Cubra com {manga} e {castanha}.'}],
+  tips:['Manga palmer ou tommy bem madura dispensa o mel.']});
+
+R({id:'crepe-aveia', cat:'cafe', meals:['cafe','lanche','janta'], name:'Crepe de aveia com frango e ricota', desc:'Massa fina de aveia, recheio cremoso.', serves:2, time:25,
+  ing:[['ovos',2],['leite',150],['aveia',60,null,'em flocos finos'],['sal',.5,'cc'],['manteiga',5,null,'para untar'],['frango_peito',200,null,'cozido e desfiado'],['ricota',100],['tomate',1,null,'em cubinhos'],['cheiro',2,null,'picado']],
+  steps:[
+    {t:'Massa', d:'Bata {ovos}, {leite}, {aveia} e {sal} no liquidificador até ficar liso. Deixe descansar.', timer:300},
+    {t:'Recheio', d:'Misture {frango_peito}, {ricota}, {tomate}, {cheiro} e uma pitada de sal.'},
+    {t:'Crepes', d:'Unte uma frigideira com {manteiga} em fogo médio, espalhe uma concha fina e vire quando soltar. Faça 4.', timer:300},
+    {t:'Recheie', d:'Recheie, dobre em quatro e volte à frigideira 1 minuto para aquecer.'}]});
+
+/* Lanches */
+R({id:'ceviche', cat:'lanches', meals:['lanche','almoco'], name:'Ceviche de tilápia', desc:'Peixe bem fresco no limão, cebola roxa e coentro.', serves:3, time:30,
+  ing:[['peixe',400,null,'filé de tilápia muito fresco'],['sal',1.5,'cc'],['limoes',5],['cebola',1,null,'roxa, em fatias finíssimas'],['calabresa_seca',.25,null,'?ou pimenta dedo-de-moça'],['coentro',3,null,'picado'],['milho',80,null,'?'],['batata_doce',200,null,'?cozida, em cubos']],
+  steps:[
+    {t:'Corte', d:'Corte {peixe} em cubos de 1,5 cm e mantenha na geladeira até a hora.'},
+    {t:'Cebola', d:'Deixe {cebola} em água gelada para suavizar. Escorra.', timer:600},
+    {t:'Tempere', d:'Misture o peixe com {sal} e o suco de {limoes}, que deve cobrir os cubos. Junte a cebola e {calabresa_seca}.'},
+    {t:'Marine', d:'Espere até o peixe ficar branco por fora e ainda translúcido no centro.', timer:600},
+    {t:'Sirva', d:'Junte {coentro} e sirva gelado, com {milho} e {batata_doce}.'}],
+  tips:['Só faça com peixe de procedência e bem fresco, sem cheiro forte.']});
+
+R({id:'falafel', cat:'lanches', meals:['lanche','almoco','janta'], name:'Falafel assado com tahine', desc:'Grão-de-bico demolhado, ervas e cominho. Crocante sem fritar.', serves:4, time:50,
+  oven:{temp:210, bake:[20,25], pre:2},
+  ing:[['grao_seco',250,null,'de molho por 12 horas'],['cebola',.5],['alho',3],['cheiro',6],['coentro',3,null,'?'],['cominho',2,'cc'],['sal',1.5,'cc'],['fermento',3],['azeite',40],['tahine',60],['limoes',1],['agua',60,null,'gelada']],
+  steps:[
+    {t:'Escorra', d:'Escorra bem {grao_seco} demolhado. Não cozinhe: o falafel precisa do grão cru.'},
+    {t:'Processe', d:'Pulse no processador com {cebola}, {alho}, {cheiro}, {coentro}, {cominho} e {sal} até virar uma farofa úmida que se molda ao apertar. Misture {fermento}.'},
+    {t:'Modele', d:'Faça 16 bolinhos achatados, arrume numa assadeira com papel-manteiga e pincele com {azeite}.'}],
+  done:'Vire na metade. Estão prontos quando dourarem dos dois lados.',
+  after:[{t:'Molho de tahine', d:'Misture {tahine}, o suco de {limoes}, {agua} e uma pitada de sal até ficar cremoso.'}],
+  tips:['Grão em lata não serve: o falafel desmancha.','Com salada e pão sírio, vira refeição.']});
+
+R({id:'quiche-alho-poro', cat:'lanches', meals:['lanche','almoco','janta'], name:'Quiche de alho-poró com massa de aveia', desc:'Massa integral de aveia, recheio de alho-poró e queijo.', serves:6, time:70,
+  oven:{temp:180, bake:[30,35], pre:2},
+  ing:[['aveia',160],['manteiga',60,null,'gelada'],['ovos',1,null,'para a massa','ovo_massa'],['sal',1,'cc'],['alho_poro',300,null,'em rodelas finas'],['azeite',15],['ovos',4],['creme',200],['leite',100],['minas',120,null,'ralado'],['noz',1,'pitada']],
+  steps:[
+    {t:'Massa', d:'Bata {aveia} no processador até virar farinha. Junte {manteiga} em cubos e metade de {sal} e pulse até farofa. Junte {ovo_massa} e pulse até formar bola.'},
+    {t:'Forre', d:'Forre o fundo e a lateral de uma forma de 24 cm com fundo removível, furando com garfo. Leve à geladeira.', timer:900},
+    {t:'Alho-poró', d:'Refogue {alho_poro} em {azeite} até murchar bem, sem dourar.', timer:480},
+    {t:'Recheio', d:'Bata {ovos}, {creme}, {leite}, o resto do sal e {noz}. Espalhe o alho-poró e {minas} na massa e despeje o creme.'}],
+  done:'Está pronta quando o centro estiver firme, tremendo só um pouco. Espere 15 minutos antes de desenformar.'});
+
+R({id:'pastinha-ricota', cat:'lanches', meals:['lanche'], name:'Pastinha de ricota com ervas', desc:'Com palitos de cenoura, pepino e pimentão.', serves:4, time:15,
+  ing:[['ricota',250],['iogurte',80],['azeite',20],['alho',1,null,'ralado'],['cheiro',3,null,'picado'],['hortela',1,null,'?picada'],['limoes',.5,null,'raspas e suco'],['sal',1,'cc'],['pimenta',.25,'cc'],['cenoura',200,null,'em palitos'],['pepino',200,null,'em palitos'],['pimentao',1,null,'em tiras']],
+  steps:[
+    {t:'Pastinha', d:'Amasse {ricota} com {iogurte} e {azeite} até ficar cremosa. Junte {alho}, {cheiro}, {hortela}, as raspas e o suco de {limoes}, {sal} e {pimenta}.'},
+    {t:'Descanse', d:'Leve à geladeira para os sabores se juntarem.', timer:900},
+    {t:'Sirva', d:'Sirva com {cenoura}, {pepino} e {pimentao}.'}],
+  tips:['Dura 3 dias na geladeira. Vai bem também no pão de fermentação natural.']});
+
+R({id:'pessego-assado', cat:'doces', meals:['lanche','cafe'], name:'Pêssego assado com iogurte e granola', desc:'Pêssego da estação, mel e canela, com iogurte frio.', serves:4, time:30,
+  oven:{temp:200, bake:[18,22], pre:0},
+  ing:[['pessego',600,null,'4 maduros, ao meio, sem caroço'],['mel',30],['canela',.5,'cc'],['manteiga',15],['iogurte',340],['castanha',30,null,'?ou granola caseira']],
+  steps:[
+    {t:'Monte', d:'Arrume {pessego} num refratário com o corte para cima. Regue {mel}, polvilhe {canela} e coloque um pedacinho de {manteiga} em cada metade.'}],
+  done:'Estão prontos quando amolecerem e o mel caramelizar nas bordas.',
+  after:[{t:'Sirva', d:'Sirva morno com {iogurte} gelado e {castanha}.'}],
+  tips:['Safra do pêssego gaúcho: dezembro a janeiro.']});
+
 /* ---------- Cuca (bolo, escala por forma) ---------- */
 CAKES.push({ id:'cuca', name:'Cuca de banana', tone:'#C98F3E', toneInk:'#fff',
   desc:'Massa fofa, banana com canela e farofa crocante. Receita do Sul.',
@@ -1862,6 +2096,21 @@ CAKES.push({ id:'cuca', name:'Cuca de banana', tone:'#C98F3E', toneInk:'#fff',
     {t:'Secos', d:'Junte {farinha} e {sal} e mexa só até incorporar. Misture {fermento}.'},
     {t:'Monte', d:'Despeje na forma, cubra com {banana}, polvilhe {canela} e espalhe a farofa por cima de tudo.'}],
   tips:['A farofa gelada é o que deixa a cobertura crocante.','Troque a banana por uva, goiabada ou doce de leite.']});
+CAKES.push({ id:'cuca-pessego', name:'Cuca de pêssego', tone:'#E9945A', toneInk:'#fff',
+  desc:'Pêssego da estação, massa fofa e farofa crocante. Para dezembro e janeiro.',
+  temp:180, bake:[40,45], key:'pessego', tops:['nenhuma'],
+  ing:[{...OVOS,q:3}, ACU(180), {id:'mant', n:'Manteiga derretida', q:60, u:'g', s:'de manteiga derretida', sp:15, p:'manteiga'}, LEITE(200), FAR(300), SAL, FERM(12),
+    {id:'pessego', n:'Pêssego maduro, em fatias', q:500, u:'g', s:'de pêssego', each:{g:150,one:'pêssego',many:'pêssegos'}, p:'pessego'},
+    {id:'canela', n:'Canela em pó', q:.5, u:'cc', s:'de canela'},
+    {id:'ffar', n:'Farinha de trigo, para a farofa', q:150, u:'g', s:'de farinha', cup:120, p:'farinha'},
+    {id:'facu', n:'Açúcar, para a farofa', q:110, u:'g', s:'de açúcar', cup:180, p:'acucar'},
+    {id:'fman', n:'Manteiga gelada, para a farofa', q:90, u:'g', s:'de manteiga gelada', sp:15, p:'manteiga'}],
+  steps:[
+    {t:'Farofa', d:'Misture {ffar} e {facu}. Junte {fman} em cubos e esfarele com a ponta dos dedos até virar uma farofa grossa. Leve à geladeira.'},
+    {t:'Bata a base', d:'Bata {ovos} com {acucar} até clarear. Junte {mant} e {leite}.', timer:180},
+    {t:'Secos', d:'Junte {farinha} e {sal} e mexa só até incorporar. Misture {fermento}.'},
+    {t:'Monte', d:'Despeje na forma, cubra com {pessego} em fileiras, polvilhe {canela} e espalhe a farofa por cima de tudo.'}],
+  tips:['Pêssego firme-maduro segura a forma no forno. Muito mole vira purê.','Fora da safra, use pêssego em calda bem escorrido e diminua o açúcar da massa.']});
 CAKES.forEach(c=>Object.assign(c, {cat:'bolos', scale:'forma', meals:['cafe','lanche']}));
 
 /* =========================================================
@@ -1915,6 +2164,7 @@ const ILL = (()=>{
     coconut:`<path d="M1.6 10a8.4 8.4 0 0 0 16.8 0Z" fill="#6B4426"/><path d="M3.2 10a6.8 6.8 0 0 0 13.6 0Z" fill="#FBF8F1"/><ellipse cx="10" cy="10" rx="8.4" ry="2.2" fill="#F1ECE2"/><ellipse cx="10" cy="10" rx="6.8" ry="1.5" fill="#FFFFFF"/>`,
     apple:`<path d="M10 5.4c-3-2.2-8.2-.8-8.2 5 0 4.4 3.2 8.4 5.8 8.4 1 0 1.6-.5 2.4-.5s1.4.5 2.4.5c2.6 0 5.8-4 5.8-8.4 0-5.8-5.2-7.2-8.2-5Z" fill="#C8372B"/><path d="M5 8.4c.6-1.4 1.8-2.2 3-2.4" stroke="#E86A5C" stroke-width="1.4" stroke-linecap="round" fill="none"/><path d="M10 5.6V2" stroke="#6B4426" stroke-width="1.6" stroke-linecap="round"/><path d="M10.6 3.2c1.6-2.4 4.4-2.6 5.4-1.8-1 2-3.6 2.8-5.4 1.8Z" fill="#5E9E3A"/>`,
     coffee:`<ellipse cx="10" cy="17.2" rx="9" ry="2.4" fill="#E9E3D7"/><path d="M3.4 8h12.6v5.4a4.6 4.6 0 0 1-4.6 4.6H8a4.6 4.6 0 0 1-4.6-4.6Z" fill="#FFFFFF"/><ellipse cx="9.7" cy="8" rx="6.3" ry="1.7" fill="#6B3E21"/><path d="M16 9.6h1.4a2.2 2.2 0 0 1 0 4.4H16" stroke="#FFFFFF" stroke-width="1.8" fill="none"/><path d="M7.6 5.4c-1-1.2 1-1.8 0-3M11.4 5.4c-1-1.2 1-1.8 0-3" stroke="#B9B2A6" stroke-width="1.2" stroke-linecap="round" fill="none"/>`,
+    peach:`<circle cx="10" cy="11" r="8" fill="#F29A5A"/><path d="M10 3.4c-2.6 2-3 5.6-1.4 8.6" stroke="#E07A3A" stroke-width="1.2" fill="none"/><circle cx="13" cy="9" r="2.6" fill="#F7BE7E" opacity=".8"/><path d="M10 3.4c1.6-2.2 4.4-2.6 6.4-1.6-1.2 2-3.8 2.8-6.4 1.6Z" fill="#5E9E3A"/>`,
     cassava:`<path d="M2.4 15.6C5 9 11 3.6 16.6 2.6c2-.4 2.6 1.6 1.2 2.8C13.6 9 9 14.2 5.4 18c-1.4 1.4-3.8.2-3-2.4Z" fill="#8A5A35"/><path d="M15.4 3.2c1.4-.2 2.4.4 2.2 1.4" stroke="#F4ECDA" stroke-width="2.6" stroke-linecap="round"/><path d="M6.4 12.4l1.6.8M10 8.6l1.4.9" stroke="#6B4426" stroke-width="1.1" stroke-linecap="round"/>`
   };
 
@@ -2109,6 +2359,34 @@ const ILL = (()=>{
   I['cookies-aveia'] = `${plate()}${[[21,38,7],[38,36.4,7],[28,43,6.6],[44,42.4,6.4]].map(([x,y,r])=>`<ellipse cx="${x}" cy="${y+.8}" rx="${r}" ry="${r1(r*.62)}" fill="#3B2216"/><ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r1(r*.6)}" fill="#6B4426"/>${dots([[x-3,y-1],[x+1,y-2],[x+3,y+.6],[x-1,y+1.4]],'#2A1810',.9)}${dots([[x-1.6,y-.4],[x+2.4,y-1.4]],'#A8784A',.6)}`).join('')}`;
   I['bolinho-atum'] = `${plate()}${[[20,39],[32,36],[44,39],[26,44],[38,44]].map(([x,y])=>`<ellipse cx="${x}" cy="${y+1}" rx="6" ry="3.6" fill="#B8742E"/><ellipse cx="${x}" cy="${y}" rx="6" ry="3.4" fill="#D99A4E"/>${dots([[x-2.6,y-.6],[x+1,y-1.4],[x+3,y+.4],[x-.6,y+1]],'#B8742E',.55)}`).join('')}${lemonWedge(26,30.6)}${herbs([[31,40,20],[40,41,-20]])}`;
 
+  /* ---------- leva 4 ---------- */
+  const peachHalf = (x, y, s=1) => `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="0" rx="6" ry="4.4" fill="#E9783A"/><ellipse cx="0" cy="-.4" rx="5" ry="3.6" fill="#F6B44E"/><ellipse cx=".2" cy="-.6" rx="2" ry="1.5" fill="#C9541E"/><path d="M-3.4 -1.4c.8-1.2 2-1.8 3.4-1.8" stroke="#FBD58A" stroke-width=".9" stroke-linecap="round" fill="none"/></g>`;
+  const okra = (x, y, a=0) => `<g transform="translate(${x} ${y}) rotate(${a})"><path d="M-3 0a3 2.6 0 1 0 6 0a3 2.6 0 1 0 -6 0Z" fill="#6FA046"/><path d="M0 -2.6L0 2.6M-2.3 -1.3L2.3 1.3M2.3 -1.3L-2.3 1.3" stroke="#9CC15A" stroke-width=".7"/>${dots([[-1,-.6],[1,.6],[1,-.8],[-1,.8]],'#E4F0C8',.45)}</g>`;
+  const ballF = (x, y, r=4.2) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#8E6A2E"/><circle cx="${x}" cy="${y-.4}" r="${r1(r-.9)}" fill="#B88A3E"/>${dots([[x-1.4,y-1],[x+1.2,y-1.6],[x+.6,y+.8]],'#5E8A2A',.55)}`;
+
+  I['xis-frango'] = `${sh(56,22)}<ellipse cx="32" cy="47.6" rx="22" ry="6.4" fill="#C98A4E"/><ellipse cx="32" cy="46" rx="22" ry="6" fill="#E3B26A"/><path d="M10.6 43.6q2.6-3 5.2 0t5.2 0 5.2 0 5.2 0 5.2 0 5.2 0 5.2 0 5.2 0" fill="#7FB04A"/><rect x="11" y="39.6" width="42" height="3.4" rx="1.7" fill="#F5D46A"/><path d="M13 39.6c2 1.6 4 1.6 6 0s4-1.6 6 0 4 1.6 6 0 4-1.6 6 0 4 1.6 6 0 4-1.6 6 0" stroke="#F7E3A0" stroke-width="1.2" fill="none"/>${[[16,38.6],[24,38],[32,38.4],[40,38],[48,38.6]].map(([x,y])=>`<path d="M${x-3.6} ${y}a3.6 1.4 0 0 0 7.2 0Z" fill="#D9412B"/>`).join('')}${dots([[20,41.4],[29,41],[37,41.6],[45,41]],'#F2C230',1)}<path d="M10 37.4c0-6.6 9.8-11 22-11s22 4.4 22 11c-6 1.6-38 1.6-44 0Z" fill="#C98A4E"/><path d="M12.6 35.6c1.4-4.6 9.4-7.6 19.4-7.6s18 3 19.4 7.6c-6 1-32.8 1-38.8 0Z" fill="#E3B26A"/><path d="M18 31.6l4 2.6M26 29.6l4 2.6M34 29.6l4 2.6M42 31l3.4 2.4" stroke="#A86B3C" stroke-width="1.6" stroke-linecap="round"/>`;
+  I['pacoca-pinhao'] = bowl('#8E4A26','#6A3418', `${mound('#C9A06A', 10)}${dots([[17,30],[21,27],[26,24.6],[31,23.4],[36,24],[41,26.4],[45,29.4],[24,30],[29,28],[34,29.6],[39,30.6],[20,33],[44,32.6]],'#A87A44',1.1)}${dots([[23,27.4],[33,26.4],[40,29],[28,31.6]],'#F1E2C4',.9)}${[[27,26],[36,27.6],[22,31]].map(([x,y],i)=>`<rect x="${x-2.2}" y="${y-.7}" width="4.4" height="1.4" rx=".7" transform="rotate(${i*40-20} ${x} ${y})" fill="#7A3A1F"/>`).join('')}${herbs([[30,25.6,20],[38,30,-20],[25,32,10],[43,28,30]])}`);
+  I['frango-tikka'] = `${plate()}${[[22,38,-10],[33,36,8],[29,43,-4],[41,41,14]].map(([x,y,a])=>`<g transform="rotate(${a} ${x} ${y})"><path d="M${x-6} ${y+1}c0-3.4 2.8-5.4 6-5.4s6 2 6 5c0 2.6-2.6 4-6 4s-6-1-6-3.6Z" fill="#B8421F"/><path d="M${x-4.8} ${y}c0-2.4 2.2-4 4.8-4s4.8 1.6 4.8 3.8c0 2-2.2 3-4.8 3s-4.8-.8-4.8-2.8Z" fill="#D9682E"/>${dots([[x-2,y-1.6],[x+2,y-.6]],'#7A2410',.7)}<path d="M${x-3} ${y-2.6}c1-.8 2.2-1.2 3.4-1.2" stroke="#F0985A" stroke-width="1" stroke-linecap="round" fill="none"/></g>`).join('')}${cuke(47,35.6,2.4)}${cuke(16,43.6,2.2)}${[[46,40,20],[18,39,-30]].map(([x,y,a])=>`<path d="M${x-2.6} ${y}a2.6 1.6 0 0 1 5.2 0" transform="rotate(${a} ${x} ${y})" stroke="#8E2E5A" stroke-width="1.3" fill="none"/>`).join('')}${lemonWedge(36,44.6)}${herbs([[27,40,20],[37,38.4,-20]])}`;
+  I['berinjela-recheada'] = `${plate()}${[[22.6,39.4,-12],[41.4,39.4,12]].map(([x,y,a])=>`<g transform="rotate(${a} ${x} ${y})"><ellipse cx="${x}" cy="${y+1.4}" rx="8.6" ry="5" fill="#3E1F3E"/><ellipse cx="${x}" cy="${y}" rx="8.6" ry="4.6" fill="#5B2E5A"/><ellipse cx="${x}" cy="${y-.2}" rx="7" ry="3.4" fill="#E3C98E"/><ellipse cx="${x}" cy="${y-.8}" rx="6.2" ry="2.8" fill="#8E4A26"/>${dots([[x-3,y-1.4],[x,y-2],[x+3,y-1],[x-1,y]],'#C73A25',.9)}<path d="M${x-4} ${y-1}c2-1.4 5-1.4 7.4 0" stroke="#FBF8F1" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M${x+8.2} ${y-.6}l2.6-1.4" stroke="#4E7A2A" stroke-width="2" stroke-linecap="round"/></g>`).join('')}${herbs([[23,38,20],[42,37.6,-20],[31,44,10]])}`;
+  I['salmao-gergelim'] = `${plate()}${[[30,42,0],[25,40.6,0],[35,41,0],[20,42,0]].map(([x,y],i)=>`<rect x="${x-2}" y="${y-.5}" width="4" height="1" rx=".5" transform="rotate(${i*30} ${x} ${y})" fill="#8E2E5A"/>`).join('')}${cuke(17,40,2.4)}${cuke(44,42.4,2.2)}${cuke(47,38.4,2)}<g transform="rotate(-8 32 36)">${[20,27.6,35.2].map((x,i)=>`<rect x="${x}" y="30.6" width="7" height="9" rx="1.2" fill="#F08A5D"/><rect x="${x+1.4}" y="31.6" width="4.2" height="7" rx=".8" fill="#F7A27A"/><rect x="${x}" y="30.6" width="7" height="2.4" rx="1" fill="#EADCBE"/>${dots([[x+1.4,31.6],[x+3.6,31.4],[x+5.4,31.8],[x+2.6,32.4]],'#2E2A24',.45)}<rect x="${x}" y="37.4" width="7" height="2.4" rx="1" fill="#EADCBE"/>${dots([[x+2,38.4],[x+4.6,38.6],[x+1,38.8]],'#2E2A24',.45)}`).join('')}</g>`;
+  I['peixe-papelote'] = `${sh(56,22)}<path d="M8 40c6-10 42-10 48 0-6 9-42 9-48 0Z" fill="#E9DCC0"/><path d="M10.4 40c6-7.4 37.2-7.4 43.2 0-6 6.6-37.2 6.6-43.2 0Z" fill="#F6EEDC"/><path d="M8 40c3 .6 4.4 2 5 3.6M56 40c-3 .6-4.4 2-5 3.6" stroke="#D2C3A2" stroke-width="1" fill="none"/>${[[17,40],[22,42.6],[42,42.4],[47,39.6]].map(([x,y])=>zucRing(x,y,2.4)).join('')}<path d="M20 39c3-3.4 8-4.6 12.4-4.2 4.6.4 9 1.8 11.6 4.4-3 2.6-7.4 3.6-12 3.6-4.6 0-9-1.2-12-3.8Z" fill="#F4ECDF"/><path d="M24 37.6c2-1.4 4.6-2 7-2" stroke="#E2D4BC" stroke-width="1" fill="none"/>${[[27,38.4],[33,40],[38,37.6]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2.2" fill="#D9412B"/><circle cx="${x}" cy="${y}" r="1.3" fill="#EF6A52"/>`).join('')}${lemonSlice(31,36,2.4)}${herbs([[24,40.6,20],[36,41.6,-20],[41,38.6,10]])}`;
+  I['salada-lentilha'] = `${plate()}<path d="M12.4 42c0-5.4 8.8-9 19.6-9s19.6 3.6 19.6 9c0 4-8.8 5.6-19.6 5.6S12.4 46 12.4 42Z" fill="#8E6A3E"/>${dots([[16,41],[19,38],[23,36.4],[28,35.4],[33,35.2],[38,36],[42,37.6],[46,40],[48,42.4],[20,43],[26,44.6],[33,45],[40,44.4],[45,43.6],[24,40],[30,41.6],[37,40.6],[42,41.6],[27,38.4],[35,38.6]],'#6E4E28',1)}${leafPile([[17,39,-20,.55],[46,39.6,20,.55],[30,45,0,.5]],'#3F7D2B','#7FB04A')}${[[20,41.6],[44,43],[37,44.6]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2" fill="#D9412B"/><circle cx="${x}" cy="${y}" r="1.2" fill="#EF6A52"/>`).join('')}${[[26,38.6,-12],[32,37.4,-4],[38,38.6,8]].map(([x,y,a])=>`<rect x="${x-4}" y="${y-1.7}" width="8" height="3.4" rx="1.7" transform="rotate(${a} ${x} ${y})" fill="#E3B26A"/><path d="M${x-2.4} ${y-1.7}l1.6 3.4M${x+.4} ${y-1.7}l1.6 3.4" transform="rotate(${a} ${x} ${y})" stroke="#B8742E" stroke-width=".7"/>`).join('')}${dots([[29,42],[23,44]],'#FBF8F1',1.1)}`;
+  I['pimentao-recheado'] = `${plate()}${[[21,38,'#D9412B','#B8321F'],[32,36,'#F5C842','#E0AE2E'],[43,38,'#5E9E3A','#3F7D2B']].map(([x,y,c,c2])=>`<path d="M${x-7} ${y-3}c-.6 5 .4 9 2.4 10.6 1.6 1.2 3 .6 4.6.6s3 .6 4.6-.6c2-1.6 3-5.6 2.4-10.6Z" fill="${c2}"/><path d="M${x-5.8} ${y-3}c-.4 4.4.4 8 2 9.4 1.2.8 2.2.4 3.8.4s2.6.4 3.8-.4c1.6-1.4 2.4-5 2-9.4Z" fill="${c}"/><ellipse cx="${x}" cy="${y-3}" rx="7" ry="2.6" fill="${c2}"/><ellipse cx="${x}" cy="${y-3.4}" rx="5.8" ry="2" fill="#E8C24A"/>${dots([[x-2.4,y-3.6],[x+.6,y-4],[x+2.6,y-3.2]],'#C99A3A',.7)}<path d="M${x-1.6} ${y-1}v4" stroke="#fff" stroke-opacity=".3" stroke-width="1.4" stroke-linecap="round"/>`).join('')}`;
+  I['bobo-camarao'] = bowl('#8E4A26','#6A3418', `${liquid('#F2B04A')}<path d="M18 31.4c3-1.4 6 .6 9-.6 3-1.2 6 .6 9-.4 3-1 5 .2 8-.2" stroke="#F8D48A" stroke-width="1.6" stroke-linecap="round" fill="none"/>${shrimp(22,30.4,10)}${shrimp(32,31.6,-10)}${shrimp(41,30,20)}${herbs([[27,30,20],[37,32.6,-20],[45,32,10]])}`) + steam(32, 9);
+  I['frango-quiabo'] = `${plate()}<ellipse cx="22" cy="41" rx="9.6" ry="6.2" fill="#E9C24A"/><ellipse cx="22" cy="39.8" rx="8" ry="4.8" fill="#F5D46A"/><path d="M17 39c2-1.6 5-2 8-1" stroke="#FAE59A" stroke-width="1.4" stroke-linecap="round" fill="none"/><ellipse cx="40.6" cy="42" rx="12.4" ry="6.6" fill="#C9772E" opacity=".75"/>${[[37,38.6,-10],[45,40,20]].map(([x,y,a])=>`<g transform="rotate(${a} ${x} ${y})"><path d="M${x-5.6} ${y+1}c0-3.2 2.6-5 5.6-5s5.6 1.8 5.6 4.6c0 2.4-2.4 3.6-5.6 3.6s-5.6-.8-5.6-3.2Z" fill="#A85A1A"/><path d="M${x-4.4} ${y}c0-2.2 2-3.6 4.4-3.6s4.4 1.4 4.4 3.4c0 1.8-2 2.6-4.4 2.6s-4.4-.6-4.4-2.4Z" fill="#D18A36"/></g>`).join('')}${okra(35,44.4,10)}${okra(42,45,-20)}${okra(48,43.6,30)}${okra(31,41.6,0)}${herbs([[24,38.6,20],[40,36,-20]])}`;
+  I['vaca-atolada'] = pot('#3B3A37','#232220','#C99A5C', `${[[19,26.6],[27,28.6],[36,26],[43,28.4]].map(([x,y],i)=>meatCube(x,y,i*20,'#6E3418','#8E4A26')).join('')}${[[23,25.4],[32,28.6],[40,25.6],[15,28.4],[47,26.8]].map(([x,y],i)=>`<rect x="${x-2.6}" y="${y-1.6}" width="5.2" height="3.2" rx="1.4" transform="rotate(${i*30-20} ${x} ${y})" fill="#F4E6C2"/>`).join('')}${herbs([[25,27,20],[34,25,-20],[44,29.4,10],[30,26.6,40]])}`) + steam(32, 11);
+  I['baiao-de-dois'] = pan('#E8D6A8', `${dots([[15,38],[19,41.6],[23,36.6],[27,40.4],[31,37],[35,41],[39,37.6],[22,44],[30,44.4],[38,44],[42,41],[17,35.4],[33,34.6]],'#8A6A3A',1.2)}${dots([[18,40],[25,38.4],[29,42.6],[37,39],[41,43.4],[21,43],[34,36.4]],'#F8F2E2',.9)}${[[20,37.6],[34,43],[40,38.6]].map(([x,y],i)=>meatCube(x,y,i*20,'#8E3A1F','#B8582E')).join('')}${[[26,42.6],[31,38.6],[37,45],[17,42.4]].map(([x,y],i)=>`<rect x="${x-2.2}" y="${y-1.8}" width="4.4" height="3.6" rx=".8" transform="rotate(${i*25} ${x} ${y})" fill="#F7E9C0"/><rect x="${x-2.2}" y="${y-1.8}" width="4.4" height="1.2" rx=".6" transform="rotate(${i*25} ${x} ${y})" fill="#D9A45C"/>`).join('')}${herbs([[24,40,20],[36,40.4,-20],[29,36,10]])}`);
+  I['hamburguer-prato'] = `${plate()}<ellipse cx="25" cy="41.6" rx="10" ry="5.6" fill="#4A2412"/><ellipse cx="25" cy="40" rx="10" ry="5.2" fill="#6E3418"/><path d="M17.6 38c2-1.6 5-2.4 8-2.2M19 42.4l11-4.6" stroke="#8E4A26" stroke-width="1.2" stroke-linecap="round" fill="none"/><path d="M17 38.6c2 .4 4-1.4 6 0s4-1.2 6 0 3.4-.8 4.6.4c-1 2.6-5 3.6-8.6 3.6s-7.6-1.4-8-4Z" fill="#F5D46A"/>${[[42,36,30],[47,40,10],[41.4,42,-20],[46.6,44.4,40]].map(([x,y,a])=>`<rect x="${x-4.4}" y="${y-1.6}" width="8.8" height="3.2" rx="1.6" transform="rotate(${a} ${x} ${y})" fill="#D96E2A"/><rect x="${x-4.4}" y="${y-1.6}" width="8.8" height="1.2" rx=".6" transform="rotate(${a} ${x} ${y})" fill="#F0A55A"/>`).join('')}${leafPile([[30,46,0,.6],[19,46.2,10,.5]],'#5E9E3A','#B5D68A')}${tomWedge(36,45.8,0)}`;
+  I['tabule-quinoa'] = bowl('#F1EDE5','#D6CFC2', `${mound('#EFE3C2', 9)}${dots([[16,31],[19,28.4],[22,26.4],[26,24.6],[30,23.6],[34,23.6],[38,24.6],[42,26.4],[45,28.4],[48,31],[21,31.4],[26,29.4],[31,28],[36,28.4],[41,30],[30,31.8],[37,32]],'#D9C38E',.75)}${herbs([[20,29,20],[24,26.6,-20],[29,25.4,40],[33,27,10],[38,26,-30],[43,28.4,20],[27,30.6,-10],[35,30.6,30],[45,31,0],[18,31.6,-40]])}${[[23,28.6],[39,29]].map(([x,y])=>`<rect x="${x-1.4}" y="${y-1.2}" width="2.8" height="2.4" rx=".5" fill="#D9412B"/>`).join('')}${[[31,26],[42,31.4]].map(([x,y])=>`<rect x="${x-1.4}" y="${y-1.2}" width="2.8" height="2.4" rx=".5" fill="#9CC15A"/>`).join('')}${chickCube(28,29,20)}${chickCube(36,25.6,-10)}`);
+  I['shakshuka-verde'] = pan('#6E9E3A', `${dots([[15,38],[19,42],[23,36],[28,40.6],[33,36.6],[37,42],[41,38],[24,44],[33,44.4]],'#4E7A2A',1.4)}${[[18,40],[30,38],[40,41.6],[26,43.6]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.6" fill="#B5D68A"/>`).join('')}${poached(22,38.4,.9)}${poached(35,37.4,.9)}${poached(29,43.6,.85)}${dots([[17,43.4],[41,36.4],[39,44]],'#FBF8F1',1.2)}${herbs([[27,39,20],[40,40,-20]])}`);
+  I['ovos-cocotte'] = `${plate()}${[[22,39],[42,39]].map(([x,y])=>`<path d="M${x-8} ${y-1}v4.6a8 3.4 0 0 0 16 0V${y-1}Z" fill="#E9E2D4"/><ellipse cx="${x}" cy="${y-1}" rx="8" ry="3.4" fill="#FBF8F2"/><ellipse cx="${x}" cy="${y-.8}" rx="6.6" ry="2.6" fill="#F3EBD6"/><path d="M${x-5.4} ${y-.6}c1.4-1.6 3-1.8 4.4-1.2" stroke="#3F7D2B" stroke-width="1.6" stroke-linecap="round" fill="none"/><circle cx="${x+.6}" cy="${y-1}" r="2.2" fill="#F5B92E"/><circle cx="${x}" cy="${y-1.6}" r=".7" fill="#FAD36A"/>${dots([[x-3,y],[x+3.6,y-.2]],'#F1D894',.6)}`).join('')}`;
+  I['pudim-chia'] = `${sh(57,13)}<path d="M19 24h26l-2 24a6 6 0 0 1-6 5.4H27a6 6 0 0 1-6-5.4Z" fill="#E6EEF2" opacity=".9"/><path d="M20.4 34h23.2l-1.2 14a4.6 4.6 0 0 1-4.6 4H26.2a4.6 4.6 0 0 1-4.6-4Z" fill="#F4EEE2"/>${dots([[24,37],[28,40.6],[33,38],[38,41],[26,45],[31,47],[37,46],[40,37.6],[29,43.4],[35,43.6]],'#3B3A37',.5)}<ellipse cx="32" cy="33.6" rx="11.6" ry="2.4" fill="#FBF8F1"/>${[[25,31],[30,29.6],[35,31],[39,29.8],[32,32.2],[27,32.6]].map(([x,y],i)=>`<rect x="${x-2.2}" y="${y-2}" width="4.4" height="4" rx="1" transform="rotate(${i*15} ${x} ${y})" fill="#F7B02E"/><rect x="${x-2.2}" y="${y-2}" width="4.4" height="1.4" rx=".7" transform="rotate(${i*15} ${x} ${y})" fill="#FBCF6A"/>`).join('')}<path d="M23.4 37v12" stroke="#fff" stroke-opacity=".6" stroke-width="1.6" stroke-linecap="round"/>`;
+  I['crepe-aveia'] = `${plate()}${[[24,39,-14],[40,40,10]].map(([x,y,a])=>`<g transform="rotate(${a} ${x} ${y})"><path d="M${x-9} ${y+4}L${x} ${y-6}L${x+9} ${y+4}Z" fill="#D9A45C"/><path d="M${x-7} ${y+3}L${x} ${y-4.4}L${x+7} ${y+3}Z" fill="#E9C27A"/><path d="M${x-9} ${y+4}h18" stroke="#C98A4E" stroke-width="2" stroke-linecap="round"/><path d="M${x-6} ${y+3.6}c2 1.6 4 1.6 6 0s4-1.6 6 0" stroke="#FBF8F1" stroke-width="2" stroke-linecap="round" fill="none"/>${dots([[x-3,y+4.6],[x+2,y+4.4]],'#D9412B',.6)}${dots([[x-1,y+4.4],[x+4,y+4.2]],'#4E8B2F',.5)}${dots([[x-2,y],[x+1,y-2],[x+2.6,y+1]],'#C98A4E',.5)}</g>`).join('')}${herbs([[31,46,20]])}`;
+  I['ceviche'] = bowl('#2F5F8A','#244A6B', `${liquid('#EEF0D8')}${[[20,30.4],[25,32.6],[29,29.6],[34,32],[38,29.6],[43,31.6],[31,33.6],[23,29]].map(([x,y],i)=>`<rect x="${x-2.2}" y="${y-1.8}" width="4.4" height="3.6" rx="1" transform="rotate(${i*20} ${x} ${y})" fill="#FBF8F1"/><rect x="${x-2.2}" y="${y-1.8}" width="4.4" height="1" rx=".5" transform="rotate(${i*20} ${x} ${y})" fill="#F1EADC"/>`).join('')}${[[27,31.4,20],[36,30.8,-30],[41,33,10]].map(([x,y,a])=>`<path d="M${x-2.6} ${y}a2.6 1.4 0 0 1 5.2 0" transform="rotate(${a} ${x} ${y})" stroke="#A8326A" stroke-width="1.2" fill="none"/>`).join('')}${herbs([[24,31.4,20],[33,30,-20],[40,29,30],[45,30.6,0]])}${dots([[30,31.8],[19,32]],'#D9412B',.6)}`) + `${lemonWedge(44,22)}`;
+  I['falafel'] = `${plate()}${[[21,39.6],[30,36.4],[39,38],[26,43.6],[36,43.4],[45,42.4]].map(([x,y])=>ballF(x,y)).join('')}<ellipse cx="17" cy="45" rx="4.6" ry="2.4" fill="#EBD8AC"/><path d="M14.6 44.8c1.4-.8 3.2-.8 4.6 0" stroke="#D9BF86" stroke-width=".8" fill="none"/>${herbs([[33,40,20],[42,36.4,-20]])}${lemonWedge(44,32)}`;
+  I['quiche-alho-poro'] = cake({bands:[[3,'#D9A45C','#E3B26A'],[9,'#F2DA8E','#F7E4A4'],[3,'#C98A4E','#D9A45C']], top:'#F0D48A', extra: dots([[22,25],[29,23.6],[36,24],[43,26.4],[27,28],[35,28.6]],'#E0A84A',1) + [[24,24.6],[33,26.2],[40,24.4],[29,27.2]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="1.8" ry="1.1" fill="none" stroke="#7FB04A" stroke-width=".8"/>`).join('')});
+  I['pastinha-ricota'] = `${plate()}<ellipse cx="26" cy="40.6" rx="9" ry="5" fill="#E6E0D4"/><ellipse cx="26" cy="39.6" rx="7.6" ry="3.8" fill="#FBF8F1"/><path d="M21 39.4c2.6-1.6 6-1.8 9-.4" stroke="#E6E0D4" stroke-width="1" fill="none"/>${herbs([[24,39,20],[28,40.4,-30],[26.4,38.2,40]])}${dots([[23,40.4],[29,38.6]],'#F1E2B8',.6)}${[[41,34,-60,'#EF7D24','#F7A65A'],[44,36,-50,'#EF7D24','#F7A65A'],[47,38,-40,'#7FB04A','#E4F0C8'],[38,37,-70,'#7FB04A','#E4F0C8'],[43,41,-30,'#D9412B','#EF6A52']].map(([x,y,a,c,c2])=>`<g transform="rotate(${a} ${x} ${y})"><rect x="${x-7}" y="${y-1.4}" width="14" height="2.8" rx="1.4" fill="${c}"/><rect x="${x-7}" y="${y-1.4}" width="14" height="1" rx=".5" fill="${c2}"/></g>`).join('')}`;
+  I['pessego-assado'] = `${sh(56,20)}<ellipse cx="32" cy="43" rx="22" ry="9.6" fill="#D2CABC"/><ellipse cx="32" cy="40.6" rx="22" ry="9.6" fill="#F1EDE5"/><ellipse cx="32" cy="40.2" rx="18.6" ry="7.4" fill="#E9A85A"/>${peachHalf(22,38.6)}${peachHalf(36,37)}${peachHalf(29,43.4)}${peachHalf(43,42.4,.95)}<ellipse cx="46" cy="35.4" rx="4.2" ry="2.2" fill="#FBF8F1"/>${dots([[20,42],[33,41],[40,39]],'#A8582E',.5)}`;
   /* ---------- Bolos (cobertura muda com a escolha) ---------- */
   const TOPC = {casquinha:['#4A2C1E','#3B2216'], brigadeiro:['#3E2418','#2E1A10'], ganache:['#2E1A12','#1F110A'], 'calda-laranja':['#F7B34A','#E89A2E'], 'glace-limao':['#F8F6EE','#E6E2D6'], 'calda-coco':['#F6F1E4','#E4DCC8'], 'acucar-canela':['#C78A4E','#A86B3C'], goiabada:['#9E2A2B','#7E1E20']};
   const CK = {
@@ -2123,7 +2401,8 @@ const ILL = (()=>{
     aipim:{s:'#F0D48A', s2:'#E0C070', nat:'#C98A3A', badge:B(BADGE.cassava), short:true},
     formigueiro:{s:'#F6E6C2', s2:'#E9D5A8', nat:'#E3C98E', badge:'', inc:dots([[14,33],[19,37],[24,36],[27,41],[16,40],[22,43],[35,36],[40,38],[46,33],[50,36],[43,42],[37,43],[48,40],[33,41]],'#3B2216',.85)},
     maca:{s:'#D9A86A', s2:'#C69252', nat:'#C78A4E', badge:B(BADGE.apple), inc:[[16,35],[24,40],[37,38],[46,34],[42,42]].map(([x,y])=>`<rect x="${x-1.6}" y="${y-1.4}" width="3.2" height="2.8" rx=".6" fill="#F4E3B8"/>`).join('')},
-    cuca:{s:'#F1D488', s2:'#E3C16E', nat:'#E8C27A', badge:B(BADGE.banana), crumb:true}
+    cuca:{s:'#F1D488', s2:'#E3C16E', nat:'#E8C27A', badge:B(BADGE.banana), crumb:true},
+    'cuca-pessego':{s:'#F1D488', s2:'#E3C16E', nat:'#E8C27A', badge:B(BADGE.peach), crumb:true}
   };
   function cakeIcon(id, topId){
     const k = CK[id] || {s:'#E9C277', s2:'#D7AC5C', nat:'#D9A85C'};
