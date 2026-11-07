@@ -624,6 +624,13 @@ body.cookbar-on .spacer{height:220px}
 .now-row.on{border-color:color-mix(in srgb,var(--acc) 35%,var(--line))}
 .rmeal{margin-top:10px}
 .fchips[hidden]{display:none}
+.sort-btn{position:relative}
+.sort-btn select{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:16px}
+.sheet .res-n{margin:14px 0 6px}
+.pk-fav{display:inline-block;width:13px;height:13px;margin-left:6px;color:#D9416A;vertical-align:-1px}
+.pk-fav svg{display:block;width:100%;height:100%}
+.pick .sels-row{margin:3px 0 1px}
+.sheet .now-row{padding:8px 10px 8px 14px}
 </style>
 </head>
 <body>
@@ -1082,7 +1089,7 @@ function nutri(c){
 const SEL_PROT = 25, SEL_CARB = 15;
 const FDESC = {rap:'Até 30 minutos no total', prot:'25 g de proteína ou mais por porção', low:'Até 15 g de carboidrato por porção', sf:'Fogão, panela ou nada', pan:'Uma panela ou assadeira do começo ao fim', marm:'Aguentam 3 a 4 dias na geladeira e reaquecem bem', veg:'Sem carne, frango ou peixe'};
 /* Tags: as calculadas saem dos dados; "uma panela" e "marmita" são editoriais. */
-const TAGDEF = [['prot','Proteica','Proteicas'],['low','Pouco carbo','Pouco carbo'],['rap','Rápida','Rápidas'],['marm','Boa para marmita','Boas para marmita'],['pan','Uma panela','Uma panela só'],['sf','Sem forno','Sem forno'],['veg','Vegetariana','Vegetarianas']];
+const TAGDEF = [['prot','Proteica','Proteicas'],['low','Pouco carbo','Pouco carbo'],['rap','Rápida','Rápidas'],['marm','Marmita','Boas para marmita'],['pan','Uma panela','Uma panela só'],['sf','Sem forno','Sem forno'],['veg','Vegetariana','Vegetarianas']];
 const ONE_POT = new Set('carne-panela almondegas strogonoff-carne carreteiro frango-ensopado strogonoff-frango frango-xadrez canja sopa-legumes caldo-verde creme-abobora sopa-ervilha peixe-assado frango-assado galeto sobrecoxa-limao frango-curry strogonoff-leve parmegiana-assada puchero carne-moida-abobrinha tainha-assada peixe-ensopado tilapia-parmesao salmao-brocolis camarao-alho sopa-capeletti sopa-lentilha frango-batata-doce picadinho-abobora moqueca curry-grao entrevero vaca-atolada shakshuka-verde peixe-papelote frango-tikka risoto-cogumelos ovos-tomate'.split(' '));
 const MARMITA = new Set('carne-panela almondegas strogonoff-carne carreteiro frango-ensopado fricasse frango-xadrez escondidinho torta-frango panqueca quibe canja sopa-legumes sopa-ervilha caldo-verde creme-abobora lasanha bolonhesa puchero carne-moida-abobrinha escondidinho-couve-flor abobrinha-recheada lasanha-abobrinha frango-curry polenta-ragu sopa-lentilha salada-atum-grao frango-batata-doce picadinho-abobora kafta frango-cuscuz-marroquino curry-grao entrevero massa-frango-brocolis vaca-atolada baiao-de-dois frango-quiabo pimentao-recheado berinjela-recheada tabule-quinoa salada-lentilha frango-tikka muffin-espinafre omelete-forno falafel quiche-alho-poro pacoca-pinhao sobrecoxa-limao'.split(' '));
 const NOT_QUICK = new Set(['overnight-oats','pudim-chia','ovos-shoyu','sagu-uva']);
@@ -3166,28 +3173,48 @@ function renderCalendar(){
 }
 
 /* Adicionar receita num dia */
+const AQ = {now:false, fav:false, t:{}};
 function openAddSheet(day, meal){
   const st = {meal: meal || (day===todayIso() ? nowMeal() : 'almoco'), q:''};
-  const row = c => { const s = status(c);
-    return `<button class="pick" data-pick="${c.id}">${swatch(c,'sm')}<span class="txt"><b>${esc(c.name)}</b><small class="${s.ok ? 'okt' : s.swapOnly ? '' : 'miss'}">${esc(statusTxt(s))}</small></span>${ICON.plus}</button>` };
+  const anyF = () => AQ.now || AQ.fav || MORE_F.some(k=>AQ.t[k]);
+  const row = c => { const s = status(c), sl = selos(c);
+    return `<button class="pick" data-pick="${c.id}">${swatch(c,'sm')}<span class="txt"><b>${esc(c.name)}${isFav(c.id) ? `<i class="pk-fav">${ICON.heartOn}</i>` : ''}</b>${sl.length ? `<span class="sels-row">${sl.map(([k,l])=>`<i class="sel ${k}">${l}</i>`).join('')}</span>` : ''}<small class="${s.ok ? 'okt' : s.swapOnly ? '' : 'miss'}">${esc(statusTxt(s))}</small></span>${ICON.plus}</button>` };
+  const controls = el => {
+    el.querySelector('#anow').innerHTML = `<span class="t"><b>Dá para fazer agora</b><small>Só com o que tem na despensa</small></span><button class="switch" role="switch" data-af="now" aria-checked="${AQ.now}" aria-label="Dá para fazer agora"></button>`;
+    el.querySelector('#anow').classList.toggle('on', AQ.now);
+    el.querySelector('#aflt').innerHTML = (DB.favs.length || AQ.fav ? `<button class="fchip fv" data-af="fav" aria-pressed="${AQ.fav}">${AQ.fav ? ICON.heartOn : ICON.heart}Favoritas</button>` : '')
+      + MORE_F.map(k=>`<button class="fchip" data-at="${k}" aria-pressed="${!!AQ.t[k]}">${ICON.ok}${TAGDEF.find(x=>x[0]===k)[2]}</button>`).join('');
+  };
   const list = el => {
     const q = plain(st.q.trim());
-    let all = ALL().filter(c=>c.meals.includes(st.meal));
-    if(q) all = ALL().filter(c=>plain(c.name).includes(q) || plain(CATN(c.cat)).includes(q) || c.ing.some(i=>plain(i.n).includes(q)));
-    const ok = q ? [] : all.filter(c=>status(c).ok).slice(0,5);
-    el.querySelector('#plist2').innerHTML = (ok.length ? `<p class="sh-sub">Dá para fazer com o que tem</p><div class="picks">${ok.map(row).join('')}</div>` : '')
-      + `<p class="sh-sub">${q ? 'Resultados' : 'Para o ' + MEALN[st.meal].toLowerCase()}</p><div class="picks">${all.filter(c=>!ok.includes(c)).map(row).join('') || '<p class="empty">Nenhuma receita encontrada.</p>'}</div>`;
+    let all = q ? ALL().filter(c=>plain(c.name).includes(q) || plain(CATN(c.cat)).includes(q) || c.ing.some(i=>plain(i.n).includes(q))) : ALL().filter(c=>c.meals.includes(st.meal));
+    if(AQ.fav) all = favs().filter(c=>all.includes(c));
+    if(AQ.now) all = all.filter(c=>{ const s = status(c); return s.ok || s.swapOnly });
+    MORE_F.filter(k=>AQ.t[k]).forEach(k=>{ all = all.filter(c=>hasTag(c,k)) });
+    all = RQ.sort==='pad' ? [...all].sort((a,b)=>(status(b).ok?1:0) - (status(a).ok?1:0)) : sortRecipes(all);
+    el.querySelector('#plist2').innerHTML = `<div class="res-n"><span>${all.length} ${all.length===1 ? 'receita' : 'receitas'}</span><label class="sort-btn">${ICON.sort}<span>${SORTS.find(x=>x[0]===RQ.sort)[1]}</span><select id="asort" aria-label="Ordenar por">${SORTS.map(([k,l])=>`<option value="${k}" ${RQ.sort===k ? 'selected' : ''}>${l}</option>`).join('')}</select></label>${anyF() ? '<button class="link" data-aclear>Limpar</button>' : ''}</div>`
+      + `<div class="picks">${all.map(row).join('') || `<p class="empty">${AQ.now && !Object.keys(DB.pantry).length ? 'Marque o que tem em casa na Despensa para ver o que dá para fazer.' : 'Nenhuma receita com esses filtros.'}</p>`}</div>`;
+    el.querySelector('#asort').onchange = e=>{ RQ.sort = e.target.value; DB.prefs.sort = RQ.sort; save(); list(el) };
   };
   openSheet(`<div class="sh-head"><h2>${day===todayIso() ? 'Hoje' : day===addDays(1) ? 'Amanhã' : cap(fmtD(day,{weekday:'long', day:'numeric', month:'short'}))}</h2><button class="sh-done" data-close>Fechar</button></div>
     <div class="sh-body">
       <div class="seg" id="ameal">${MEALS.map(([k])=>`<button data-meal="${k}" aria-pressed="${st.meal===k}">${MEAL_SHORT[k]}</button>`).join('')}</div>
-      <label class="search mt">${ICON.search}<input id="aq" type="search" placeholder="Buscar receita" autocomplete="off"></label>
+      <label class="search mt">${ICON.search}<input id="aq" type="search" placeholder="Buscar receita ou ingrediente" autocomplete="off"></label>
+      <div class="now-row" id="anow"></div>
+      <div class="fchips" id="aflt"></div>
       <div id="plist2"></div></div>`, el=>{
-    list(el);
+    controls(el); list(el);
     el.querySelector('#aq').oninput = e=>{ st.q = e.target.value; list(el) };
     el.addEventListener('click', e=>{
       const m = e.target.closest('[data-meal]');
       if(m){ st.meal = m.dataset.meal; el.querySelectorAll('#ameal button').forEach(x=>x.setAttribute('aria-pressed', x.dataset.meal===st.meal)); list(el); return }
+      const f = e.target.closest('[data-af],[data-at],[data-aclear]');
+      if(f){
+        if(f.dataset.af) AQ[f.dataset.af] = !AQ[f.dataset.af];
+        else if(f.dataset.at) AQ.t[f.dataset.at] = !AQ.t[f.dataset.at];
+        else { AQ.now = AQ.fav = false; AQ.t = {} }
+        controls(el); list(el); return;
+      }
       const p = e.target.closest('[data-pick]'); if(!p) return;
       const c = REC(p.dataset.pick), s = SR(c), cc = calc(c);
       const pl = {id:uid(), rid:c.id, date:day, meal:st.meal};
