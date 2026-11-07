@@ -563,6 +563,18 @@ html{touch-action:manipulation}
 .cb-btn{flex:none;height:34px;padding:0 14px;border-radius:17px;background:var(--acc);color:var(--on-acc);font-size:14px;font-weight:650;line-height:34px}
 body.cookbar-on .wrap{padding-bottom:calc(170px + var(--safe-b))}
 body.cookbar-on .spacer{height:220px}
+.rmeal{margin-top:12px}
+.rmeal button{font-size:14px}
+.fchips{display:flex;align-items:center;gap:5px;margin:10px -20px 0;padding:0 20px;overflow-x:auto;scrollbar-width:none}
+.fchips::-webkit-scrollbar{display:none}
+.fchip{flex:none;display:inline-flex;align-items:center;gap:3px;height:32px;padding:0 10px;border:1px solid var(--line2);border-radius:16px;background:none;color:var(--ink2);font-size:13px;font-weight:550;white-space:nowrap}
+.fchip svg{display:none;width:11px;height:11px}
+.fchip[aria-pressed=true]{padding-left:8px;border-color:transparent;background:var(--acc-soft);color:var(--acc)}
+.fchip[aria-pressed=true] svg{display:block}
+.fclear{flex:none;height:32px;margin-left:2px;padding:0 4px;border:0;background:none;color:var(--muted);font-size:14px;font-weight:550}
+#res .empty-card{margin-top:18px}
+.res-n{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.res-n .link{flex:none;font-size:14px}
 </style>
 </head>
 <body>
@@ -3208,13 +3220,15 @@ function renderRecipes(){
   $('#app').innerHTML = `<div class="wrap">
     <header class="home-head"><div class="hh-row"><h1>Receitas</h1><a class="icon-btn" href="#/nova" aria-label="Nova receita">${ICON.plus}</a></div></header>
     <label class="search">${ICON.search}<input id="rq" type="search" placeholder="Buscar receita ou ingrediente" value="${esc(RQ.q)}" autocomplete="off" enterkeyhint="search"></label>
-    <div class="chiprow" id="rchips"></div>
+    <div class="seg rmeal" id="rmeal" role="group" aria-label="Refeição"></div>
+    <div class="fchips" id="rflt" role="group" aria-label="Filtros"></div>
     <div id="res"></div>
   </div>`;
+  const anyF = () => RQ.now || RQ.prot || RQ.low;
   const chips = () => {
-    $('#rchips').innerHTML = `<button class="chip" data-meal="all" aria-pressed="${RQ.meal==='all'}">Todas</button>${MEALS.map(([k,l])=>`<button class="chip" data-meal="${k}" aria-pressed="${RQ.meal===k}">${l}</button>`).join('')}
-      <button class="chip" data-now aria-pressed="${RQ.now}">Dá para fazer agora</button>
-      <button class="chip" data-sel="prot" aria-pressed="${RQ.prot}">Proteicas</button><button class="chip" data-sel="low" aria-pressed="${RQ.low}">Pouco carbo</button>`;
+    $('#rmeal').innerHTML = `<button data-meal="all" aria-pressed="${RQ.meal==='all'}">Tudo</button>${MEALS.map(([k])=>`<button data-meal="${k}" aria-pressed="${RQ.meal===k}">${MEAL_SHORT[k]}</button>`).join('')}`;
+    $('#rflt').innerHTML = [['now','Dá para fazer'],['prot','Proteicas'],['low','Pouco carbo']].map(([k,l])=>`<button class="fchip" data-f="${k}" aria-pressed="${!!RQ[k]}">${ICON.ok}${l}</button>`).join('')
+      ;
   };
   const results = () => {
     const q = plain(RQ.q.trim());
@@ -3232,12 +3246,21 @@ function renderRecipes(){
     if(q) list = list.filter(c=>plain(c.name).includes(q) || plain(c.desc).includes(q) || plain(CATN(c.cat)).includes(q) || c.ing.some(i=>plain(i.n).includes(q)));
     if(RQ.now) list = list.filter(c=>{ const s = status(c); return s.ok || s.swapOnly });
     if(RQ.prot || RQ.low) list = list.filter(c=>{ const k = selos(c).map(x=>x[0]); return (!RQ.prot || k.includes('prot')) && (!RQ.low || k.includes('low')) });
-    $('#res').innerHTML = list.length ? `<p class="res-n">${list.length} ${list.length===1 ? 'receita' : 'receitas'}</p><ul class="cake-list">${list.map(c=>recRow(c)).join('')}</ul>`
-      : `<p class="empty" style="margin-top:20px">${RQ.now ? 'Nenhuma receita dá para fazer só com o que está marcado na despensa.' : 'Nenhuma receita encontrada.'}</p>`;
+    const desc = [RQ.meal!=='all' && MEALN[RQ.meal].toLowerCase(), RQ.now && 'dá para fazer', RQ.prot && 'proteicas', RQ.low && 'pouco carbo'].filter(Boolean);
+    $('#res').innerHTML = list.length ? `<p class="res-n"><span>${list.length} ${list.length===1 ? 'receita' : 'receitas'}</span>${anyF() || RQ.meal!=='all' ? '<button class="link" data-clear data-all>Limpar</button>' : ''}</p><ul class="cake-list">${list.map(c=>recRow(c)).join('')}</ul>`
+      : `<div class="empty-card"><p>${RQ.now && !Object.keys(DB.pantry).length ? 'Marque o que você tem na Despensa para ver o que dá para fazer.' : RQ.now ? 'Nenhuma receita dá para fazer só com o que está na despensa, com esses filtros.' : 'Nenhuma receita com esses filtros.'}</p>${anyF() || RQ.meal!=='all' ? '<button class="btn secondary" data-clear>Limpar filtros</button>' : ''}</div>`;
   };
   chips(); results();
   $('#rq').oninput = e=>{ RQ.q = e.target.value; results() };
-  $('#rchips').onclick = e=>{ const b = e.target.closest('button'); if(!b) return; if(b.dataset.meal) RQ.meal = b.dataset.meal; else if(b.dataset.sel) RQ[b.dataset.sel] = !RQ[b.dataset.sel]; else RQ.now = !RQ.now; chips(); results() };
+  const onF = e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    if(b.dataset.meal) RQ.meal = b.dataset.meal;
+    else if(b.dataset.f) RQ[b.dataset.f] = !RQ[b.dataset.f];
+    else if(b.dataset.clear!=null){ RQ.now = RQ.prot = RQ.low = false; RQ.meal = 'all' }
+    else return;
+    chips(); results();
+  };
+  ['#rmeal','#rflt','#res'].forEach(sel=>$(sel).onclick = onF);
 }
 function renderCategory(cat){
   const mine = cat==='minhas', list = mine ? customs() : ALL().filter(c=>c.cat===cat);
