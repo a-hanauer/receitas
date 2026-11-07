@@ -579,8 +579,14 @@ body.cookbar-on .spacer{height:220px}
 .fav-btn{color:var(--muted)}
 .fav-btn svg{width:22px;height:22px}
 .fav-btn[aria-pressed=true]{color:#D9416A}
-.row-fav{display:inline-block;width:14px;height:14px;margin-left:6px;color:#D9416A;vertical-align:-1px}
-.row-fav svg{display:block;width:100%;height:100%}
+.rec-li{position:relative}
+.rec-li .cake-row{padding-right:44px}
+.rec-li .cake-row .chev{display:none}
+.row-fav{position:absolute;right:-8px;top:50%;display:grid;place-items:center;width:44px;height:44px;margin-top:-22px;border:0;border-radius:22px;background:none;color:var(--line2)}
+.row-fav svg{width:20px;height:20px}
+.row-fav[aria-pressed=true]{color:#D9416A}
+.row-fav:active{background:var(--press)}
+.danger-bg{background:var(--danger)!important;color:#fff!important}
 .catc .ci{position:relative}
 .catc.fav{grid-column:1/-1;flex-direction:row;align-items:center;gap:6px;min-height:0;padding:6px 16px 6px 6px}
 .catc.fav .ci{margin:0}
@@ -3241,10 +3247,24 @@ function startCook(c, planId){
 const RQ = {q:'', meal:'all', now:false, prot:false, low:false, fav:false};
 function recRow(c, sub){
   const s = status(c);
-  return `<li><a class="cake-row" href="#/r/${c.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}${isFav(c.id) ? `<i class="row-fav" aria-label="Favorita">${ICON.heartOn}</i>` : ''}</b>
+  const f = isFav(c.id);
+  return `<li class="rec-li"><a class="cake-row" href="#/r/${c.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}</b>
     <span>${sub || minTxt(totalMin(c, calc(c), topOf(c))) + (histMeta(c.id) ? ', feita ' + histMeta(c.id) : '')}${sub ? '' : selos(c).map(([k,l])=>` <i class="sel ${k}">${l}</i>`).join('')}</span>
-    <span class="${s.ok ? 'okt' : s.swapOnly ? 'swap' : 'miss'}">${esc(statusTxt(s))}</span></span>${ICON.chev}</a></li>`;
+    <span class="${s.ok ? 'okt' : s.swapOnly ? 'swap' : 'miss'}">${esc(statusTxt(s))}</span></span>${ICON.chev}</a><button class="row-fav" data-favtog="${c.id}" aria-pressed="${f}" aria-label="${f ? 'Tirar ' + esc(c.name) + ' das favoritas' : 'Favoritar ' + esc(c.name)}">${f ? ICON.heartOn : ICON.heart}</button></li>`;
 }
+function askFav(c){
+  if(!isFav(c.id)){ toggleFav(c); refresh(); return }
+  openSheet(`<div class="sh-head"><h2>Tirar das favoritas?</h2><button class="sh-done" data-close>Cancelar</button></div>
+    <div class="sh-body"><p class="cap" style="margin-top:0">${esc(c.name)} sai da lista de favoritas. A receita continua no app.</p>
+      <button class="btn primary block danger-bg" data-unfav>Tirar das favoritas</button></div>`, el=>{
+    el.addEventListener('click', e=>{ if(e.target.closest('[data-unfav]')){ closeSheet(true); toggleFav(c); refresh() } });
+  }, {label:'Tirar das favoritas'});
+}
+document.addEventListener('click', e=>{
+  const b = e.target.closest('[data-favtog]'); if(!b) return;
+  e.preventDefault(); e.stopPropagation();
+  const c = REC(b.dataset.favtog); if(c) askFav(c);
+}, true);
 function renderRecipes(){
   document.title = 'Receitas';
   const all = ALL();
@@ -3460,7 +3480,7 @@ function bindRecipe(c){
       save(); return refresh();
     }
     switch(b.dataset.act){
-      case 'fav': toggleFav(c); refresh(); break;
+      case 'fav': askFav(c); break;
       case 'pan': openPanSheet(c); break;
       case 'top': openTopSheet(c); break;
       case 'plan': openPlanSheet(c); break;
