@@ -3283,8 +3283,9 @@ function startCook(c, planId){
 /* =========================================================
    RECEITAS
    ========================================================= */
-const RQ = {q:'', meal:'all', now:false, fav:false, rap:false, sort:'pad', t:{}};
+const RQ = {q:'', meal:'all', now:false, fav:false, rap:false, sort:(DB.prefs && SORTS_OK(DB.prefs.sort)) || 'pad', t:{}};
 const MORE_F = ['prot','low','sf','pan','marm','veg'];
+function SORTS_OK(k){ return ['pad','tempo','falta','prot','carb','feitas','nome'].includes(k) ? k : null }
 const SORTS = [['pad','Padrão','Ordem da categoria'],['tempo','Mais rápidas','Menor tempo total primeiro'],['falta','Falta menos','Menos ingredientes para comprar'],['prot','Mais proteína','Por porção, estimado'],['carb','Menos carboidrato','Por porção, estimado'],['feitas','Mais feitas','Pelo seu histórico'],['nome','A a Z','Ordem alfabética']];
 function sortRecipes(list){
   const k = RQ.sort, key = {
@@ -3303,7 +3304,7 @@ const sortBtn = () => `<button class="sort-btn" data-sort>${ICON.sort}${SORTS.fi
 function openSortSheet(){
   openSheet(`<div class="sh-head"><h2>Ordenar por</h2><button class="sh-done" data-close>Fechar</button></div>
     <div class="sh-body"><div class="opts">${SORTS.map(([k,l,d])=>`<button class="opt" data-so="${k}" aria-pressed="${RQ.sort===k}"><span class="ot"><b>${l}</b><small>${d}</small></span><span class="radio"></span></button>`).join('')}</div></div>`, el=>{
-    el.addEventListener('click', e=>{ const b = e.target.closest('[data-so]'); if(!b) return; RQ.sort = b.dataset.so; closeSheet(true); refresh() });
+    el.addEventListener('click', e=>{ const b = e.target.closest('[data-so]'); if(!b) return; RQ.sort = b.dataset.so; DB.prefs.sort = RQ.sort; save(); closeSheet(true); refresh() });
   }, {label:'Ordenar'});
 }
 document.addEventListener('click', e=>{ if(e.target.closest('[data-sort]')){ e.preventDefault(); openSortSheet() } });
@@ -3855,7 +3856,7 @@ async function importCode(code){
   } else json = new TextDecoder().decode(bytes);
   const obj = JSON.parse(json);
   if(!obj || typeof obj!=='object' || !obj.prefs) throw new Error('shape');
-  DB = obj; normalize(); invalidate(); save();
+  DB = obj; normalize(); invalidate(); save(); RQ.sort = SORTS_OK(DB.prefs.sort) || 'pad';
 }
 function runShortcut(secs){ location.href = 'shortcuts://run-shortcut?name=' + encodeURIComponent(SHORTCUT) + '&input=text&text=' + Math.round(secs) }
 function clockAlarm(secs){ if(DB.prefs.alarm && secs >= ALARM_MIN){ runShortcut(secs); return true } return false }
