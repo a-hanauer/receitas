@@ -26,6 +26,8 @@
   :root{--bg:#121211;--surface:#1C1C1A;--ink:#F2F1EE;--ink2:#CFCDC7;--muted:#9A978F;--line:#2B2A27;--line2:#403E3A;--press:#262523;--hl:#2E2617;--ok:#5DB27F;--warn:#E0B04A;--acc:#F2856B;--on-acc:#1A0D0A;--acc-soft:#3A201A;--danger:#F28B82;--star:#F2B634}
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,[contenteditable]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 html,body{margin:0;background:var(--bg);color:var(--ink)}
 body{font-size:17px;line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;min-height:100vh}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -439,7 +441,7 @@ button.cake-row{width:100%;border:0;border-bottom:1px solid var(--line);backgrou
 .ed-switch{margin-top:14px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .ed .pchips .chip{height:36px}
 .sv{min-width:28px;text-align:center;font-size:17px;font-weight:650;align-self:center}
-.toast{display:flex;align-items:center;gap:14px}
+.toast{display:flex;align-items:center;gap:14px;width:max-content}
 .toast button{flex:none;padding:0;border:0;background:none;color:var(--bg);font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
 
 /* ---------- v4: calendário, mercado, despensa ---------- */
@@ -492,6 +494,10 @@ html{touch-action:manipulation}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 [hidden]{display:none!important}
 .link-card>svg:last-child{color:var(--acc)}
+.cartbtn{flex:none;display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:20px;background:none;color:var(--muted)}
+.cartbtn:active{background:var(--press)}
+.cartbtn svg{width:18px;height:18px}
+.cartbtn[aria-pressed=true]{background:var(--acc-soft);color:var(--acc)}
 </style>
 </head>
 <body>
@@ -1834,10 +1840,22 @@ function shopData(){
     }
     rows.push(Object.assign({}, t, {buy: u && t.q > 0 ? buy : 0, note}));
   }
+  for(const x of DB.extras){
+    if(!x.p || x.done || !CAT[x.p]) continue;
+    const row = rows.find(y=>y.p===x.p);
+    if(row) row.manual = x.id;
+    else rows.push({p:x.p, q:0, from:[], buy:0, note:'', manual:x.id});
+  }
   rows.sort((a,b)=>pOrder(a.p) - pOrder(b.p));
   return {rows};
 }
-const buyCount = () => shopData().rows.length + DB.extras.filter(x=>!x.done).length;
+const buyCount = () => shopData().rows.length + DB.extras.filter(x=>!x.p && !x.done).length;
+const manualOf = p => DB.extras.find(x=>x.p===p && !x.done);
+function toggleBuy(p){
+  const m = manualOf(p);
+  if(m){ DB.extras = DB.extras.filter(x=>x!==m); save(); return false }
+  DB.extras.push({id:uid(), p, n:CAT[p].n, done:false}); save(); return true;
+}
 function deduct(c, cc, top){
   const snap = JSON.parse(JSON.stringify(DB.pantry)), gone = [];
   for(const e of needs(c, cc, top).values()){
@@ -1910,6 +1928,7 @@ const ICON = {
   close:'<svg viewBox="0 0 18 18" fill="none"><path d="M3 3l12 12M15 3 3 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   gear:'<svg viewBox="0 0 20 20" fill="none"><path d="M3 5.5h8M15 5.5h2M3 14.5h2M9 14.5h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="13" cy="5.5" r="2" stroke="currentColor" stroke-width="1.8"/><circle cx="7" cy="14.5" r="2" stroke="currentColor" stroke-width="1.8"/></svg>',
   list:'<svg viewBox="0 0 20 20" fill="none"><path d="M7.5 5.5H17M7.5 10H17M7.5 14.5H17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="3.8" cy="5.5" r="1.2" fill="currentColor"/><circle cx="3.8" cy="10" r="1.2" fill="currentColor"/><circle cx="3.8" cy="14.5" r="1.2" fill="currentColor"/></svg>',
+  cart:'<svg viewBox="0 0 20 20" fill="none"><path d="M3 7.5h14l-1.2 8.6a1.4 1.4 0 0 1-1.4 1.2H5.6a1.4 1.4 0 0 1-1.4-1.2L3 7.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M7 7.5 9 3.5M13 7.5l-2-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
   plus:'<svg viewBox="0 0 16 16" fill="none"><path d="M8 2.5v11M2.5 8h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   trash:'<svg viewBox="0 0 16 16" fill="none"><path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   star:'<svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9L12 2.8Z" fill="currentColor"/></svg>',
@@ -2536,11 +2555,13 @@ function pantryHome(){
   const sorted = arr => arr.sort((a,b)=>CAT[a].n.localeCompare(CAT[b].n, 'pt-BR'));
   const secs = SECS.map(([k,l])=>{ const all = CAT_ORDER.filter(p=>CAT[p].sec===k);
     return {k, l, ids: sorted(all.filter(pass)), have: all.filter(p=>DB.pantry[p]).length, total: all.length} });
+  const onList = new Map(shopData().rows.map(x=>[x.p, x]));
   const row = p => {
-    const C = CAT[p], h = DB.pantry[p], u = punit(p), editing = PQ.edit===p, why = need.get(p);
+    const C = CAT[p], h = DB.pantry[p], u = punit(p), editing = PQ.edit===p, why = need.get(p), L = onList.get(p);
     return `<div class="prow">
       <button class="pbtn" role="checkbox" aria-checked="${!!h}" data-ph="${p}"><span class="box">${ICON.check}</span><span class="pn">${esc(C.n)}${PQ.f==='plan' && why ? `<span class="buy-from">Para ${esc(join(why.map(lowerFirst)))}</span>` : ''}</span></button>
       ${h && u ? `<button class="qbtn ${h.q > 0 ? '' : 'empty'}" data-pq="${p}" aria-label="Quantidade de ${esc(C.n.toLowerCase())}">${h.q > 0 ? qtyTxt(p, h.q) : 'Quantidade'}</button>` : ''}
+      ${C.noBuy ? '' : `<button class="cartbtn" data-cart="${p}" aria-pressed="${!!L}" aria-label="${L ? 'Na lista de compras' : 'Pôr na lista de compras'}: ${esc(C.n.toLowerCase())}">${ICON.cart}</button>`}
     </div>
     ${editing ? `<div class="pedit"><span class="amt"><input id="pq-in" inputmode="decimal" enterkeyhint="done" value="${h && h.q > 0 ? numTxt(h.q) : ''}" placeholder="—" aria-label="Quantidade"><span>${u}</span></span>
       <button class="tbtn" data-pqok="${p}">Salvar</button>${h && h.q > 0 ? `<button class="tbtn" data-pqclear="${p}">Sem quantidade</button>` : ''}
@@ -2564,6 +2585,13 @@ function pantryHome(){
   $('#pbody').onclick = e=>{
     const b = e.target.closest('button'); if(!b) return;
     const re = () => { save(); const y = scrollY; renderPantry('home'); scrollTo(0,y) };
+    if(b.dataset.cart){
+      const p = b.dataset.cart, r0 = shopData().rows.find(x=>x.p===p);
+      if(r0 && !r0.manual){ toast(`Já está na lista, para ${join(r0.from.map(lowerFirst))}.`); return }
+      const added = toggleBuy(p); re(); setTabbar('despensa');
+      toast(added ? `${CAT[p].n} na lista de compras` : `${CAT[p].n} saiu da lista`, {label:'Desfazer', fn:()=>{ toggleBuy(p); re(); setTabbar('despensa') }});
+      return;
+    }
     if(b.dataset.jump){ const el = document.getElementById('sec-' + b.dataset.jump); if(el) el.scrollIntoView({behavior:'smooth', block:'start'}); return }
     if(b.dataset.ph){ const p = b.dataset.ph; if(DB.pantry[p]){ delete DB.pantry[p]; if(PQ.edit===p) PQ.edit = null } else DB.pantry[p] = {q:null}; return re() }
     if(b.dataset.pq){ PQ.edit = PQ.edit===b.dataset.pq ? null : b.dataset.pq; return re() }
@@ -2581,36 +2609,40 @@ function pantryBuy(){
   $('#pbody').innerHTML = `
     <div class="mkt"><span class="t"><b>${DB.market.to ? 'Compras ' + marketTxt(true) : 'Compras para todo o cardápio'}</b><small>${nPlan ? `${nPlan} ${nPlan===1 ? 'receita' : 'receitas'}, descontando o que tem em casa. Ao marcar um item, ele vai para a despensa.` : nAll ? 'Nenhuma receita nesse período.' : 'Planeje receitas no calendário: o que faltar aparece aqui.'}</small></span><button class="tbtn" data-act="mkt">Período</button></div>
     ${bySec.map(([l,arr])=>`<h3 class="grp">${l}</h3>${arr.map(r=>`<div class="prow"><button class="pbtn" role="checkbox" aria-checked="false" data-buy="${r.p}">
-        <span class="box">${ICON.check}</span><span class="pn">${esc(pname(r.p))}<span class="buy-from">${esc([r.note, 'Para ' + join(r.from.map(lowerFirst))].filter(Boolean).join('. '))}</span></span>
-        <span class="bq">${packTxt(r.p, r.buy)}</span></button></div>`).join('')}`).join('')}
+        <span class="box">${ICON.check}</span><span class="pn">${esc(pname(r.p))}<span class="buy-from">${esc([r.note, r.from.length ? 'Para ' + join(r.from.map(lowerFirst)) + (r.manual ? ' e pedido por você' : '') : 'Adicionado por você'].filter(Boolean).join('. '))}</span></span>
+        <span class="bq">${r.buy > 0 ? packTxt(r.p, r.buy) : ''}</span></button>${r.manual && !r.from.length ? `<button class="icon-btn sm" data-exdel="${r.manual}" aria-label="Tirar ${esc(pname(r.p).toLowerCase())} da lista">${ICON.close}</button>` : ''}</div>`).join('')}`).join('')}
     <h3 class="grp">Outros itens</h3>
-    ${extras.map(x=>`<div class="prow ${x.done ? 'done-row' : ''}"><button class="pbtn" role="checkbox" aria-checked="${x.done}" data-ex="${x.id}"><span class="box">${ICON.check}</span><span class="pn">${esc(x.n)}</span></button>
+    ${extras.filter(x=>!x.p).map(x=>`<div class="prow ${x.done ? 'done-row' : ''}"><button class="pbtn" role="checkbox" aria-checked="${x.done}" data-ex="${x.id}"><span class="box">${ICON.check}</span><span class="pn">${esc(x.n)}</span></button>
       <button class="icon-btn sm" data-exdel="${x.id}" aria-label="Remover ${esc(x.n)}">${ICON.close}</button></div>`).join('')}
     <form class="add-row" id="exf"><input id="exn" placeholder="Ex.: café, papel-toalha" autocomplete="off" enterkeyhint="done" aria-label="Novo item"><button class="tbtn" type="submit">Adicionar</button></form>
     ${DB.bought.length ? `<h3 class="grp">Comprados agora <small>já na despensa</small></h3>
       ${DB.bought.map((x,i)=>`<div class="prow done-row"><button class="pbtn" role="checkbox" aria-checked="true" data-undo="${i}"><span class="box">${ICON.check}</span><span class="pn">${esc(pname(x.p))}<span class="buy-from">Toque para desfazer</span></span><span class="bq">${x.add ? packTxt(x.p, x.add) : ''}</span></button></div>`).join('')}` : ''}
     <div class="shop-actions">
-      ${rows.length || extras.some(x=>!x.done) ? '<button class="btn primary block" data-act="send">Enviar lista</button>' : ''}
+      ${rows.length || extras.some(x=>!x.p && !x.done) ? '<button class="btn primary block" data-act="send">Enviar lista</button>' : ''}
       ${DB.bought.length || extras.some(x=>x.done) ? '<button class="btn ghost block" data-act="clean">Limpar comprados</button>' : ''}
     </div>`;
   const re = () => { save(); const y = scrollY; renderPantry('buy'); scrollTo(0,y); setTabbar('despensa') };
-  $('#exf').onsubmit = e=>{ e.preventDefault(); const n = $('#exn').value.trim(); if(!n) return; DB.extras.push({id:uid(), n, done:false}); re(); $('#exn').focus() };
+  $('#exf').onsubmit = e=>{ e.preventDefault(); const n = $('#exn').value.trim(); if(!n) return;
+    const p = CAT_ORDER.find(k=>!CAT[k].skip && !CAT[k].noBuy && plain(CAT[k].n)===plain(n));
+    if(p){ if(!manualOf(p)) toggleBuy(p) } else DB.extras.push({id:uid(), n, done:false});
+    re(); $('#exn').focus() };
   $('#pbody').onclick = e=>{
     const b = e.target.closest('button'); if(!b) return;
     if(b.dataset.buy){
       const p = b.dataset.buy, r = rows.find(x=>x.p===p), prev = DB.pantry[p] ? Object.assign({}, DB.pantry[p]) : null;
       const add = r && r.buy > 0 ? buyAmount(p, r.buy) : null;
       DB.pantry[p] = {q: add ? Math.round(((prev && prev.q) || 0) + add) : (prev ? prev.q : null)};
-      DB.bought.push({p, prev, add}); return re();
+      const ex = DB.extras.filter(x=>x.p===p); DB.extras = DB.extras.filter(x=>x.p!==p);
+      DB.bought.push({p, prev, add, ex}); return re();
     }
-    if(b.dataset.undo!=null){ const x = DB.bought[+b.dataset.undo]; if(x){ if(x.prev) DB.pantry[x.p] = x.prev; else delete DB.pantry[x.p]; DB.bought.splice(+b.dataset.undo, 1) } return re() }
+    if(b.dataset.undo!=null){ const x = DB.bought[+b.dataset.undo]; if(x){ if(x.prev) DB.pantry[x.p] = x.prev; else delete DB.pantry[x.p]; if(x.ex) DB.extras.push(...x.ex); DB.bought.splice(+b.dataset.undo, 1) } return re() }
     if(b.dataset.ex){ const x = DB.extras.find(y=>y.id===b.dataset.ex); if(x) x.done = !x.done; return re() }
     if(b.dataset.exdel){ DB.extras = DB.extras.filter(y=>y.id!==b.dataset.exdel); return re() }
     if(b.dataset.act==='mkt'){ openMarketSheet(); return }
     if(b.dataset.act==='clean'){ DB.bought = []; DB.extras = DB.extras.filter(x=>!x.done); return re() }
     if(b.dataset.act==='send'){
       const lines = []; bySec.forEach(([l,arr])=>{ lines.push('\n' + l); arr.forEach(r=>lines.push(`• ${pname(r.p)}${r.buy > 0 ? ': ' + packTxt(r.p, r.buy) : ''}`)) });
-      const ex = DB.extras.filter(x=>!x.done); if(ex.length){ lines.push('\nOutros'); ex.forEach(x=>lines.push('• ' + x.n)) }
+      const ex = DB.extras.filter(x=>!x.p && !x.done); if(ex.length){ lines.push('\nOutros'); ex.forEach(x=>lines.push('• ' + x.n)) }
       shareText('Lista de compras\n' + lines.join('\n'));
     }
   };
