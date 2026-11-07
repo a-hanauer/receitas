@@ -1,6 +1,6 @@
 {
-  "name": "Fornada",
-  "short_name": "Fornada",
+  "name": "Receitas",
+  "short_name": "Receitas",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
