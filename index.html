@@ -1153,13 +1153,16 @@ const MEALS = [['cafe','Café da manhã'],['almoco','Almoço'],['lanche','Lanche
 const MEAL_SHORT = {cafe:'Café', almoco:'Almoço', lanche:'Lanche', janta:'Jantar'};
 /* Tipos de receita: refeição (café, almoço, jantar), lanche e sobremesa. */
 const KINDS = [['ref','Refeições','Refeição'],['lan','Lanches','Lanche'],['sob','Sobremesas','Sobremesa']];
+const KIND_OVR = {'wrap-ovo':['lan'], 'crepe-aveia':['lan'], 'ovos-tomate':['ref','lan']};
 function kindsOf(c){
   if(c.kinds && c.kinds.length) return c.kinds;
+  if(KIND_OVR[c.id]) return KIND_OVR[c.id];
   if(c.cat==='doces') return ['sob'];
   if(c.cat==='bolos') return ['lan','sob'];
   const m = c.meals || [], out = [];
-  if(c.cat!=='lanches' && m.some(x=>x==='cafe' || x==='almoco' || x==='janta')) out.push('ref');
-  if(m.includes('lanche') || c.cat==='lanches') out.push('lan');
+  // Refeição = prato de almoço ou jantar. Café da manhã e lanche contam como lanche.
+  if(c.cat!=='lanches' && m.some(x=>x==='almoco' || x==='janta')) out.push('ref');
+  if(c.cat==='lanches' || m.some(x=>x==='cafe' || x==='lanche')) out.push('lan');
   return out.length ? out : ['ref'];
 }
 const isKind = (c, k) => k==='all' || kindsOf(c).includes(k);
