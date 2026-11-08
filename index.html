@@ -649,6 +649,12 @@ body.cookbar-on .spacer{height:220px}
 html,body{max-width:100%;overflow-x:hidden}
 .today-add{margin-top:2px}
 .cake-list+.today-add{border-top:0}
+.nstats{display:flex;gap:0;margin:2px 0 8px}
+.nstats span{flex:1;padding-left:12px;border-left:1px solid var(--line)}
+.nstats span:first-child{padding-left:0;border-left:0}
+.nstats b{display:block;font-size:20px;font-weight:650;letter-spacing:-.01em;color:var(--ink)}
+.nstats small{display:block;color:var(--muted);font-size:13px}
+.nutri p{font-size:13px}
 </style>
 </head>
 <body>
@@ -1088,21 +1094,45 @@ const NUT = {
   mostarda:[4,6], ketchup:[1,25], shoyu:[8,8], oleo:[0,0], azeite:[0,0], fermento:[0,0], vinagre:[0,0]
 };
 const CS_G = {cs:15, cc:5, pitada:0};
+/* Gordura por 100 g, para estimar calorias (4 kcal/g proteína e carboidrato, 9 kcal/g gordura). */
+const FAT = {cenoura:.2, banana:.3, laranja:.1, limoes:.1, maca:.2, aipim:.3, milho:1.2, cebola:.1, alho:.5, tomate:.2, batata:.1, abobora:.2, abobrinha:.2,
+  pimentao:.2, couve:.5, alface:.2, cheiro:.5, hortela:.7, couve_flor:.3, brocolis:.4, berinjela:.2, pepino:.1, radicci:.3, ovos:10, leite:3.2, manteiga:82,
+  creme:20, lc:8, iogurte:3.3, requeijao:23, queijo:25, minas:20, parmesao:28, presunto:3, carne_moida:7, bife:10, carne_tiras:8, carne_panela:10, charque:15,
+  frango_peito:2.5, frango_coxa:9, peixe:2, calabresa:28, galeto:9, salmao:12, tainha:5, camarao:1, farinha:1.2, arroz:.5, sobra_arroz:.3, feijao:1.3,
+  ervilha_seca:1.5, esp:1.5, massa_lasanha:1.5, macarrao_sopa:1.5, passata:.3, champignon:.3, batata_palha:35, farinha_mandioca:.3, farinha_rosca:5,
+  trigo_quibe:1.5, flocao:1.5, aveia:7, fuba:1.9, choc:10, meio:40, coco:60, lcoco:18, granulado:15, maracuja:.3, amendoim:49, maionese:60, pao_forma:3,
+  pao_hamb:5, atum:5, grao:2.6, lentilha:1, tahine:54, capeletti:8, chia:31, mostarda:4, oleo:100, azeite:100, batata_doce:.1, abacate:8, espinafre:.4,
+  cogumelo:.3, repolho:.1, manjericao:.6, frutas_vermelhas:.3, pinhao:1.3, ricota:8, pao_fermentacao:1.5, tortilla:7, cuscuz_marroquino:1, arboreo:.6,
+  macarrao_integral:2.5, macarrao_yakisoba:1.5, castanha:46, nozes:65, gergelim:50, pasta_amendoim:50, cacau:12, dende:100, coentro:.5, quinoa:6, feta:21,
+  queijo_coalho:22, alho_poro:.3, quiabo:.2, manga:.3, pessego:.1, tomate_cereja:.3, carne_sol:12, feijao_corda:2, arroz_integral:2.5, grao_seco:6};
+const CAKE_SLICES = 15; // forma de referência 20×30 cm
+
 /* Estimativa por porção da receita base. null para bolos (escala por forma). */
+const _nut = new Map();
 function nutri(c){
-  if(!c || c.scale==='forma') return null;
-  let p = 0, k = 0, known = 0, total = 0;
-  for(const i of c.ing){
-    if(i.opt || !i.p) continue;
-    const N = NUT[i.p]; total++;
-    if(!N){ if(CAT[i.p] && CAT[i.p].track===false) known++; continue }
+  if(!c) return null;
+  if(!c.custom && _nut.has(c.id)) return _nut.get(c.id);
+  const forma = c.scale==='forma';
+  let p = 0, k = 0, f = 0, known = 0, total = 0;
+  const add = (list, top) => { for(const i of list){
+    const id = forma ? pid(i, top) : (i.opt ? null : i.p);
+    if(!id) continue;
+    const N = NUT[id]; total++;
+    if(!N){ if(CAT[id] && CAT[id].track===false) known++; continue }
     known++;
-    const g = i.u==='g' || i.u==='ml' ? i.q : i.u==='un' ? i.q * (N[2] || 0) : i.q * (CS_G[i.u] || 0);
-    p += g * N[0] / 100; k += g * N[1] / 100;
+    let g = i.u==='g' || i.u==='ml' ? i.q : i.u==='un' ? i.q * (N[2] || 0) : i.q * (CS_G[i.u] || 0);
+    if(/fritar/i.test(i.n || '')) g *= .15; // só uma parte do óleo de fritura fica no alimento
+    p += g * N[0] / 100; k += g * N[1] / 100; f += g * (FAT[id] || 0) / 100;
+  } };
+  add(c.ing);
+  if(forma){ const t = TOP((c.tops || ['nenhuma'])[0]); if(t && t.ing && t.ing.length) add(t.ing, t.id) }
+  let out = null;
+  if(total && known >= total * .8){
+    const s = forma ? CAKE_SLICES : (c.serves || 1);
+    out = {p: Math.round(p / s), c: Math.round(k / s), kcal: Math.round((4*p + 4*k + 9*f) / s / 10) * 10, per: forma ? 'fatia' : 'porção'};
   }
-  if(!total || known < total * .8) return null;
-  const s = c.serves || 1;
-  return {p: Math.round(p / s), c: Math.round(k / s)};
+  if(!c.custom) _nut.set(c.id, out);
+  return out;
 }
 const SEL_PROT = 25, SEL_CARB = 15;
 const FDESC = {rap:'Até 30 minutos no total', prot:'25 g de proteína ou mais por porção', low:'Até 15 g de carboidrato por porção', sf:'Fogão, panela ou nada', pan:'Uma panela ou assadeira do começo ao fim', marm:'Aguentam 3 a 4 dias na geladeira e reaquecem bem', veg:'Sem carne, frango ou peixe'};
@@ -3375,14 +3405,15 @@ function startCook(c, planId){
    ========================================================= */
 const RQ = {q:'', meal:'all', now:false, fav:false, sort:(DB.prefs && SORTS_OK(DB.prefs.sort)) || 'pad', t:{}};
 const MORE_F = ['rap','prot','pan','low','marm','sf','veg'];
-function SORTS_OK(k){ return ['pad','tempo','falta','prot','carb','feitas','nome'].includes(k) ? k : null }
-const SORTS = [['pad','Padrão','Ordem da categoria'],['tempo','Mais rápidas','Menor tempo total primeiro'],['falta','Falta menos','Menos ingredientes para comprar'],['prot','Mais proteína','Por porção, estimado'],['carb','Menos carboidrato','Por porção, estimado'],['feitas','Mais feitas','Pelo seu histórico'],['nome','A a Z','Ordem alfabética']];
+function SORTS_OK(k){ return ['pad','tempo','falta','prot','carb','kcal','feitas','nome'].includes(k) ? k : null }
+const SORTS = [['pad','Padrão','Ordem da categoria'],['tempo','Mais rápidas','Menor tempo total primeiro'],['falta','Falta menos','Menos ingredientes para comprar'],['prot','Mais proteína','Por porção, estimado'],['carb','Menos carboidrato','Por porção, estimado'],['kcal','Menos calorias','Por porção, estimado'],['feitas','Mais feitas','Pelo seu histórico'],['nome','A a Z','Ordem alfabética']];
 function sortRecipes(list){
   const k = RQ.sort, key = {
     tempo: c=>totalMin(c, calc(c), topOf(c)),
     falta: c=>{ const s = status(c); return s.miss.length + s.short.length },
     prot: c=>{ const n = nutri(c); return n ? -n.p : 1e9 },
     carb: c=>{ const n = nutri(c); return n ? n.c : 1e9 },
+    kcal: c=>{ const n = nutri(c); return n ? n.kcal : 1e9 },
     feitas: c=>{ const h = hist(c.id); return h.length ? -(h.length*1e13 + h[h.length-1].at) : 1e15 }
   }[k];
   if(k==='nome') return [...list].sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
@@ -3402,7 +3433,7 @@ function recRow(c, sub){
   const s = status(c);
   const f = isFav(c.id);
   return `<li class="rec-li"><a class="cake-row" href="#/r/${c.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}</b>
-    <span>${sub || minTxt(totalMin(c, calc(c), topOf(c))) + (histMeta(c.id) ? ', feita ' + histMeta(c.id) : '')}</span>${sub || !selos(c).length ? '' : `<span class="sels-row">${selos(c).map(([k,l])=>`<i class="sel ${k}">${l}</i>`).join('')}</span>`}
+    <span>${sub || minTxt(totalMin(c, calc(c), topOf(c))) + (nutri(c) ? ` · ${nutri(c).kcal} kcal${c.scale==='forma' ? '/fatia' : ''}` : '') + (histMeta(c.id) ? ', feita ' + histMeta(c.id) : '')}</span>${sub || !selos(c).length ? '' : `<span class="sels-row">${selos(c).map(([k,l])=>`<i class="sel ${k}">${l}</i>`).join('')}</span>`}
     <span class="${s.ok ? 'okt' : s.swapOnly ? 'swap' : 'miss'}">${esc(statusTxt(s))}</span></span>${ICON.chev}</a><button class="row-fav" data-favtog="${c.id}" aria-pressed="${f}" aria-label="${f ? 'Tirar ' + esc(c.name) + ' das favoritas' : 'Favoritar ' + esc(c.name)}">${f ? ICON.heartOn : ICON.heart}</button></li>`;
 }
 function askFav(c){
@@ -3608,7 +3639,7 @@ function renderRecipe(c){
     <div class="ch-title">${swatch(c,'lg')}<div><h1>${esc(title(c))}</h1>${c.desc ? `<p>${esc(c.desc)}</p>` : ''}</div></div>
     <div class="facts">${facts}</div>
     ${(()=>{ const n = nutri(c); if(!n) return ''; const sl = selos(c);
-      return `<div class="nutri">${sl.length ? `<span class="sels">${sl.map(([k,l])=>`<i class="sel ${k}">${l}</i>`).join('')}</span>` : ''}<p>Por porção, estimado: <b>${n.p} g</b> de proteína e <b>${n.c} g</b> de carboidrato.</p></div>` })()}
+      return `<div class="nutri">${sl.length ? `<span class="sels">${sl.map(([k,l])=>`<i class="sel ${k}">${l}</i>`).join('')}</span>` : ''}<div class="nstats"><span><b class="num">${n.kcal}</b><small>kcal</small></span><span><b class="num">${n.p} g</b><small>proteína</small></span><span><b class="num">${n.c} g</b><small>carboidrato</small></span></div><p>Estimativa por ${n.per}${c.scale==='forma' ? ', com a forma 20×30 cortada em 15' : ''}, calculada pelos ingredientes.</p></div>` })()}
   </div></header>
   <main class="wrap">
     ${cfgCard}${cookBan}${planCard}
