@@ -655,6 +655,70 @@ html,body{max-width:100%;overflow-x:hidden}
 .nstats b{display:block;font-size:20px;font-weight:650;letter-spacing:-.01em;color:var(--ink)}
 .nstats small{display:block;color:var(--muted);font-size:13px}
 .nutri p{font-size:13px}
+/* Hoje */
+.td .home-head{padding-bottom:6px}
+.td-k{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:26px 0 10px}
+.td-k h2{margin:0;font-size:20px;font-weight:650;letter-spacing:-.015em}
+.td-k a,.td-k button{flex:none;padding:0;border:0;background:none;color:var(--acc);font-size:15px;font-weight:550;text-decoration:none}
+.td-hero{overflow:hidden;border:1px solid var(--line);border-radius:22px;background:var(--surface)}
+.td-hb{display:block;width:100%;padding:0;border:0;background:none;color:inherit;text-align:left}
+.td-hb .art{position:relative;display:grid;place-items:center;height:150px}
+.td-hb .art svg{width:150px;height:150px}
+.td-tag{position:absolute;left:14px;top:14px;height:26px;padding:0 10px;border-radius:13px;background:color-mix(in srgb,var(--surface) 88%,transparent);color:var(--ink);font-size:13px;font-weight:650;line-height:26px}
+.td-hb .bd{display:block;padding:14px 16px 0}
+.td-hb b{display:block;font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.td-hb small{display:block;margin-top:3px;color:var(--muted);font-size:15px}
+.td-hf{padding:12px 16px 16px}
+.td-st{display:flex;align-items:center;gap:10px;min-height:44px;padding:8px 8px 8px 12px;border-radius:12px;background:var(--bg);color:var(--ink2);font-size:14px;font-weight:550}
+.td-st span{flex:1;min-width:0}
+.td-st.ok{color:var(--ok)} .td-st.miss{color:var(--warn)}
+.td-st .tbtn{flex:none;display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 11px;font-size:13px;text-decoration:none}
+.td-st .tbtn svg{width:15px;height:15px}
+.td-hf .btn{height:48px;margin-top:12px}
+.td-mini{display:flex;align-items:center;gap:12px;width:100%;padding:10px 0;border:0;border-bottom:1px solid var(--line);background:none;color:inherit;text-align:left}
+.td-mini:active{background:var(--press)}
+.td-mini .txt{flex:1;min-width:0}
+.td-mini b{display:block;font-size:16px;font-weight:600}
+.td-mini small{display:block;color:var(--muted);font-size:13.5px}
+.td-mini small.miss{color:var(--warn)} .td-mini small.okt{color:var(--ok)}
+.td-mini>svg{flex:none;color:var(--muted)}
+.td-add{margin-top:2px}
+.td-late{margin-top:16px;padding:12px 14px 14px;border-radius:16px;background:var(--hl)}
+.td-late>p{margin:0;color:var(--ink2);font-size:14px;font-weight:600}
+.td-li+.td-li{margin-top:6px;padding-top:6px;border-top:1px solid color-mix(in srgb,var(--ink) 8%,transparent)}
+.td-late .td-mini{border:0}
+.td-late .td-mini:active{background:none}
+.td-acts{display:flex;gap:8px}
+.td-acts .tbtn{background:var(--surface);color:var(--ink)}
+.td-acts .tbtn.p{background:var(--acc);color:var(--on-acc)}
+.td-wk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.td-wk button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 9px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink)}
+.td-wk button.on{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.td-wk small{color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.td-wk button.on small{color:inherit;opacity:.7}
+.td-wk b{font-size:17px;font-weight:650}
+.td-wk .dt{display:flex;gap:2px;height:6px}
+.td-wk .dt i{width:6px;height:6px;border-radius:3px}
+.td-q{display:flex;gap:10px;margin-top:22px}
+.td-q a{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:inherit;text-decoration:none}
+.td-q a:active{background:var(--press)}
+.td-q .ic,.td-empty .ic{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:11px;background:var(--acc-soft);color:var(--acc)}
+.td-q .ic svg,.td-empty .ic svg{width:20px;height:20px}
+.td-q b{display:block;font-size:15px;font-weight:650}
+.td-q small{display:block;overflow:hidden;color:var(--muted);font-size:13px;white-space:nowrap;text-overflow:ellipsis}
+.td-q a>span:last-child{min-width:0}
+.td-strip{display:flex;gap:12px;margin:0 -20px;padding:0 20px 4px;overflow-x:auto;scrollbar-width:none}
+.td-strip::-webkit-scrollbar{display:none}
+.td-strip a{flex:none;width:140px;color:inherit;text-decoration:none}
+.td-strip .sw{display:grid;place-items:center;height:118px;border-radius:18px}
+.td-strip .sw svg{width:104px;height:104px}
+.td-strip b{display:block;margin-top:8px;font-size:15px;font-weight:600;line-height:1.25}
+.td-strip small{display:block;margin-top:2px;color:var(--muted);font-size:13px}
+.td-empty{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:inherit;text-decoration:none}
+.td-empty>span:nth-child(2){flex:1}
+.td-empty b{display:block;font-size:15px;font-weight:650}
+.td-empty small{display:block;color:var(--muted);font-size:13.5px}
+.td-empty>svg{color:var(--acc)}
 </style>
 </head>
 <body>
@@ -3268,33 +3332,75 @@ function planRow(p, noMeal){
 function renderToday(){
   document.title = 'Receitas';
   const t = todayIso(), plans = DB.plan.filter(p=>REC(p.rid));
-  const cooking = ALL().filter(c=>resumeIdx(c)!=null);
-  const byMeal = () => 0;
-  const todays = plans.filter(p=>p.date===t).sort(byMeal);
-  const late = plans.filter(p=>p.date && p.date < t).sort((a,b)=>a.date.localeCompare(b.date) || byMeal(a,b));
-  const next = plans.filter(p=>p.date && p.date > t);
-  const meal = nowMeal(), seed = t.split('-').join('');
-  const hash = s => { let h = +seed; for(const ch of s) h = (h*31 + ch.charCodeAt(0)) % 1e9; return h };
-  const sug = ALL().filter(c=>isKind(c,'ref') && !plans.some(p=>p.rid===c.id) && status(c).ok).sort((a,b)=>hash(a.id) - hash(b.id)).slice(0,4);
-  const nBuy = buyCount();
-  const today = new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long'});
-  $('#app').innerHTML = `<div class="wrap">
-    <header class="home-head"><div class="hh-row"><h1>Hoje</h1><a class="icon-btn" href="#/ajustes" aria-label="Ajustes">${ICON.gear}</a></div>
-      <p>${today.charAt(0).toUpperCase() + today.slice(1)}</p></header>
-    <h2 class="sec-h">Cardápio de hoje</h2>
-    ${todays.length ? `<ul class="cake-list">${todays.map(p=>planRow(p)).join('')}</ul>` : ''}
-    <button class="cal-new today-add" data-add="${t}">${ICON.plus}<span>${todays.length ? 'Adicionar outra receita' : 'Planejar o que fazer hoje'}</span></button>
-    ${late.length ? `<h3 class="day-h">Ficou para trás</h3><ul class="cake-list">${late.map(planRow).join('')}</ul>` : ''}
-    <a class="link-card" href="#/calendario"><span class="txt"><b>Próximos dias</b><small>${next.length ? `${next.length} ${next.length===1 ? 'refeição planejada' : 'refeições planejadas'}` : 'Nada planejado ainda'}</small></span>${ICON.chev}</a>
-    <a class="link-card" style="margin-top:10px" href="#/compras"><span class="txt"><b>Lista de compras</b><small>${nBuy ? `${nBuy} ${nBuy===1 ? 'item' : 'itens'} para comprar` : 'Nada para comprar'}</small></span>${ICON.chev}</a>
-    ${sug.length ? `<h2 class="sec-h">Com o que tenho</h2>
-      <ul class="cake-list">${sug.map(c=>`<li><a class="cake-row" href="#/r/${c.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}</b><span>${minTxt(totalMin(c, calc(c), topOf(c)))}, ${esc(CATN(c.cat).toLowerCase())}</span></span>${ICON.chev}</a></li>`).join('')}</ul>` : ''}
+  const todays = plans.filter(p=>p.date===t);
+  const late = plans.filter(p=>p.date && p.date < t).sort((a,b)=>a.date.localeCompare(b.date));
+  const week = [...Array(7)].map((_,i)=>shiftIso(t, i));
+  const hasWeek = plans.some(p=>p.date > t && p.date <= week[6]);
+  const live = todays.find(p=>resumeIdx(REC(p.rid))!=null);
+  const hero = live || todays[0], rest = todays.filter(p=>p!==hero);
+  const nBuy = buyCount(), nCan = hasPantry() ? ALL().filter(canMake).length : 0;
+  const bg = c => tint(toneOf(c), .22);
+  const art = c => illus(c, c.scale==='forma' ? SR(c).top : null);
+  const tm = (c, p) => minTxt(totalMin(c, calc(c, p ? cfgOf(c,p) : undefined), topOf(c, p ? cfgOf(c,p) : undefined)));
+  const kc = c => { const n = nutri(c); return n ? ` · ${n.kcal} kcal` : '' };
+  const st = p => { const c = REC(p.rid); return status(c, cfgOf(c,p)) };
+  // Sugestões pela hora: manhã e fim de tarde puxam lanches; almoço e jantar, refeições
+  const meal = nowMeal(), want = meal==='cafe' || meal==='lanche' ? 'lan' : 'ref';
+  const seed = +t.split('-').join('');
+  const hash = s => { let h = seed; for(const ch of s) h = (h*31 + ch.charCodeAt(0)) % 1e9; return h };
+  const sug = hasPantry() ? ALL().filter(c=>canMake(c) && !todays.some(p=>p.rid===c.id))
+    .sort((a,b)=>(isKind(b,want) - isKind(a,want)) || (status(b).ok - status(a).ok) || hash(a.id) - hash(b.id)).slice(0,8) : [];
+  const mini = (p, plan=true) => { const c = REC(p.rid), s = st(p);
+    return `<button class="td-mini" ${plan ? `data-plan="${p.id}"` : ''}><span class="swatch sm" style="background:${bg(c)}" aria-hidden="true">${art(c)}</span><span class="txt"><b>${esc(c.name)}</b><small class="${s.ok ? 'okt' : s.swapOnly ? '' : 'miss'}">${tm(c,p)} · ${esc(statusTxt(s))}</small></span>${ICON.chev}</button>` };
+  const today = cap(new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long'}));
+
+  let heroH = '';
+  if(hero){
+    const c = REC(hero.rid), s = st(hero), going = resumeIdx(c)!=null;
+    heroH = `<div class="td-k"><h2>${going ? 'Em preparo' : 'Próximo preparo'}</h2></div>
+      <article class="td-hero"><button class="td-hb" data-plan="${hero.id}" aria-label="${esc(c.name)}: ajustar">
+        <span class="art" style="background:${bg(c)}">${art(c)}${todays.length > 1 ? `<span class="td-tag">1 de ${todays.length} hoje</span>` : ''}</span>
+        <span class="bd"><b>${esc(c.name)}</b><small>${tm(c,hero)} · ${portionTxt(c,hero)}${kc(c)}</small></span></button>
+        <div class="td-hf"><div class="td-st ${s.ok ? 'ok' : s.swapOnly ? '' : 'miss'}"><span>${esc(statusTxt(s))}</span>${s.ok || s.swapOnly ? '' : `<a class="tbtn" href="#/compras">${ICON.cart}Compras</a>`}</div>
+        <button class="btn primary block" data-cook="${hero.id}">${going ? `Continuar preparo` : 'Começar preparo'}</button></div></article>`;
+  }
+  const lateH = late.length ? `<section class="td-late"><p>Ficou para trás</p>${late.map(p=>`<div class="td-li">${mini(p)}<div class="td-acts"><button class="tbtn p" data-late="hoje" data-id="${p.id}">Fazer hoje</button><button class="tbtn" data-late="fiz" data-id="${p.id}">Já fiz</button><button class="tbtn" data-late="tirar" data-id="${p.id}">Tirar</button></div></div>`).join('')}</section>` : '';
+  const weekH = hasWeek ? `<div class="td-k"><h2>Semana</h2><a href="#/calendario">Calendário</a></div>
+    <div class="td-wk">${week.map((d,i)=>{ const ps = plansOn(d);
+      return `<button data-wk="${d}" class="${i===0 ? 'on' : ''}" aria-label="${fmtD(d,{weekday:'long', day:'numeric'})}${ps.length ? `, ${ps.length} ${ps.length===1 ? 'receita' : 'receitas'}` : ''}"><small>${i===0 ? 'Hoje' : fmtD(d,{weekday:'short'}).slice(0,3)}</small><b>${+d.slice(8)}</b><span class="dt">${ps.slice(0,3).map(p=>`<i style="background:${toneOf(REC(p.rid))}"></i>`).join('')}</span></button>` }).join('')}</div>` : '';
+  const quickH = `<div class="td-q"><a href="#/compras"><span class="ic">${ICON.cart}</span><span><b>Compras</b><small>${nBuy ? `${nBuy} ${nBuy===1 ? 'item' : 'itens'}` : 'Lista vazia'}</small></span></a>
+    <a href="#/despensa"><span class="ic">${ICON.pantry}</span><span><b>Despensa</b><small>${hasPantry() ? `${nCan} dá pra fazer` : 'Vazia'}</small></span></a></div>`;
+  const sugH = `<div class="td-k"><h2>Com o que tenho</h2>${sug.length ? '<button data-all>Ver todas</button>' : ''}</div>
+    ${sug.length ? `<div class="td-strip">${sug.map(c=>`<a href="#/r/${c.id}"><span class="sw" style="background:${bg(c)}" aria-hidden="true">${art(c)}</span><b>${esc(c.name)}</b><small>${tm(c)}${kc(c)}</small></a>`).join('')}</div>`
+      : `<a class="td-empty" href="#/despensa"><span class="ic">${ICON.pantry}</span><span><b>${hasPantry() ? 'Nada completo com o que tem' : 'O que tem em casa?'}</b><small>${hasPantry() ? 'Marque mais itens na Despensa para ver sugestões.' : 'Marque na Despensa e veja o que dá para fazer.'}</small></span>${ICON.chev}</a>`}`;
+  const addH = `<button class="cal-new td-add" data-add="${t}">${ICON.plus}<span>${todays.length ? 'Adicionar receita hoje' : 'Planejar o que fazer hoje'}</span></button>`;
+
+  // Sem nada planejado: sugestões no topo e só o atalho para planejar
+  const planned = todays.length || late.length || hasWeek;
+  $('#app').innerHTML = `<div class="wrap td">
+    <header class="home-head"><div class="hh-row"><h1>Hoje</h1><a class="icon-btn" href="#/ajustes" aria-label="Ajustes">${ICON.gear}</a></div><p>${today}</p></header>
+    ${planned
+      ? `${heroH}${rest.length ? `<div class="td-k"><h2>Também hoje</h2></div>${rest.map(p=>mini(p)).join('')}` : ''}${addH}${lateH}${weekH}${quickH}${sugH}`
+      : `${sugH}${addH}${quickH}`}
   </div>`;
   $('#app').onclick = e=>{
-    const d = e.target.closest('[data-drop]'); if(d){ abandonCook(REC(d.dataset.drop)); refresh(); return }
-    const a = e.target.closest('[data-add]'); if(a){ openAddSheet(a.dataset.add); return }
-    const b = e.target.closest('[data-plan]'); if(!b) return;
-    const pl = DB.plan.find(x=>x.id===b.dataset.plan); if(pl) openPlanSheet(REC(pl.rid), pl.id);
+    const b = e.target.closest('button'); if(!b) return;
+    if(b.dataset.cook){ const pl = DB.plan.find(x=>x.id===b.dataset.cook); if(pl) startCook(REC(pl.rid), pl.id); return }
+    if(b.dataset.add){ openAddSheet(b.dataset.add); return }
+    if(b.dataset.all!=null){ RQ.now = true; RQ.q = ''; RQ.meal = 'all'; location.hash = '#/receitas'; return }
+    if(b.dataset.wk){ CAL.view = 'week'; CAL.focus = b.dataset.wk; location.hash = '#/calendario'; return }
+    if(b.dataset.late){
+      const pl = DB.plan.find(x=>x.id===b.dataset.id); if(!pl) return;
+      const c = REC(pl.rid), a = b.dataset.late;
+      if(a==='hoje'){ pl.date = t; save(); refresh(); toast(`${c.name}: hoje`); return }
+      const idx = DB.plan.indexOf(pl);
+      const undo = snap => ()=>{ DB.plan.splice(idx, 0, pl); if(snap) DB.pantry = snap; save(); refresh() };
+      DB.plan = DB.plan.filter(x=>x!==pl);
+      if(a==='fiz'){ const cfg = cfgOf(c, pl), {snap} = deduct(c, calc(c, cfg), topOf(c, cfg)); save(); refresh(); toast('Feito. Despensa atualizada.', {label:'Desfazer', fn:undo(snap)}) }
+      else { save(); refresh(); toast('Tirado do cardápio', {label:'Desfazer', fn:undo()}) }
+      return;
+    }
+    if(b.dataset.plan){ const pl = DB.plan.find(x=>x.id===b.dataset.plan); if(pl) openPlanSheet(REC(pl.rid), pl.id) }
   };
 }
 
