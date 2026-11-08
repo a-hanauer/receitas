@@ -695,7 +695,7 @@ const OLEO = q => ({id:'oleo', n:'Óleo (girassol ou canola)', q, u:'ml', s:'de 
 const LEITE = (q,s) => ({id:'leite', n:'Leite integral', q, u:'ml', s:s||'de leite'});
 
 const CAKES = [
-{ id:'cenoura', name:'Cenoura', tone:'#E07B2E', top2:'#4A2C1E', toneInk:'#fff',
+{ id:'cenoura', name:'Bolo de cenoura', tone:'#E07B2E', top2:'#4A2C1E', toneInk:'#fff',
   desc:'Massa laranja e fofa de liquidificador, com casquinha de chocolate.',
   temp:180, bake:[30,40], key:'cenoura', tops:['casquinha','brigadeiro','ganache'],
   ing:[{id:'cenoura', n:'Cenoura descascada e picada', q:250, u:'g', s:'de cenoura', each:{g:125,one:'cenoura grande',many:'cenouras grandes'}},
@@ -707,7 +707,7 @@ const CAKES = [
     {t:'Fermento', d:'Junte {fermento} e mexa delicadamente. Despeje na forma.'}],
   tips:['Pedaços de cenoura afundam e pesam a massa: bata até ficar realmente liso.','A farinha vai à mão, não no liquidificador.','Cobertura quente sobre bolo quente é o que forma a casquinha.']},
 
-{ id:'banana', name:'Banana', tone:'#E3B23C', toneInk:'#2A2108',
+{ id:'banana', name:'Bolo de banana', tone:'#E3B23C', toneInk:'#2A2108',
   desc:'Mesma base do de cenoura, com banana bem madura. Menos açúcar, mais aroma.',
   temp:180, bake:[35,45], key:'banana', tops:['casquinha','acucar-canela','ganache'],
   ing:[{id:'banana', n:'Banana nanica bem madura, sem casca', q:300, u:'g', s:'de banana', each:{g:100,one:'banana nanica',many:'bananas nanicas'}},
@@ -720,7 +720,7 @@ const CAKES = [
     {t:'Fermento', d:'Junte {fermento}, mexa delicadamente e despeje na forma.'}],
   tips:['Use bananas com a casca cheia de pintas pretas: são mais doces e perfumadas.','A massa é densa; faça o teste do palito bem no centro.']},
 
-{ id:'milho', name:'Milho verde', tone:'#F2C230', toneInk:'#2A2208',
+{ id:'milho', name:'Bolo de milho verde', tone:'#F2C230', toneInk:'#2A2208',
   desc:'Bolo de milho de liquidificador, úmido e com sabor marcado de milho.',
   temp:180, bake:[40,50], key:'milho', tops:['nenhuma','acucar-canela','goiabada'],
   ing:[{id:'milho', n:'Milho verde escorrido (lata ou espiga)', q:340, u:'g', s:'de milho verde', each:{g:170,one:'lata escorrida',many:'latas escorridas'}},
@@ -734,7 +734,7 @@ const CAKES = [
     {t:'Fermento', d:'Junte {fermento}, mexa delicadamente e despeje na forma.'}],
   tips:['Com milho de espiga, use os grãos crus cortados rente ao sabugo (3 a 4 espigas).','Para textura mais lisa, passe o creme de milho pela peneira antes de juntar os ovos.']},
 
-{ id:'fuba', name:'Fubá', tone:'#D9A441', toneInk:'#2A1E08',
+{ id:'fuba', name:'Bolo de fubá', tone:'#D9A441', toneInk:'#2A1E08',
   desc:'O bolo de vó: fofo, perfumado, perfeito com café.',
   temp:180, bake:[40,45], key:'fuba', tops:['nenhuma','goiabada','acucar-canela'],
   ing:[{id:'fuba', n:'Fubá mimoso', q:250, u:'g', s:'de fubá', cup:160}, FAR(190), ACU(220), {...OVOS,q:3},
@@ -747,7 +747,7 @@ const CAKES = [
     {t:'Fermento', d:'Junte {fermento}, mexa delicadamente e despeje na forma.'}],
   tips:['Fubá mimoso (o mais fino) deixa o bolo macio; o comum deixa arenoso.','A massa é líquida mesmo. Não corrija com mais farinha.']},
 
-{ id:'chocolate', name:'Chocolate', tone:'#5A3324', toneInk:'#fff',
+{ id:'chocolate', name:'Bolo de chocolate', tone:'#5A3324', toneInk:'#fff',
   desc:'Fofo e escuro, com leite quente para abrir o sabor do chocolate.',
   temp:180, bake:[35,40], key:'farinha', tops:['brigadeiro','ganache','casquinha'],
   ing:[{id:'choc', n:'Chocolate em pó 50%', q:80, u:'g', s:'de chocolate em pó', cup:90, sp:7},
@@ -759,7 +759,7 @@ const CAKES = [
     {t:'Fermento', d:'Junte {fermento}, mexa delicadamente e despeje na forma.'}],
   tips:['Leite quente (ou metade café) dissolve o cacau e intensifica o sabor.','Peneirar o chocolate evita grumos secos na massa.']},
 
-{ id:'laranja', name:'Laranja com casca', tone:'#F08A24', toneInk:'#fff',
+{ id:'laranja', name:'Bolo de laranja com casca', tone:'#F08A24', toneInk:'#fff',
   desc:'A laranja inteira vai ao liquidificador. Perfume intenso, com calda.',
   temp:180, bake:[35,40], key:'laranja', tops:['calda-laranja','casquinha','nenhuma'],
   ing:[{id:'laranja', n:'Laranja-pera com casca, sem miolo branco e sementes', q:200, u:'g', s:'de laranja', each:{g:200,one:'laranja grande',many:'laranjas grandes'}},
@@ -772,7 +772,7 @@ const CAKES = [
     {t:'Fermento', d:'Junte {fermento}, mexa delicadamente e despeje na forma.'}],
   tips:['Laranja de casca fina amarga menos. Laranja-lima não serve: falta acidez.','Se for a primeira vez, use só metade da casca para conhecer o amargor.']},
 
-{ id:'limao', name:'Limão', tone:'#9DBF3B', toneInk:'#1C2408',
+{ id:'limao', name:'Bolo de limão', tone:'#9DBF3B', toneInk:'#1C2408',
   desc:'Massa úmida de iogurte com raspas de limão e glacê ácido.',
   temp:180, bake:[35,40], key:'iogurte', tops:['glace-limao','nenhuma'],
   ing:[{id:'limoes', n:'Limão-taiti (raspas)', q:2, u:'un', s:'limões', s1:'limão', r:1},
@@ -786,7 +786,7 @@ const CAKES = [
     {t:'Fermento', d:'Junte {fermento}, mexa delicadamente e despeje na forma.'}],
   tips:['A parte branca da casca amarga; rale só a verde.','Esprema o suco depois de ralar: limão inteiro é mais fácil de ralar.']},
 
-{ id:'coco', name:'Coco', tone:'#C9B79C', toneInk:'#2A2216',
+{ id:'coco', name:'Bolo de coco', tone:'#C9B79C', toneInk:'#2A2216',
   desc:'Fofo, com coco na massa e calda molhadinha de leite de coco.',
   temp:180, bake:[35,40], key:'coco', tops:['calda-coco','nenhuma','brigadeiro'],
   ing:[{id:'coco', n:'Coco ralado sem açúcar', q:100, u:'g', s:'de coco ralado', cup:80},
@@ -800,7 +800,7 @@ const CAKES = [
     {t:'Fermento', d:'Junte {fermento}, mexa delicadamente e despeje na forma.'}],
   tips:['Coco fresco ralado fica ainda melhor: use o dobro do peso e pule a hidratação.']},
 
-{ id:'aipim', name:'Aipim', tone:'#B98B4E', toneInk:'#fff',
+{ id:'aipim', name:'Bolo de aipim', tone:'#B98B4E', toneInk:'#fff',
   desc:'Sem farinha: cremoso por dentro, bem dourado por fora.',
   temp:200, bake:[45,55], key:'aipim', tops:['nenhuma','acucar-canela'], noLeaven:true,
   done:'Está pronto quando a superfície estiver bem dourada e firme. O centro fica cremoso: o palito sai úmido, mas sem massa líquida.',
@@ -816,7 +816,7 @@ const CAKES = [
     {t:'Junte tudo', d:'Numa tigela, misture o aipim, os líquidos, {coco} e {queijo} até ficar homogêneo. Despeje na forma.'}],
   tips:['O bolo é baixinho e denso por natureza: não leva fermento.','Aipim congelado já descascado funciona; descongele e escorra antes de ralar.']},
 
-{ id:'formigueiro', name:'Formigueiro', tone:'#E9DCC6', toneInk:'#2A2216',
+{ id:'formigueiro', name:'Bolo formigueiro', tone:'#E9DCC6', toneInk:'#2A2216',
   desc:'Massa amanteigada de baunilha pontilhada de chocolate granulado.',
   temp:180, bake:[35,40], key:'farinha', tops:['brigadeiro','ganache','nenhuma'],
   ing:[{...OVOS,q:3}, ACU(220), LEITE(200), OLEO(120),
@@ -829,7 +829,7 @@ const CAKES = [
     {t:'Granulado e fermento', d:'Passe {granulado} na colher de farinha separada (assim ele não afunda). Junte à massa com {fermento} e misture delicadamente. Despeje na forma.'}],
   tips:['Granulado de chocolate de verdade (não o sabor chocolate) derrete menos e marca melhor.']},
 
-{ id:'maca', name:'Maçã com canela', tone:'#B8432F', toneInk:'#fff',
+{ id:'maca', name:'Bolo de maçã com canela', tone:'#B8432F', toneInk:'#fff',
   desc:'Massa de canela e mascavo com cubinhos de maçã por todo o bolo.',
   temp:180, bake:[40,45], key:'maca', tops:['acucar-canela','nenhuma','calda-laranja'],
   ing:[{id:'maca', n:'Maçã em cubinhos, com casca', q:300, u:'g', s:'de maçã', each:{g:150,one:'maçã média',many:'maçãs médias'}},
@@ -3023,7 +3023,7 @@ const ICON = {
 };
 function esc(s){ return String(s ?? '').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m]) }
 function lowerFirst(s){ return s ? s.charAt(0).toLowerCase() + s.slice(1) : '' }
-function title(c){ return c.scale==='forma' && !(c.custom && /^bolo\b/i.test(c.name)) ? 'Bolo de ' + lowerFirst(c.name) : c.name }
+function title(c){ return c.scale==='forma' && !/^(bolo|cuca)\b/i.test(c.name) ? 'Bolo de ' + lowerFirst(c.name) : c.name }
 function plain(s){ return (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase() }
 let toastT = null;
 function toast(msg, action){
