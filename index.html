@@ -1086,7 +1086,7 @@ const NUT = {
   polvilho_azedo:[.3,87], goma:[0,55], flocao:[7,79], aveia:[14,66], fuba:[7,79], choc:[7,70], meio:[5,55], coco:[5,20],
   lcoco:[1.5,3], granulado:[4,70], goiabada:[.3,75], maracuja:[1,13], amendoim:[27,20], amido:[.3,88], maionese:[1,4],
   pao_forma:[10,49,25], pao_hamb:[9,50,60], atum:[26,0], grao:[8,27], lentilha:[23,60], tahine:[17,21], capeletti:[12,55],
-  sagu:[.5,86], suco_uva:[.2,15], vinho_branco:[.1,2.6], chia:[17,42], mel:[.4,82], batata_doce:[1.3,20], abacate:[1.5,6], espinafre:[2.9,3.6], cogumelo:[3,3], repolho:[1.3,5], manjericao:[3,3], frutas_vermelhas:[1,10], pinhao:[3,44],
+  sagu:[.5,86], suco_uva:[.2,15], vinho_branco:[.1,2.6], chia:[17,42], mel:[.4,82], batata_doce:[1.3,20], abacate:[1.5,2], espinafre:[2.9,3.6], cogumelo:[3,3], repolho:[1.3,5], manjericao:[3,3], frutas_vermelhas:[1,10], pinhao:[3,44],
   ricota:[11,3], pao_fermentacao:[9,50,50], tortilla:[8,50,40], cuscuz_marroquino:[13,72], arboreo:[7,79], macarrao_integral:[13,65], macarrao_yakisoba:[11,70],
   castanha:[18,30], nozes:[15,14], gergelim:[18,12], pasta_amendoim:[25,20], cacau:[20,40], dende:[0,0], coentro:[2,4],
   quinoa:[14,64], feta:[14,4], queijo_coalho:[23,2], alho_poro:[1.5,14], quiabo:[2,6], manga:[.5,15], pessego:[.9,10], tomate_cereja:[1,4],
@@ -1139,7 +1139,7 @@ const FDESC = {rap:'Até 30 minutos no total', prot:'25 g de proteína ou mais p
 /* Tags: as calculadas saem dos dados; "uma panela" e "marmita" são editoriais. */
 const TAGDEF = [['prot','Proteica','Proteicas'],['low','Pouco carbo','Pouco carbo'],['rap','Rápida','Rápidas'],['marm','Marmita','Boas para marmita'],['pan','Uma panela','Uma panela só'],['sf','Sem forno','Sem forno'],['veg','Vegetariana','Vegetarianas']];
 const ONE_POT = new Set('carne-panela almondegas strogonoff-carne carreteiro frango-ensopado strogonoff-frango frango-xadrez canja sopa-legumes caldo-verde creme-abobora sopa-ervilha peixe-assado frango-assado galeto sobrecoxa-limao frango-curry strogonoff-leve parmegiana-assada puchero carne-moida-abobrinha tainha-assada peixe-ensopado tilapia-parmesao salmao-brocolis camarao-alho sopa-capeletti sopa-lentilha frango-batata-doce picadinho-abobora moqueca curry-grao entrevero vaca-atolada shakshuka-verde peixe-papelote frango-tikka risoto-cogumelos ovos-tomate'.split(' '));
-const MARMITA = new Set('carne-panela almondegas strogonoff-carne carreteiro frango-ensopado fricasse frango-xadrez escondidinho torta-frango panqueca quibe canja sopa-legumes sopa-ervilha caldo-verde creme-abobora lasanha bolonhesa puchero carne-moida-abobrinha escondidinho-couve-flor abobrinha-recheada lasanha-abobrinha frango-curry polenta-ragu sopa-lentilha salada-atum-grao frango-batata-doce picadinho-abobora kafta frango-cuscuz-marroquino curry-grao entrevero massa-frango-brocolis vaca-atolada baiao-de-dois frango-quiabo pimentao-recheado berinjela-recheada tabule-quinoa salada-lentilha frango-tikka muffin-espinafre omelete-forno falafel quiche-alho-poro pacoca-pinhao sobrecoxa-limao'.split(' '));
+const MARMITA = new Set('tortilla-espanhola ovos-recheados carne-panela almondegas strogonoff-carne carreteiro frango-ensopado fricasse frango-xadrez escondidinho torta-frango panqueca quibe canja sopa-legumes sopa-ervilha caldo-verde creme-abobora lasanha bolonhesa puchero carne-moida-abobrinha escondidinho-couve-flor abobrinha-recheada lasanha-abobrinha frango-curry polenta-ragu sopa-lentilha salada-atum-grao frango-batata-doce picadinho-abobora kafta frango-cuscuz-marroquino curry-grao entrevero massa-frango-brocolis vaca-atolada baiao-de-dois frango-quiabo pimentao-recheado berinjela-recheada tabule-quinoa salada-lentilha frango-tikka muffin-espinafre omelete-forno falafel quiche-alho-poro pacoca-pinhao sobrecoxa-limao'.split(' '));
 const NOT_QUICK = new Set(['overnight-oats','pudim-chia','ovos-shoyu','sagu-uva']);
 const _tags = new Map();
 function tagsOf(c){
@@ -1167,17 +1167,18 @@ function selos(c){ return tagsOf(c).slice(0,3) }
    CATEGORIAS E REFEIÇÕES
    ========================================================= */
 const CATS = [
-  {id:'cafe', n:'Café da manhã', tone:'#E3B23C'},
-  {id:'peixe', n:'Peixe e ovos', tone:'#5E86C9'},
+  {id:'ovos', n:'Ovos', tone:'#E3B23C'},
+  {id:'peixe', n:'Peixes e frutos do mar', tone:'#5E86C9'},
   {id:'carne', n:'Carne', tone:'#C0412F'},
   {id:'leves', n:'Saladas e leguminosas', tone:'#5F9E45'},
   {id:'sopas', n:'Sopas e caldos', tone:'#3FA3A3'},
   {id:'frango', n:'Frango', tone:'#EE8A2E'},
-  {id:'forno', n:'Forno', tone:'#A8834F'},
+  {id:'forno', n:'Forno', tone:'#7F8A99'},
   {id:'massas', n:'Massas e risotos', tone:'#8C7BC9'},
+  {id:'cafe', n:'Café da manhã', tone:'#9C6B4A'},
   {id:'lanches', n:'Lanches', tone:'#E8664A'},
-  {id:'bolos', n:'Bolos', tone:'#6B3F2A'},
-  {id:'doces', n:'Sobremesas', tone:'#B35FA6'}
+  {id:'doces', n:'Sobremesas', tone:'#B35FA6'},
+  {id:'bolos', n:'Bolos', tone:'#6B3F2A'}
 ];
 const MEALS = [['cafe','Café da manhã'],['almoco','Almoço'],['lanche','Lanche'],['janta','Jantar']];
 const MEAL_SHORT = {cafe:'Café', almoco:'Almoço', lanche:'Lanche', janta:'Jantar'};
@@ -1306,7 +1307,7 @@ R({id:'frango-ensopado', cat:'frango', meals:['almoco','janta'], name:'Frango en
     {t:'Ensope', d:'Volte o frango com {colorau} e {agua}. Tampe e cozinhe em fogo baixo.', timer:1500},
     {t:'Batatas', d:'Junte {batata} e cozinhe até ficarem macias e o caldo engrossar. Finalize com {cheiro}.', timer:900}]});
 
-/* ---------- Peixe e ovos ---------- */
+/* ---------- Peixes ---------- */
 R({id:'peixe-assado', cat:'peixe', meals:['almoco','janta'], name:'Peixe assado com legumes', desc:'Tudo no mesmo refratário.', serves:4, time:50,
   oven:{temp:200, bake:[20,25], pre:1},
   ing:[['peixe',600],['limoes',1],['sal',1.5,'cc'],['pimenta',.25,'cc'],['batata',500,null,'em rodelas de 1 cm'],['tomate',2,null,'em rodelas'],['cebola',1,null,'em rodelas'],['pimentao',.5,null,'em tiras'],['azeite',45],['cheiro',2,null,'?picado']],
@@ -1325,7 +1326,7 @@ R({id:'peixe-empanado', cat:'peixe', meals:['almoco','janta'], name:'Filé de pe
     {t:'Frite', d:'Aqueça {oleo} a 170 °C: um pedacinho de pão deve dourar em 30 segundos. Frite em levas até dourar, virando na metade, e escorra em papel-toalha.', timer:360}],
   tips:['Na air fryer: borrife óleo e asse a 200 °C por 12 minutos, virando na metade.']});
 
-R({id:'ovos-tomate', cat:'peixe', meals:['almoco','janta'], name:'Ovos ao molho de tomate', desc:'Ovos cozidos no molho, gema mole.', serves:2, time:20,
+R({id:'ovos-tomate', cat:'ovos', meals:['almoco','janta'], name:'Ovos ao molho de tomate', desc:'Ovos cozidos no molho, gema mole.', serves:2, time:20,
   ing:[['azeite',15],['cebola',.5,null,'picada'],['tomate',3,null,'picados'],['sal',.5,'cc'],['ovos',4],['cheiro',2,null,'?picado']],
   steps:[
     {t:'Faça o molho', d:'Aqueça {azeite} e refogue {cebola}. Junte {tomate} e {sal} e cozinhe até soltar caldo e encorpar.', timer:360},
@@ -1608,7 +1609,7 @@ R({id:'lasanha-abobrinha', cat:'forno', meals:['almoco','janta'], name:'Lasanha 
   done:'Está pronto quando borbulhar nas bordas e dourar por cima.',
   after:[{t:'Descanse', d:'Deixe descansar antes de cortar, para firmar.', timer:600}]});
 
-/* Peixe e ovos */
+/* Peixes */
 R({id:'tainha-assada', cat:'peixe', meals:['almoco','janta'], name:'Tainha assada com limão', desc:'Peixe do nosso litoral, assado com tomate e cebola.', serves:4, time:60,
   oven:{temp:200, bake:[30,35], pre:1},
   ing:[['tainha',1000,null,'aberta, com pele'],['limoes',2],['alho',4,null,'amassados'],['sal',2,'cc'],['pimenta',.5,'cc'],['cebola',1,null,'em rodelas'],['tomate',2,null,'em rodelas'],['azeite',30],['cheiro',2,null,'?picado']],
@@ -1657,7 +1658,7 @@ R({id:'camarao-alho', cat:'peixe', meals:['almoco','janta'], name:'Camarão no a
     {t:'Finalize', d:'Desligue e finalize com o suco de {limoes} e {cheiro}.'}],
   tips:['Camarão em forma de C está no ponto. Em forma de O, passou.','Com abobrinha em tiras ou salada, fica com pouco carboidrato.']});
 
-R({id:'omelete-forno', cat:'peixe', meals:['cafe','almoco','janta','lanche'], name:'Omelete de forno com legumes', desc:'Fatias prontas para a semana.', serves:4, time:45,
+R({id:'omelete-forno', cat:'ovos', meals:['cafe','almoco','janta','lanche'], name:'Omelete de forno com legumes', desc:'Fatias prontas para a semana.', serves:4, time:45,
   oven:{temp:180, bake:[25,30], pre:0},
   ing:[['azeite',15],['cebola',.5,null,'picada'],['abobrinha',250,null,'em cubinhos'],['tomate',1,null,'picado'],['ovos',8],['leite',100],['sal',1,'cc'],['pimenta',.25,'cc'],['queijo',100,null,'ralado'],['cheiro',2,null,'?picado']],
   steps:[
@@ -1757,7 +1758,7 @@ R({id:'polenta-ragu', cat:'frango', meals:['almoco','janta'], name:'Polenta mole
 /* ---------- Leva 3: pratos completos, cafés e lanches ---------- */
 
 /* Café da manhã */
-R({id:'ovos-turcos', cat:'cafe', meals:['cafe','lanche'], name:'Ovos turcos com iogurte', desc:'Ovos pochê sobre iogurte com alho e manteiga de páprica.', serves:2, time:20,
+R({id:'ovos-turcos', cat:'ovos', meals:['cafe','lanche'], name:'Ovos turcos com iogurte', desc:'Ovos pochê sobre iogurte com alho e manteiga de páprica.', serves:2, time:20,
   ing:[['iogurte',250,null,'integral, em temperatura ambiente'],['alho',1,null,'ralado'],['sal',.5,'cc'],['vinagre',15],['ovos',4,null,'bem frescos'],['manteiga',30],['paprica',1,'cc'],['calabresa_seca',.25,null,'?'],['cheiro',1,null,'?ou endro'],['pao_fermentacao',2,null,'?tostado, para servir']],
   steps:[
     {t:'Iogurte temperado', d:'Misture {iogurte}, {alho} e {sal}. Espalhe em dois pratos fundos.'},
@@ -1775,7 +1776,7 @@ R({id:'panqueca-ricota', cat:'cafe', meals:['cafe','lanche'], name:'Panqueca de 
     {t:'Calda', d:'Aqueça {frutas_vermelhas} numa panelinha até soltarem o suco. Sirva sobre as panquecas com {mel}.', timer:180}],
   tips:['Ricota fresca de padaria ou laticínio dá textura bem melhor que a de pote.']});
 
-R({id:'tosta-abacate', cat:'cafe', meals:['cafe','lanche'], name:'Tosta de abacate com ovo', desc:'Pão de fermentação natural, abacate temperado e ovo mole.', serves:2, time:15,
+R({id:'tosta-abacate', cat:'ovos', meals:['cafe','lanche'], name:'Tosta de abacate com ovo', desc:'Pão de fermentação natural, abacate temperado e ovo mole.', serves:2, time:15,
   ing:[['pao_fermentacao',2,null,'fatias grossas'],['abacate',200,null,'maduro'],['limoes',.5],['sal',.5,'cc'],['pimenta',.25,'cc'],['ovos',2],['azeite',10],['calabresa_seca',.25,null,'?'],['tomate',1,null,'?em cubinhos']],
   steps:[
     {t:'Ovos', d:'Cozinhe {ovos} em água fervente para gema mole, passe para água fria e descasque.', timer:390},
@@ -1794,7 +1795,7 @@ R({id:'granola', cat:'cafe', meals:['cafe','lanche'], name:'Granola caseira com 
   after:[{t:'Esfrie e guarde', d:'Deixe esfriar na assadeira sem mexer, quebre em pedaços e guarde em pote fechado.'}],
   tips:['Sirva com iogurte natural e fruta. Dura 3 semanas em pote fechado.']});
 
-R({id:'wrap-ovo', cat:'cafe', meals:['cafe','lanche','janta'], name:'Wrap de ovo com espinafre', desc:'O ovo vira a massa. Recheio de queijo e espinafre.', serves:1, time:10,
+R({id:'wrap-ovo', cat:'ovos', meals:['cafe','lanche','janta'], name:'Wrap de ovo com espinafre', desc:'O ovo vira a massa. Recheio de queijo e espinafre.', serves:1, time:10,
   ing:[['ovos',2],['sal',1,'pitada'],['manteiga',5],['espinafre',40,null,'folhas'],['minas',40,null,'em fatias'],['tomate',.5,null,'?em fatias']],
   steps:[
     {t:'Bata', d:'Bata {ovos} com {sal}.'},
@@ -1966,7 +1967,7 @@ R({id:'sanduiche-pesto', cat:'lanches', meals:['lanche','almoco'], name:'Sanduí
     {t:'Monte', d:'Toste {pao_fermentacao}, passe pesto, recheie com o frango, {tomate} e {queijo}.'}],
   tips:['Sobra pesto: dura 5 dias na geladeira coberto com azeite, e vai bem em massa.']});
 
-R({id:'ovos-shoyu', cat:'lanches', meals:['lanche','cafe'], name:'Ovos marinados no shoyu', desc:'Gema cremosa, clara com sabor. Lanche proteico pronto na geladeira.', serves:6, time:20,
+R({id:'ovos-shoyu', cat:'ovos', meals:['lanche','cafe'], name:'Ovos marinados no shoyu', desc:'Gema cremosa, clara com sabor. Lanche proteico pronto na geladeira.', serves:6, time:20,
   ing:[['ovos',6],['shoyu',100],['agua',100],['mel',15],['alho',1,null,'amassado'],['gengibre',1,null,'em fatias']],
   steps:[
     {t:'Cozinhe', d:'Coloque {ovos} em água fervente, direto da geladeira, e cozinhe para gema cremosa.', timer:420},
@@ -1982,7 +1983,7 @@ R({id:'bruschetta', cat:'lanches', meals:['lanche'], name:'Bruschetta de tomate 
     {t:'Monte', d:'Cubra com o tomate na hora de servir, para o pão não amolecer.'}],
   tips:['Com ricota ou burrata por baixo do tomate, vira refeição leve.']});
 
-R({id:'muffin-espinafre', cat:'lanches', meals:['lanche','cafe'], name:'Muffin de espinafre e queijo', desc:'Salgado, de ovo, para levar na bolsa.', serves:6, time:35,
+R({id:'muffin-espinafre', cat:'ovos', meals:['lanche','cafe'], name:'Muffin de espinafre e queijo', desc:'Salgado, de ovo, para levar na bolsa.', serves:6, time:35,
   oven:{temp:180, bake:[20,22], pre:0},
   ing:[['ovos',6],['iogurte',100],['sal',1,'cc'],['pimenta',.25,'cc'],['espinafre',100,null,'picado'],['tomate',1,null,'em cubinhos'],['minas',100,null,'em cubinhos'],['parmesao',20],['aveia',30]],
   steps:[
@@ -1991,6 +1992,88 @@ R({id:'muffin-espinafre', cat:'lanches', meals:['lanche','cafe'], name:'Muffin d
     {t:'Forminhas', d:'Distribua em 12 forminhas de muffin untadas ou de silicone, até 3/4, e polvilhe {parmesao}.'}],
   done:'Estão prontos quando crescerem, firmarem no centro e dourarem.',
   tips:['Duram 4 dias na geladeira. Aqueça 20 segundos no micro-ondas.']});
+
+R({id:'ovos-recheados', cat:'ovos', meals:['lanche'], name:'Ovos recheados com páprica', desc:'Gema cremosa com mostarda e iogurte. Lanche proteico de geladeira.', serves:4, time:25,
+  ing:[['ovos',6],['iogurte',40,null,'integral'],['maionese',20],['mostarda',1],['sal',.5,'cc'],['pimenta',.25,'cc'],['paprica',.5,'cc'],['cheiro',1,null,'?ou cebolinha picada']],
+  steps:[
+    {t:'Cozinhe', d:'Coloque {ovos} em água fervente, direto da geladeira, e cozinhe até a gema firmar.', timer:600},
+    {t:'Gelo', d:'Passe para água com gelo, descasque e corte ao meio no comprimento.', timer:300},
+    {t:'Recheio', d:'Tire as gemas e amasse com {iogurte}, {maionese}, {mostarda}, {sal} e {pimenta} até ficar liso.'},
+    {t:'Monte', d:'Recheie as claras com uma colher ou um saco de confeitar. Polvilhe {paprica} e {cheiro}.'}],
+  tips:['Duram 2 dias na geladeira, cobertos.','Cozinhe os ovos de uma vez para a semana e recheie só o que for comer.']});
+
+R({id:'tortilla-espanhola', cat:'ovos', meals:['lanche','almoco','janta'], name:'Tortilha espanhola de batata', desc:'Batata cozida no azeite, ovos e cebola. Boa morna ou fria.', serves:4, time:50,
+  ing:[['batata',600,null,'em fatias finas'],['cebola',1,null,'em fatias finas'],['azeite',150,null,'para fritar; o que sobra volta para a cozinha'],['sal',1.5,'cc'],['ovos',6]],
+  steps:[
+    {t:'Batata no azeite', d:'Aqueça {azeite} numa frigideira antiaderente de 24 cm em fogo médio-baixo. Junte {batata}, {cebola} e metade de {sal} e cozinhe sem dourar, mexendo de vez em quando, até a batata ficar macia.', timer:1200},
+    {t:'Escorra', d:'Escorra numa peneira sobre uma tigela, guardando o azeite.'},
+    {t:'Ovos', d:'Bata {ovos} com o resto do sal, junte a batata ainda quente e deixe descansar.', timer:300},
+    {t:'Doure', d:'Volte 1 colher de sopa do azeite à frigideira em fogo médio. Despeje a mistura e cozinhe, soltando as bordas com a espátula, até firmar embaixo.', timer:300},
+    {t:'Vire', d:'Cubra com um prato, vire de uma vez e deslize de volta para a frigideira. Cozinhe o outro lado.', timer:180}],
+  tips:['Dura 3 dias na geladeira. Corte em fatias ou cubos para levar.','O azeite que sobra fica com gosto de cebola: use em refogados.']});
+
+R({id:'sanduiche-ovo', cat:'ovos', meals:['lanche','cafe'], name:'Sanduíche de salada de ovo', desc:'Ovo picado com iogurte, mostarda e ervas no pão de fermentação.', serves:2, time:20,
+  ing:[['ovos',4],['iogurte',40,null,'integral'],['maionese',20],['mostarda',1],['cheiro',1,null,'picado'],['sal',.5,'cc'],['pimenta',.25,'cc'],['pao_fermentacao',4],['alface',4]],
+  steps:[
+    {t:'Cozinhe', d:'Coloque {ovos} em água fervente e cozinhe até a gema firmar.', timer:600},
+    {t:'Gelo', d:'Passe para água com gelo e descasque.', timer:300},
+    {t:'Salada de ovo', d:'Pique os ovos grosseiramente e misture {iogurte}, {maionese}, {mostarda}, {cheiro}, {sal} e {pimenta}.'},
+    {t:'Monte', d:'Toste {pao_fermentacao}, cubra metade das fatias com {alface} e a salada de ovo, e feche com as outras.'}],
+  tips:['A salada de ovo dura 2 dias na geladeira. Monte o sanduíche na hora para o pão não amolecer.']});
+
+R({id:'ovo-no-pao', cat:'ovos', meals:['cafe','lanche'], name:'Ovo no pão com queijo', desc:'O ovo frita dentro de um buraco no pão, que fica crocante na manteiga.', serves:1, time:10,
+  ing:[['pao_fermentacao',2,null,'fatias grossas'],['manteiga',10],['ovos',2],['sal',1,'pitada'],['pimenta',1,'pitada'],['queijo',30,null,'ralado']],
+  steps:[
+    {t:'Abra o buraco', d:'Com a boca de um copo, corte um círculo no centro de cada fatia de {pao_fermentacao}.'},
+    {t:'Doure o pão', d:'Derreta {manteiga} numa frigideira em fogo médio. Doure um lado das fatias e dos círculos e vire.', timer:120},
+    {t:'Ovo', d:'Quebre um de {ovos} em cada buraco e tempere com {sal} e {pimenta}. Tampe e cozinhe até a clara firmar.', timer:180},
+    {t:'Queijo', d:'Espalhe {queijo} sobre o pão, sem cobrir a gema, e tampe até derreter.', timer:60},
+    {t:'Sirva', d:'Sirva com os círculos tostados ao lado, para molhar na gema.'}],
+  tips:['Fogo médio, não alto: o pão doura no mesmo tempo em que a clara cozinha.']});
+
+R({id:'ovos-nuvem', cat:'ovos', meals:['cafe','lanche'], name:'Ovos nuvem com parmesão', desc:'Clara em neve assada com queijo e a gema mole no meio.', serves:2, time:20,
+  oven:{temp:230, bake:[5,6], pre:0},
+  ing:[['ovos',4,null,'em temperatura ambiente'],['sal',1,'pitada'],['parmesao',30],['cheiro',1,null,'?ou cebolinha picada'],['pimenta',.25,'cc'],['pao_fermentacao',2,null,'?tostado, para servir']],
+  steps:[
+    {t:'Separe', d:'Separe as claras de {ovos} numa tigela limpa e seca. Deixe cada gema numa xícara.'},
+    {t:'Bata', d:'Bata as claras com {sal} até formar picos firmes.'},
+    {t:'Incorpore', d:'Junte {parmesao} e {cheiro} com uma espátula, sem bater.'},
+    {t:'Montinhos', d:'Faça 4 montinhos numa assadeira com papel-manteiga e afunde o centro de cada um com uma colher.'}],
+  done:'Estão prontos quando as pontas dourarem.',
+  after:[
+    {t:'Gemas', d:'Coloque uma gema em cada buraco e volte ao forno só até a gema aquecer, ainda mole.', timer:180},
+    {t:'Sirva', d:'Tempere com {pimenta} e sirva na hora, com {pao_fermentacao}.'}],
+  tips:['Qualquer gota de gema ou gordura na tigela impede a clara de crescer.']});
+
+R({id:'abacate-ovo-forno', cat:'ovos', meals:['cafe','lanche'], name:'Abacate assado com ovo', desc:'Metades de abacate com ovo no lugar do caroço. Sem pão, pouco carbo.', serves:2, time:25,
+  oven:{temp:200, bake:[15,18], pre:0},
+  ing:[['abacate',500,null,'firme, quase maduro'],['sal',.5,'cc'],['ovos',2],['pimenta',.25,'cc'],['parmesao',15],['calabresa_seca',.25,null,'?'],['coentro',1,null,'?ou cheiro-verde']],
+  steps:[
+    {t:'Abacate', d:'Corte {abacate} ao meio e tire o caroço. Alargue a cavidade com uma colher até caber um ovo e tempere com {sal}.'},
+    {t:'Apoie', d:'Acomode as metades numa forma pequena, apoiadas em bolinhas de papel-alumínio para não tombarem.'},
+    {t:'Ovo', d:'Quebre um de {ovos} em cada metade, tempere com {pimenta} e polvilhe {parmesao}.'}],
+  done:'Está pronto quando a clara firmar e a gema ainda tremer.',
+  after:[{t:'Finalize', d:'Finalize com {calabresa_seca} e {coentro}.'}],
+  tips:['O abacate que sai da cavidade vai bem amassado com limão e sal, por cima.']});
+
+R({id:'ovos-rancheiros', cat:'ovos', meals:['cafe','lanche','janta'], name:'Ovos rancheiros na tortilha', desc:'Ovos cozidos em molho de tomate picante, com feta, abacate e coentro.', serves:2, time:25,
+  ing:[['azeite',15],['cebola',.5,null,'picada'],['alho',1,null,'picado'],['tomate',3,null,'bem maduros, picados'],['cominho',.5,'cc'],['calabresa_seca',.25,null,'?ou pimenta dedo-de-moça'],['sal',1,'cc'],['ovos',4],['tortilla',2],['feta',40,null,'?ou queijo meia cura esfarelado'],['abacate',150,null,'?em fatias'],['coentro',1],['limoes',.5]],
+  steps:[
+    {t:'Molho', d:'Refogue {cebola} e {alho} em {azeite}. Junte {tomate}, {cominho}, {calabresa_seca} e metade de {sal} e cozinhe até encorpar.', timer:600},
+    {t:'Ovos', d:'Abra 4 covas no molho e quebre {ovos} nelas. Tempere com o resto do sal, tampe e cozinhe até a clara firmar.', timer:300},
+    {t:'Tortilhas', d:'Aqueça {tortilla} numa frigideira seca até pintar dos dois lados.'},
+    {t:'Monte', d:'Ponha molho e dois ovos sobre cada tortilha e finalize com {feta}, {abacate}, {coentro} e gotas de {limoes}.'}],
+  tips:['Com feijão-preto cozido por baixo do molho, vira jantar completo.']});
+
+R({id:'cuscuz-ovo-coalho', cat:'ovos', meals:['cafe','lanche','janta'], name:'Cuscuz com ovo e queijo coalho', desc:'Cuscuz de flocão no vapor, coalho tostado e ovo de gema mole.', serves:2, time:25,
+  ing:[['flocao',120],['sal',1,'cc'],['agua',100,null,'aos poucos'],['queijo_coalho',100,null,'em fatias'],['manteiga',15],['ovos',4],['cheiro',1,null,'?']],
+  steps:[
+    {t:'Hidrate', d:'Misture {flocao} e {sal} e vá juntando {agua} até ficar úmido como areia molhada. Descanse.', timer:600},
+    {t:'Vapor', d:'Coloque na cuscuzeira sem apertar, tampe e cozinhe no vapor até soltar cheiro de milho cozido.', timer:600},
+    {t:'Coalho', d:'Doure {queijo_coalho} numa frigideira seca, dos dois lados.', timer:300},
+    {t:'Ovos', d:'Na mesma frigideira, derreta {manteiga} e frite {ovos} com a gema mole.', timer:180},
+    {t:'Sirva', d:'Solte o cuscuz com um garfo e sirva com o coalho, os ovos e {cheiro}.'}],
+  tips:['Sem cuscuzeira: cozinhe no micro-ondas numa tigela tampada, de 3 a 4 minutos.']});
 
 R({id:'cookies-aveia', cat:'lanches', meals:['lanche','cafe'], name:'Cookies de aveia, banana e cacau', desc:'Sem açúcar e sem farinha branca.', serves:8, time:30,
   oven:{temp:180, bake:[14,16], pre:0},
@@ -2147,7 +2230,7 @@ R({id:'tabule-quinoa', cat:'leves', meals:['almoco','janta'], name:'Tabule de qu
   tips:['Lave a quinoa antes: tira o amargor da casca.']});
 
 /* Café */
-R({id:'shakshuka-verde', cat:'cafe', meals:['cafe','janta'], name:'Shakshuka verde', desc:'Ovos cozidos em abobrinha, espinafre e ervas, com queijo feta.', serves:2, time:25,
+R({id:'shakshuka-verde', cat:'ovos', meals:['cafe','janta'], name:'Shakshuka verde', desc:'Ovos cozidos em abobrinha, espinafre e ervas, com queijo feta.', serves:2, time:25,
   ing:[['azeite',20],['cebola',.5,null,'picada'],['alho',2,null,'picados'],['abobrinha',250,null,'em cubinhos'],['espinafre',150],['cominho',.5,'cc'],['sal',1,'cc'],['ovos',4],['feta',60,null,'esfarelado'],['cheiro',2,null,'?ou endro'],['pao_fermentacao',2,null,'?para servir']],
   steps:[
     {t:'Refogue', d:'Numa frigideira com tampa, refogue {cebola}, {alho} e {abobrinha} em {azeite}.', timer:300},
@@ -2155,7 +2238,7 @@ R({id:'shakshuka-verde', cat:'cafe', meals:['cafe','janta'], name:'Shakshuka ver
     {t:'Ovos', d:'Abra 4 covas e quebre {ovos} nelas. Tampe e cozinhe em fogo baixo até a clara firmar.', timer:300},
     {t:'Sirva', d:'Cubra com {feta} e {cheiro} e sirva na frigideira, com {pao_fermentacao}.'}]});
 
-R({id:'ovos-cocotte', cat:'cafe', meals:['cafe','lanche'], name:'Ovos em cocotte com espinafre', desc:'Em potinhos no forno: gema mole, creme e queijo.', serves:2, time:25,
+R({id:'ovos-cocotte', cat:'ovos', meals:['cafe','lanche'], name:'Ovos em cocotte com espinafre', desc:'Em potinhos no forno: gema mole, creme e queijo.', serves:2, time:25,
   oven:{temp:190, bake:[12,14], pre:0},
   ing:[['manteiga',10],['espinafre',80],['sal',.5,'cc'],['creme',60],['ovos',4],['parmesao',20],['pimenta',.25,'cc']],
   steps:[
@@ -2354,7 +2437,7 @@ const ILL = (()=>{
   I['frango-xadrez'] = `${plate()}<ellipse cx="32" cy="44" rx="18" ry="6.4" fill="#9E5A2A" opacity=".55"/>${[[20,40,'#E8C08A'],[26,36.6,'#E8C08A'],[33,40.6,'#E8C08A'],[40,36.6,'#E8C08A'],[44,41.6,'#E8C08A'],[29,44,'#E8C08A']].map(([x,y,c],i)=>`<rect x="${x-3}" y="${y-2.6}" width="6" height="5.2" rx="1.6" transform="rotate(${i*12} ${x} ${y})" fill="${c}"/><rect x="${x-3}" y="${y-2.6}" width="6" height="2" rx="1" transform="rotate(${i*12} ${x} ${y})" fill="#C98F52" opacity=".55"/>`).join('')}${[[23.6,43.4,'#4E8B2F'],[36.6,44,'#D9412B'],[31,36,'#D9412B'],[17.6,36.6,'#4E8B2F'],[45.6,37,'#4E8B2F'],[39.6,46,'#D9412B']].map(([x,y,c])=>`<rect x="${x-2.2}" y="${y-2.2}" width="4.4" height="4.4" rx="1" transform="rotate(20 ${x} ${y})" fill="${c}"/>`).join('')}${[[34,34],[22,46],[47,44.6]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="1.9" ry="1.3" fill="#C98F3E"/>`).join('')}`;
   I['frango-ensopado'] = pot('#E3B23C','#B98B1E','#D9772E', `<path d="M19 26.6c1-2.6 5.6-3.4 7.6-1 .6 2.4-1.6 4-4.6 4-2 0-3.6-1.2-3-3Z" fill="#A85A22"/><path d="M33 25.6c1.4-2.4 6-2.4 7.4.4 0 2.4-2.6 3.6-5.2 3.2-1.6-.4-2.8-1.8-2.2-3.6Z" fill="#A85A22"/><rect x="27" y="27" width="4.4" height="3.6" rx="1.1" fill="#F0D9A0"/><rect x="41.6" y="26.6" width="4.4" height="3.6" rx="1.1" fill="#F0D9A0"/>${herbs([[25,25.4],[38,29,30],[31,25,-20]])}`) + steam(32,7);
 
-  /* ---------- Peixe e ovos ---------- */
+  /* ---------- Peixes ---------- */
   I['peixe-assado'] = dish('#FBF8F2','#DDD6C9','#F2E2C4', `<path d="M13 37.4c4.6-6 12-8.4 20-7.6 5 .6 8.6 2.6 11.6 5.6l7.4-5.4c.8-.4 1.4.2 1.2 1l-1.6 6.6 1.6 6.6c.2.8-.4 1.4-1.2 1l-7.4-5.4c-3 3-6.6 5-11.6 5.6-8 .8-15.4-1.6-20-7.6Z" fill="#E9D6C2"/><circle cx="19" cy="36.4" r="1.2" fill="#3B3A37"/><path d="M24 33.4c1.4 2.4 1.4 5.4 0 8M30 32.6c1.6 2.8 1.6 6.4 0 9.2M36 33c1.4 2.6 1.4 5.8 0 8.4" stroke="#D2BCA4" stroke-width="1.2" fill="none"/>${[[25,30.6],[35,30.2],[29,44],[40,43]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3.2" fill="#D9412B"/><circle cx="${x}" cy="${y}" r="2" fill="#EF6A52"/>`).join('')}${herbs([[20,42,30],[45,32,-20],[33,36.4]])}`);
   I['peixe-empanado'] = `${plate()}<rect x="12" y="34" width="22" height="10" rx="5" transform="rotate(-8 23 39)" fill="#D9993A"/><rect x="27" y="35.4" width="22" height="10" rx="5" transform="rotate(6 38 40.4)" fill="#E2A548"/>${dots([[16,38],[20,36.4],[25,37.6],[19,41],[29,36],[31,40],[34,38.6],[38,42],[42,39],[45,42.6],[36,44.4],[22,39.6]],'#B87A2A',.9)}${lemonWedge(36,44.6)}`;
   I['omelete'] = `${plate()}<path d="M11 44a21 14 0 0 1 42 0Z" fill="#F5C842"/><path d="M15 34c4-4 10-5.6 17-5.6" stroke="#FAD970" stroke-width="2.6" stroke-linecap="round" fill="none"/>${dots([[22,38],[38,35],[44,40]],'#E0AE2E',1.4)}<path d="M15 44q2 3.4 4 0" fill="#D9412B"/><path d="M24 44q2.4 4 4.8 0" fill="#FFF0B0"/><path d="M33 44q2 3.4 4 0" fill="#4E8B2F"/><path d="M41 44q2.4 4 4.8 0" fill="#FFF0B0"/><path d="M11 44h42" stroke="#E0AE2E" stroke-width="2"/>`;
@@ -2430,7 +2513,7 @@ const ILL = (()=>{
   I['abobrinha-recheada'] = `${plate()}${[[22.6,39.6,-12],[41.4,39.6,12]].map(([x,y,a])=>`<g transform="rotate(${a} ${x} ${y})"><ellipse cx="${x}" cy="${y+1.4}" rx="8.4" ry="5" fill="#3F7D2B"/><ellipse cx="${x}" cy="${y}" rx="8.4" ry="4.6" fill="#5E9E3A"/><ellipse cx="${x}" cy="${y-.2}" rx="6.8" ry="3.4" fill="#E1EBB8"/><ellipse cx="${x}" cy="${y-1}" rx="6.2" ry="3" fill="#8E4A26"/><path d="M${x-4.6} ${y-1.6}c1.6-1.6 3-1 4.4-1.8 1.6-.8 3.2-.2 4.6 1" stroke="#F5D46A" stroke-width="2.6" stroke-linecap="round" fill="none"/>${dots([[x-2,y-1.8],[x+2.2,y-1.6]],'#E0A84A',.8)}<path d="M${x+8} ${y-.6}l2.2-1" stroke="#7A9A3A" stroke-width="1.6" stroke-linecap="round"/></g>`).join('')}${herbs([[31,44,10]])}`;
   I['lasanha-abobrinha'] = cake({bands:[[2.6,'#E9B04A','#F0BE57'],[2.4,'#A8321F','#B8432F'],[1.8,'#7FB04A','#9CC15A'],[2.4,'#F4EEDF','#FBF6EA'],[2.4,'#A8321F','#B8432F'],[1.8,'#7FB04A','#9CC15A'],[2.6,'#F2D06B','#F6DA7E']], top:'#E9B04A', extra: dots([[22,25],[30,23.4],[38,24],[44,26.6],[27,28.6],[36,28.4]],'#C98A30',1)+herbs([[31,25.6,20],[40,26.4,-20]])});
 
-  /* Peixe e ovos */
+  /* Peixes */
   I['tainha-assada'] = dish('#FBF8F2','#DDD6C9','#F2E2C4', `${[[17,44],[47,44.6]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3.2" fill="#D9412B"/><circle cx="${x}" cy="${y}" r="2.1" fill="#EF6A52"/>`).join('')}<ellipse cx="25" cy="45.2" rx="3" ry="2" fill="none" stroke="#F4ECDC" stroke-width="1.2"/><path d="M12 36.4c5-6.4 13-8.8 21.6-7.8 5 .6 8.6 2.6 11.6 5.4l7-4.8c.8-.4 1.4.2 1.2 1l-1.6 6.2 1.6 6.2c.2.8-.4 1.4-1.2 1l-7-4.8c-3 2.8-6.6 4.8-11.6 5.4-8.6 1-16.6-1.4-21.6-7.8Z" fill="#8E9BA3"/><path d="M14 37.4c5 4.8 12 6.6 19.6 5.8 4.6-.6 8-2.2 10.8-5" fill="#C9D2D6"/><path d="M14.4 36c5.6-4.8 12.6-6.4 19.6-5.6" stroke="#6E7A82" stroke-width="1.6" stroke-linecap="round" fill="none"/><circle cx="18.4" cy="35" r="1.3" fill="#26241F"/><circle cx="18" cy="34.6" r=".4" fill="#fff"/><path d="M22.6 31.8c1.4 2.6 1.4 6.2 0 9" stroke="#6E7A82" stroke-width="1" fill="none"/><path d="M27.6 32.4l2.4 7.6M32.4 31.6l2.4 8M37.2 32.4l2.2 7" stroke="#6E7A82" stroke-width="1.1" stroke-linecap="round" opacity=".8"/>${lemonWedge(36,40.6)}${herbs([[29,42.6,20],[44,32.4,-30],[24,33.6,10]])}`);
   I['peixe-ensopado'] = pot('#B8432F','#86281C','#E07B3A', `${[[21,26.6],[33,25.4],[40,28.4],[27,29]].map(([x,y],i)=>`<path d="M${x-3.6} ${y}c0-1.8 1.6-2.8 3.6-2.8s3.6 1 3.6 2.8-1.6 2.6-3.6 2.6-3.6-.8-3.6-2.6Z" fill="#F7F1E6"/><path d="M${x-2} ${y-.8}c.6 1 .6 2 0 3M${x+.6} ${y-1}c.6 1 .6 2.2 0 3.2" stroke="#E6DCCB" stroke-width=".6" fill="none"/>`).join('')}${[[16,28.6,'#F5C842',20],[45,26.4,'#5E9E3A',-30],[36,29.8,'#D9412B',10],[29,24.6,'#5E9E3A',40]].map(([x,y,c,a])=>`<rect x="${x-3}" y="${y-.8}" width="6" height="1.6" rx=".8" transform="rotate(${a} ${x} ${y})" fill="${c}"/>`).join('')}${herbs([[24,25.6,10],[37,27,-20],[44,29.4,30]])}`) + steam(32, 12);
   I['tilapia-parmesao'] = `${plate()}${[[22,39.4,-14],[41.4,39.6,12]].map(([x,y,a])=>`<g transform="rotate(${a} ${x} ${y})"><path d="M${x-9} ${y+1}c0-3.6 4-6 9-6s9 2.4 9 5.6-4 5-9 5-9-1.4-9-4.6Z" fill="#F1E6D2"/><path d="M${x-8} ${y}c0-3 3.6-4.8 8-4.8s8 1.8 8 4.6c0 2.6-3.6 3.8-8 3.8s-8-1.2-8-3.6Z" fill="#E9BF5C"/>${dots([[x-4.6,y-1],[x-1.6,y-2.4],[x+2,y-1.6],[x+5,y-.4],[x-2.6,y+1],[x+1.4,y+.8],[x+4,y+1.4]],'#C99436',.75)}${dots([[x-3,y-.2],[x+.6,y-1],[x+3.4,y+.4]],'#4E8B2F',.6)}</g>`).join('')}${lemonWedge(26,44.6)}`;
@@ -2537,6 +2620,19 @@ const ILL = (()=>{
   I['quiche-alho-poro'] = cake({bands:[[3,'#D9A45C','#E3B26A'],[9,'#F2DA8E','#F7E4A4'],[3,'#C98A4E','#D9A45C']], top:'#F0D48A', extra: dots([[22,25],[29,23.6],[36,24],[43,26.4],[27,28],[35,28.6]],'#E0A84A',1) + [[24,24.6],[33,26.2],[40,24.4],[29,27.2]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="1.8" ry="1.1" fill="none" stroke="#7FB04A" stroke-width=".8"/>`).join('')});
   I['pastinha-ricota'] = `${plate()}<ellipse cx="26" cy="40.6" rx="9" ry="5" fill="#E6E0D4"/><ellipse cx="26" cy="39.6" rx="7.6" ry="3.8" fill="#FBF8F1"/><path d="M21 39.4c2.6-1.6 6-1.8 9-.4" stroke="#E6E0D4" stroke-width="1" fill="none"/>${herbs([[24,39,20],[28,40.4,-30],[26.4,38.2,40]])}${dots([[23,40.4],[29,38.6]],'#F1E2B8',.6)}${[[41,34,-60,'#EF7D24','#F7A65A'],[44,36,-50,'#EF7D24','#F7A65A'],[47,38,-40,'#7FB04A','#E4F0C8'],[38,37,-70,'#7FB04A','#E4F0C8'],[43,41,-30,'#D9412B','#EF6A52']].map(([x,y,a,c,c2])=>`<g transform="rotate(${a} ${x} ${y})"><rect x="${x-7}" y="${y-1.4}" width="14" height="2.8" rx="1.4" fill="${c}"/><rect x="${x-7}" y="${y-1.4}" width="14" height="1" rx=".5" fill="${c2}"/></g>`).join('')}`;
   I['pessego-assado'] = `${sh(56,20)}<ellipse cx="32" cy="43" rx="22" ry="9.6" fill="#D2CABC"/><ellipse cx="32" cy="40.6" rx="22" ry="9.6" fill="#F1EDE5"/><ellipse cx="32" cy="40.2" rx="18.6" ry="7.4" fill="#E9A85A"/>${peachHalf(22,38.6)}${peachHalf(36,37)}${peachHalf(29,43.4)}${peachHalf(43,42.4,.95)}<ellipse cx="46" cy="35.4" rx="4.2" ry="2.2" fill="#FBF8F1"/>${dots([[20,42],[33,41],[40,39]],'#A8582E',.5)}`;
+  /* ---------- Ovos: lanches ---------- */
+  const devil = (x, y, a=0) => `<g transform="translate(${x} ${y}) rotate(${a})"><ellipse cx="0" cy=".8" rx="6.6" ry="4" fill="#E6DFD2"/><ellipse cx="0" cy="0" rx="6.6" ry="4" fill="#FFFFFF"/><path d="M-3.6 .4c0-2.4 1.6-3.9 3.6-3.9s3.6 1.5 3.6 3.9c0 .9-1.6 1.3-3.6 1.3s-3.6-.4-3.6-1.3Z" fill="#F7C948"/><path d="M-2.2 -.6c1.2-1 3.2-1 4.4 0M-1.2 -2.2c.8-.5 1.8-.5 2.4 0" stroke="#E2A626" stroke-width=".7" stroke-linecap="round" fill="none"/>${dots([[-1.4,.2],[1.2,-.8],[.4,.9]],'#C8402A',.42)}</g>`;
+  I['ovos-recheados'] = `${plate()}${devil(21,39.6,-10)}${devil(33.4,36.8,4)}${devil(44.6,40,12)}${devil(27,45.4,6)}${devil(39.6,45.6,-6)}${herbs([[31,41.6,20],[16,43,-30],[49,44.6,10]])}`;
+  I['tortilla-espanhola'] = `${plate()}<ellipse cx="27" cy="41.6" rx="17" ry="7" fill="#B9782A"/><path d="M10 38.4v3.2a17 7 0 0 0 34 0v-3.2Z" fill="#D69A3A"/><ellipse cx="27" cy="38.4" rx="17" ry="7" fill="#EDBE55"/>${dots([[19,37],[25,35],[33,37.6],[29,41],[21,40.6],[36,40]],'#D79B36',1.1)}${dots([[23,38.6],[31,35.6],[35,38.8]],'#F5D27A',.8)}<path d="M45 38.6l12.6 1.8v4.4L45 43Z" fill="#F6E0A0"/><path d="M57.6 40.4v4.4" stroke="#B9782A" stroke-width="1.2"/><path d="M45 38.6l11-5.6 1.6 7.4Z" fill="#EDBE55"/>${dots([[47.6,40.8],[51,41.6],[54.4,42.2],[49.4,42.8],[55.6,43.6]],'#FBF0C8',.6)}${dots([[52,37],[54.6,35.6]],'#D79B36',.6)}`;
+  const sand = (x, y, s=1) => `<g transform="translate(${x} ${y}) scale(${s})"><rect x="0" y="10" width="22" height="5" rx="1.8" fill="#B8742E"/><rect x=".9" y="10.3" width="20.2" height="3.8" rx="1.3" fill="#EBCB8E"/><path d="M-1 10.6c1.6-1.9 2.9-1.9 4.4 0s2.9-1.9 4.4 0 2.9-1.9 4.4 0 2.9-1.9 4.4 0 2.9-1.9 4.4 0 2.4-1.6 3.4-.4v1.2h-24Z" fill="#6FA53A"/><rect x=".2" y="4.2" width="21.6" height="6" rx="2.6" fill="#F8EBB4"/>${dots([[3,6.4],[8,7.6],[12.6,6],[17.4,7.4],[5.6,8.6],[15,8.8]],'#F2BE2E',.85)}${dots([[10,8.4],[19.6,6]],'#FFFFFF',.8)}${dots([[6.6,6],[14.6,7.2],[19,8.6]],'#4E8B2F',.4)}<path d="M0 4.6V2.2A2.2 2.2 0 0 1 2.2 0h17.6A2.2 2.2 0 0 1 22 2.2v2.4Z" fill="#B8742E"/><rect x=".9" y=".9" width="20.2" height="3.4" rx="1.1" fill="#EBCB8E"/>${dots([[4,2.4],[10,2],[16,2.8]],'#D9AE6A',.5)}</g>`;
+  I['sanduiche-ovo'] = `${plate()}${sand(10.6,28.6,1)}${sand(30,32.6,1.04)}`;
+  I['ovo-no-pao'] = `${plate()}<g transform="rotate(-8 28 39)"><rect x="14" y="27" width="28" height="24" rx="5" fill="#B8742E"/><rect x="16" y="29" width="24" height="20" rx="3.6" fill="#E3B66E"/><ellipse cx="28" cy="39" rx="8.4" ry="7.4" fill="#FFFFFF"/><circle cx="28.4" cy="38.6" r="3.6" fill="#F5B92E"/><circle cx="27.4" cy="37.6" r="1.1" fill="#FAD36A"/><path d="M16.6 31.6c2.6 1 4 3 6 2.6M33 46.6c2-.6 4.6.2 6.6-1.2M35.6 30.4c1 2 3 2.6 4.4 2" stroke="#F6D25E" stroke-width="2.4" stroke-linecap="round" fill="none"/>${dots([[19,44],[37,35]],'#D29A50',.6)}</g><circle cx="50" cy="44" r="5.6" fill="#B8742E"/><circle cx="50" cy="43.6" r="4.4" fill="#E3B66E"/>${dots([[49,42.6],[51.4,44.4]],'#D29A50',.5)}${dots([[24,38.6],[31.6,41.2]],'#3B3A36',.35)}`;
+  const cloud = (x, y, s=1) => `<g transform="translate(${x} ${y}) scale(${s})"><path d="M-9 3c-2.6-.4-3.4-4-1-5.4-.6-3.4 3-5.6 5.6-4 1.4-2.6 5.4-3 7.2-.6 2.6-1.2 5.6 1 5 3.8 2.4 1 2.2 4.6-.2 5.6.2 2.6-2.4 4-4.6 3.2-1.6 2-5.4 2.2-7 .4-2.6.8-5-1-5-3Z" fill="#E9DCC0"/><path d="M-9 1.8c-2.6-.4-3.4-4-1-5.4-.6-3.4 3-5.6 5.6-4 1.4-2.6 5.4-3 7.2-.6 2.6-1.2 5.6 1 5 3.8 2.4 1 2.2 4.6-.2 5.6.2 2.6-2.4 4-4.6 3.2-1.6 2-5.4 2.2-7 .4-2.6.8-5-1-5-3Z" fill="#FFFCF4"/>${dots([[-8.6,-3.6],[-3.4,-6.6],[3,-6],[7.4,-1.6],[-6,3.4]],'#EBC77E',.9)}<circle cx="0" cy="-1" r="3.6" fill="#F3A21E"/><circle cx="-.9" cy="-1.9" r="1.1" fill="#F9C866"/></g>`;
+  I['ovos-nuvem'] = `${plate()}${cloud(22,40,1.05)}${cloud(42,40.6,1.05)}${herbs([[31,45,20],[16,45.4,-20],[50,46,15]])}${dots([[30,36],[34,44]],'#3B3A36',.35)}`;
+  const avoEgg = (x, y, a=0) => `<g transform="translate(${x} ${y}) rotate(${a})"><path d="M-11 0c0-4.4 4-7 9.4-7 4 0 8 2 11 4.4 1.4 1.2 1.4 4 0 5.2-3 2.4-7 4.4-11 4.4C-7 7-11 4.4-11 0Z" fill="#35561E"/><path d="M-11 0c0-4.4 4-7 9.4-7 4 0 8 2 11 4.4 1.4 1.2 1.4 4 0 5.2-3 2.4-7 4.4-11 4.4C-7 7-11 4.4-11 0Z" transform="scale(.87)" fill="#C7D96E"/><path d="M-11 0c0-4.4 4-7 9.4-7 4 0 8 2 11 4.4 1.4 1.2 1.4 4 0 5.2-3 2.4-7 4.4-11 4.4C-7 7-11 4.4-11 0Z" transform="translate(-1 0) scale(.66)" fill="#E2EBA6"/><ellipse cx="-2.2" cy="0" rx="5.4" ry="3.7" fill="#FFFFFF"/><circle cx="-2.2" cy="-.2" r="2.3" fill="#F5B92E"/><circle cx="-2.9" cy="-.9" r=".75" fill="#FAD36A"/></g>`;
+  I['abacate-ovo-forno'] = `${plate()}${avoEgg(22,40.4,-8)}${avoEgg(42.6,41.4,190)}${dots([[30,36.4],[33,45],[14,44]],'#C8402A',.45)}${herbs([[31,40,20],[20,46,-20],[49,36.4,10]])}`;
+  I['ovos-rancheiros'] = `${plate()}<ellipse cx="32" cy="41" rx="21" ry="8.6" fill="#EBD08C"/>${dots([[15,40],[22,46],[45,46],[50,39],[30,48.4],[40,33.6]],'#C99A4A',.8)}<path d="M15.4 41.4c-.6-4.4 7-7.6 16.6-7.6s17 3 16.6 7.2c-.4 4-8 6.4-16.6 6.4s-16-2-16.6-6Z" fill="#C8402A"/>${dots([[19,42],[26,45],[38,45.6],[45,41],[30,37],[42,37.6]],'#E25F3A',.9)}${poached(25.6,40.4,1.15)}${poached(39.4,40.6,1.15)}<rect x="30.6" y="44.2" width="3" height="2.4" rx=".5" fill="#FAF6EC"/><rect x="18" y="37.4" width="2.6" height="2.2" rx=".5" fill="#FAF6EC"/><rect x="45" y="44" width="2.6" height="2.2" rx=".5" fill="#FAF6EC"/>${avoSlice(47.4,37.2,20,.9)}${herbs([[33,36.6,20],[21,45,-20],[46,40.8,10],[29,43,30]])}`;
+  I['cuscuz-ovo-coalho'] = `${plate()}<ellipse cx="22" cy="44" rx="11.6" ry="3.4" fill="#D9A23A"/><path d="M10.4 44c0-8 5-13.4 11.6-13.4S33.6 36 33.6 44Z" fill="#F1BF47"/>${dots([[15,40],[19,35],[24,33.4],[28,38],[22,40.6],[17,43],[27,42.6]],'#E0A22E',.8)}${dots([[18,38],[25,37],[21,43.4],[29,41]],'#FADA80',.65)}${[[37,45.4,-14],[42,47.4,-10]].map(([x,y,a])=>`<g transform="rotate(${a} ${x} ${y})"><rect x="${x-8}" y="${y-2.6}" width="16" height="5.2" rx="1.4" fill="#F4E4C0"/><path d="M${x-5} ${y-2.6}v5.2M${x-1} ${y-2.6}v5.2M${x+3} ${y-2.6}v5.2" stroke="#C9883A" stroke-width="1.3"/></g>`).join('')}${poached(44,37.4,1.2)}${herbs([[24,31.6,20],[34,40,-10]])}`;
   /* ---------- Bolos (cobertura muda com a escolha) ---------- */
   const TOPC = {casquinha:['#4A2C1E','#3B2216'], brigadeiro:['#3E2418','#2E1A10'], ganache:['#2E1A12','#1F110A'], 'calda-laranja':['#F7B34A','#E89A2E'], 'glace-limao':['#F8F6EE','#E6E2D6'], 'calda-coco':['#F6F1E4','#E4DCC8'], 'acucar-canela':['#C78A4E','#A86B3C'], goiabada:['#9E2A2B','#7E1E20']};
   const CK = {
@@ -3078,7 +3174,7 @@ function swatch(c, cls=''){
   const t = c.scale==='forma' ? SR(c).top : null;
   return `<span class="swatch ${cls}" style="background:${tint(toneOf(c), .22)}" aria-hidden="true">${illus(c, t)}</span>`;
 }
-const CAT_ICON = {cafe:'pao-de-queijo', carne:'bife-chimichurri', frango:'frango-assado', peixe:'peixe-assado', massas:'bolonhesa', forno:'escondidinho', sopas:'canja', lanches:'hamburguer', leves:'salada-completa', bolos:'cenoura', doces:'pudim'};
+const CAT_ICON = {ovos:'ovos-recheados', cafe:'pao-de-queijo', carne:'bife-chimichurri', frango:'frango-assado', peixe:'peixe-assado', massas:'bolonhesa', forno:'escondidinho', sopas:'canja', lanches:'hamburguer', leves:'salada-completa', bolos:'cenoura', doces:'pudim'};
 
 /* ---------- Folha (bottom sheet) ---------- */
 let SHEET = null;
