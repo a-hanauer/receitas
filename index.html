@@ -699,14 +699,17 @@ html,body{max-width:100%;overflow-x:hidden}
 .td-wk b{font-size:17px;font-weight:650}
 .td-wk .dt{display:flex;gap:2px;height:6px}
 .td-wk .dt i{width:6px;height:6px;border-radius:3px}
-.td-q{display:flex;gap:10px;margin-top:22px}
-.td-q a{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:inherit;text-decoration:none}
+.td-q{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:22px}
+.td-q a{display:flex;flex-direction:column;gap:12px;padding:12px 12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:inherit;text-decoration:none}
 .td-q a:active{background:var(--press)}
+.td-q .hd{display:flex;align-items:center;gap:10px}
+.td-q .hd b{flex:1;min-width:0;font-size:15px;font-weight:650}
+.td-q .hd>svg{flex:none;color:var(--muted)}
+.td-q .v{display:block;margin-top:auto;color:var(--muted);font-size:14px;line-height:1.25}
+.td-q .v em{display:block;margin-bottom:1px;color:var(--ink);font-size:26px;font-style:normal;font-weight:700;letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
+.td-q .v.none{min-height:47px;display:flex;align-items:flex-end}
 .td-q .ic,.td-empty .ic{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:11px;background:var(--acc-soft);color:var(--acc)}
 .td-q .ic svg,.td-empty .ic svg{width:20px;height:20px}
-.td-q b{display:block;font-size:15px;font-weight:650}
-.td-q small{display:block;overflow:hidden;color:var(--muted);font-size:13px;white-space:nowrap;text-overflow:ellipsis}
-.td-q a>span:last-child{min-width:0}
 .td-strip{display:flex;gap:12px;margin:0 -20px;padding:0 20px 4px;overflow-x:auto;scrollbar-width:none}
 .td-strip::-webkit-scrollbar{display:none}
 .td-strip a{flex:none;width:140px;color:inherit;text-decoration:none}
@@ -3368,8 +3371,9 @@ function renderToday(){
   const weekH = hasWeek ? `<div class="td-k"><h2>Semana</h2><a href="#/calendario">Calendário</a></div>
     <div class="td-wk">${week.map((d,i)=>{ const ps = plansOn(d);
       return `<button data-wk="${d}" class="${i===0 ? 'on' : ''}" aria-label="${fmtD(d,{weekday:'long', day:'numeric'})}${ps.length ? `, ${ps.length} ${ps.length===1 ? 'receita' : 'receitas'}` : ''}"><small>${i===0 ? 'Hoje' : fmtD(d,{weekday:'short'}).slice(0,3)}</small><b>${+d.slice(8)}</b><span class="dt">${ps.slice(0,3).map(p=>`<i style="background:${toneOf(REC(p.rid))}"></i>`).join('')}</span></button>` }).join('')}</div>` : '';
-  const quickH = `<div class="td-q"><a href="#/compras"><span class="ic">${ICON.cart}</span><span><b>Compras</b><small>${nBuy ? `${nBuy} ${nBuy===1 ? 'item' : 'itens'}` : 'Lista vazia'}</small></span></a>
-    <a href="#/despensa"><span class="ic">${ICON.pantry}</span><span><b>Despensa</b><small>${hasPantry() ? `${nCan} dá pra fazer` : 'Vazia'}</small></span></a></div>`;
+  const nHome = Object.keys(DB.pantry).length;
+  const qcard = (href, icon, title, n, label, none) => `<a href="${href}"><span class="hd"><span class="ic">${icon}</span><b>${title}</b>${ICON.chev}</span>${n ? `<span class="v"><em>${n}</em>${label}</span>` : `<span class="v none">${none}</span>`}</a>`;
+  const quickH = `<div class="td-q">${qcard('#/compras', ICON.cart, 'Compras', nBuy, nBuy===1 ? 'item para comprar' : 'itens para comprar', 'Nada para comprar')}${qcard('#/despensa', ICON.pantry, 'Despensa', nHome, nHome===1 ? 'item em casa' : 'itens em casa', 'Nada marcado')}</div>`;
   const sugH = `<div class="td-k"><h2>Com o que tenho</h2>${sug.length ? '<button data-all>Ver todas</button>' : ''}</div>
     ${sug.length ? `<div class="td-strip">${sug.map(c=>`<a href="#/r/${c.id}"><span class="sw" style="background:${bg(c)}" aria-hidden="true">${art(c)}</span><b>${esc(c.name)}</b><small>${tm(c)}${kc(c)}</small></a>`).join('')}</div>`
       : `<a class="td-empty" href="#/despensa"><span class="ic">${ICON.pantry}</span><span><b>${hasPantry() ? 'Nada completo com o que tem' : 'O que tem em casa?'}</b><small>${hasPantry() ? 'Marque mais itens na Despensa para ver sugestões.' : 'Marque na Despensa e veja o que dá para fazer.'}</small></span>${ICON.chev}</a>`}`;
