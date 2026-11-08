@@ -618,11 +618,12 @@ body.cookbar-on .spacer{height:220px}
 .cbox svg{width:12px;height:12px;opacity:0}
 .opt[aria-pressed=true] .cbox{border-color:var(--acc);background:var(--acc)}
 .opt[aria-pressed=true] .cbox svg{opacity:1}
-.now-row{display:flex;align-items:center;gap:12px;margin-top:12px;padding:10px 12px 10px 16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
-.now-row .t{flex:1;min-width:0}
-.now-row b{display:block;font-size:16px;font-weight:650}
-.now-row small{display:block;margin-top:1px;color:var(--muted);font-size:13px}
-.now-row.on{border-color:color-mix(in srgb,var(--acc) 35%,var(--line))}
+.fchip.now{gap:5px;padding:0 11px 0 9px;border:1.5px solid var(--acc);color:var(--acc);font-weight:650}
+.fchip.now svg,.fchip.now[aria-pressed=true] svg{display:block;width:15px;height:15px}
+.fchip.now .n{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--acc-soft);font-size:12px;font-weight:700;line-height:18px;text-align:center;font-variant-numeric:tabular-nums}
+.fchip.now[aria-pressed=true]{padding-left:9px;border-color:var(--acc);background:var(--acc);color:var(--on-acc)}
+.fchip.now[aria-pressed=true] .n{background:color-mix(in srgb,var(--on-acc) 22%,transparent)}
+.fdiv{flex:none;width:1px;height:20px;margin:0 3px;background:var(--line2)}
 .rmeal{margin-top:10px}
 .fchips[hidden]{display:none}
 .sort-btn{position:relative}
@@ -631,7 +632,6 @@ body.cookbar-on .spacer{height:220px}
 .pk-fav{display:inline-block;width:13px;height:13px;margin-left:6px;color:#D9416A;vertical-align:-1px}
 .pk-fav svg{display:block;width:100%;height:100%}
 .pick .sels-row{margin:3px 0 1px}
-.sheet .now-row{padding:8px 10px 8px 14px}
 .acts{grid-column:2;margin:4px 0 0;padding-left:20px;color:var(--ink2);font-size:16px}
 .acts li{margin:3px 0;padding-left:2px}
 .acts li::marker{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
@@ -3148,6 +3148,7 @@ const ICON = {
   plus:'<svg viewBox="0 0 16 16" fill="none"><path d="M8 2.5v11M2.5 8h11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   trash:'<svg viewBox="0 0 16 16" fill="none"><path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   star:'<svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9L12 2.8Z" fill="currentColor"/></svg>',
+  pantry:'<svg viewBox="0 0 24 24" fill="none"><rect x="6.5" y="3" width="11" height="3.5" rx="1.2" stroke="currentColor" stroke-width="2"/><path d="M7.5 6.5C5.6 7.6 5 9 5 11v7.2A2.8 2.8 0 0 0 7.8 21h8.4a2.8 2.8 0 0 0 2.8-2.8V11c0-2-.6-3.4-2.5-4.5" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M5 12.5h14M5 17h14" stroke="currentColor" stroke-width="2"/></svg>',
   search:'<svg viewBox="0 0 18 18" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.8"/><path d="m12 12 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
 };
 function esc(s){ return String(s ?? '').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m]) }
@@ -3286,7 +3287,7 @@ function renderToday(){
     ${late.length ? `<h3 class="day-h">Ficou para trás</h3><ul class="cake-list">${late.map(planRow).join('')}</ul>` : ''}
     <a class="link-card" href="#/calendario"><span class="txt"><b>Próximos dias</b><small>${next.length ? `${next.length} ${next.length===1 ? 'refeição planejada' : 'refeições planejadas'}` : 'Nada planejado ainda'}</small></span>${ICON.chev}</a>
     <a class="link-card" style="margin-top:10px" href="#/compras"><span class="txt"><b>Lista de compras</b><small>${nBuy ? `${nBuy} ${nBuy===1 ? 'item' : 'itens'} para comprar` : 'Nada para comprar'}</small></span>${ICON.chev}</a>
-    ${sug.length ? `<h2 class="sec-h">Dá para fazer com o que tem</h2>
+    ${sug.length ? `<h2 class="sec-h">Com o que tenho</h2>
       <ul class="cake-list">${sug.map(c=>`<li><a class="cake-row" href="#/r/${c.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}</b><span>${minTxt(totalMin(c, calc(c), topOf(c)))}, ${esc(CATN(c.cat).toLowerCase())}</span></span>${ICON.chev}</a></li>`).join('')}</ul>` : ''}
   </div>`;
   $('#app').onclick = e=>{
@@ -3361,6 +3362,13 @@ function renderCalendar(){
   };
 }
 
+/* Filtro principal: receitas que dá para fazer com o que tem na despensa */
+const hasPantry = () => Object.keys(DB.pantry).length > 0;
+const canMake = c => { const s = status(c); return s.ok || s.swapOnly };
+const nowChip = (on, attr) => `<button class="fchip now" ${attr}="now" aria-pressed="${on}">${ICON.pantry}Com o que tenho${hasPantry() ? '<span class="n"></span>' : ''}</button><span class="fdiv" aria-hidden="true"></span>`;
+const setNowN = (root, base) => { const n = root.querySelector('.fchip.now .n'); if(n) n.textContent = base.filter(canMake).length };
+const pantryHint = () => toast('Marque o que tem na Despensa', {label:'Abrir', fn:()=>{ closeSheet(true); location.hash = '#/despensa' }});
+
 /* Adicionar receita num dia */
 const AQ = {now:false, fav:false, t:{}};
 function openAddSheet(day, meal){
@@ -3369,17 +3377,16 @@ function openAddSheet(day, meal){
   const row = c => { const s = status(c), sl = selos(c);
     return `<button class="pick" data-pick="${c.id}">${swatch(c,'sm')}<span class="txt"><b>${esc(c.name)}${isFav(c.id) ? `<i class="pk-fav">${ICON.heartOn}</i>` : ''}</b>${sl.length ? `<span class="sels-row">${sl.map(([k,l])=>`<i class="sel ${k}">${l}</i>`).join('')}</span>` : ''}<small class="${s.ok ? 'okt' : s.swapOnly ? '' : 'miss'}">${esc(statusTxt(s))}</small></span>${ICON.plus}</button>` };
   const controls = el => {
-    el.querySelector('#anow').innerHTML = `<span class="t"><b>Dá para fazer agora</b><small>Só com o que tem na despensa</small></span><button class="switch" role="switch" data-af="now" aria-checked="${AQ.now}" aria-label="Dá para fazer agora"></button>`;
-    el.querySelector('#anow').classList.toggle('on', AQ.now);
-    el.querySelector('#aflt').innerHTML = (DB.favs.length || AQ.fav ? `<button class="fchip fv" data-af="fav" aria-pressed="${AQ.fav}">${AQ.fav ? ICON.heartOn : ICON.heart}Favoritas</button>` : '')
+    el.querySelector('#aflt').innerHTML = nowChip(AQ.now, 'data-af') + (DB.favs.length || AQ.fav ? `<button class="fchip fv" data-af="fav" aria-pressed="${AQ.fav}">${AQ.fav ? ICON.heartOn : ICON.heart}Favoritas</button>` : '')
       + MORE_F.map(k=>`<button class="fchip" data-at="${k}" aria-pressed="${!!AQ.t[k]}">${ICON.ok}${TAGDEF.find(x=>x[0]===k)[2]}</button>`).join('');
   };
   const list = el => {
     const q = plain(st.q.trim());
     let all = q ? ALL().filter(c=>plain(c.name).includes(q) || plain(CATN(c.cat)).includes(q) || c.ing.some(i=>plain(i.n).includes(q))) : ALL().filter(c=>isKind(c, st.kind));
     if(AQ.fav) all = favs().filter(c=>all.includes(c));
-    if(AQ.now) all = all.filter(c=>{ const s = status(c); return s.ok || s.swapOnly });
     MORE_F.filter(k=>AQ.t[k]).forEach(k=>{ all = all.filter(c=>hasTag(c,k)) });
+    setNowN(el, all);
+    if(AQ.now) all = all.filter(canMake);
     all = RQ.sort==='pad' ? [...all].sort((a,b)=>(status(b).ok?1:0) - (status(a).ok?1:0)) : sortRecipes(all);
     el.querySelector('#plist2').innerHTML = `<div class="res-n"><span>${all.length} ${all.length===1 ? 'receita' : 'receitas'}</span><label class="sort-btn">${ICON.sort}<span>${SORTS.find(x=>x[0]===RQ.sort)[1]}</span><select id="asort" aria-label="Ordenar por">${SORTS.map(([k,l])=>`<option value="${k}" ${RQ.sort===k ? 'selected' : ''}>${l}</option>`).join('')}</select></label>${anyF() ? '<button class="link" data-aclear>Limpar</button>' : ''}</div>`
       + `<div class="picks">${all.map(row).join('') || `<p class="empty">${AQ.now && !Object.keys(DB.pantry).length ? 'Marque o que tem em casa na Despensa para ver o que dá para fazer.' : 'Nenhuma receita com esses filtros.'}</p>`}</div>`;
@@ -3389,7 +3396,6 @@ function openAddSheet(day, meal){
     <div class="sh-body">
       <div class="seg" id="ameal"><button data-kind="all" aria-pressed="true">Tudo</button>${KINDS.map(([k,l])=>`<button data-kind="${k}" aria-pressed="false">${l}</button>`).join('')}</div>
       <label class="search mt">${ICON.search}<input id="aq" type="search" placeholder="Buscar receita ou ingrediente" autocomplete="off"></label>
-      <div class="now-row" id="anow"></div>
       <div class="fchips" id="aflt"></div>
       <div id="plist2"></div></div>`, el=>{
     controls(el); list(el);
@@ -3399,6 +3405,7 @@ function openAddSheet(day, meal){
       if(m){ st.kind = m.dataset.kind; el.querySelectorAll('#ameal button').forEach(x=>x.setAttribute('aria-pressed', x.dataset.kind===st.kind)); list(el); return }
       const f = e.target.closest('[data-af],[data-at],[data-aclear]');
       if(f){
+        if(f.dataset.af==='now' && !AQ.now && !hasPantry()){ pantryHint(); return }
         if(f.dataset.af) AQ[f.dataset.af] = !AQ[f.dataset.af];
         else if(f.dataset.at) AQ.t[f.dataset.at] = !AQ.t[f.dataset.at];
         else { AQ.now = AQ.fav = false; AQ.t = {} }
@@ -3551,7 +3558,6 @@ function renderRecipes(){
   $('#app').innerHTML = `<div class="wrap">
     <header class="home-head"><div class="hh-row"><h1>Receitas</h1><a class="icon-btn" href="#/nova" aria-label="Nova receita">${ICON.plus}</a></div></header>
     <label class="search">${ICON.search}<input id="rq" type="search" placeholder="Buscar receita ou ingrediente" value="${esc(RQ.q)}" autocomplete="off" enterkeyhint="search"></label>
-    <div class="now-row" id="nowrow"></div>
     <div class="seg rmeal" id="rmeal" role="group" aria-label="Tipo"></div>
     <div class="fchips" id="rflt" role="group" aria-label="Filtros"></div>
     <div id="res"></div>
@@ -3560,15 +3566,18 @@ function renderRecipes(){
   const anyF = () => RQ.fav || RQ.now || nMore() > 0;
   const chips = () => {
     $('#rmeal').innerHTML = `<button data-meal="all" aria-pressed="${RQ.meal==='all'}">Tudo</button>${KINDS.map(([k,l])=>`<button data-meal="${k}" aria-pressed="${RQ.meal===k}">${l}</button>`).join('')}`;
-    $('#nowrow').innerHTML = `<span class="t"><b>Dá para fazer agora</b><small>${Object.keys(DB.pantry).length ? 'Só receitas com o que tem na despensa' : 'Marque o que tem em casa na Despensa'}</small></span><button class="switch" role="switch" data-f="now" aria-checked="${RQ.now}" aria-label="Dá para fazer agora"></button>`;
-    $('#nowrow').classList.toggle('on', RQ.now);
-    const fchips = (DB.favs.length || RQ.fav ? `<button class="fchip fv" data-f="fav" aria-pressed="${RQ.fav}">${RQ.fav ? ICON.heartOn : ICON.heart}Favoritas</button>` : '')
+    const fchips = nowChip(RQ.now, 'data-f') + (DB.favs.length || RQ.fav ? `<button class="fchip fv" data-f="fav" aria-pressed="${RQ.fav}">${RQ.fav ? ICON.heartOn : ICON.heart}Favoritas</button>` : '')
       + MORE_F.map(k=>`<button class="fchip" data-t="${k}" aria-pressed="${!!RQ.t[k]}">${ICON.ok}${TAGDEF.find(x=>x[0]===k)[2]}</button>`).join('');
     $('#rflt').innerHTML = fchips; $('#rflt').hidden = !fchips;
   };
   const results = () => {
     const q = plain(RQ.q.trim());
     const browse = !q && RQ.meal==='all' && !anyF();
+    let list = all.filter(c=>isKind(c, RQ.meal));
+    if(q) list = list.filter(c=>plain(c.name).includes(q) || plain(c.desc).includes(q) || plain(CATN(c.cat)).includes(q) || c.ing.some(i=>plain(i.n).includes(q)));
+    if(RQ.fav) list = favs().filter(c=>list.includes(c));
+    MORE_F.filter(k=>RQ.t[k]).forEach(k=>{ list = list.filter(c=>hasTag(c,k)) });
+    setNowN($('#rflt'), list);
     if(browse){
       const mine = customs();
       $('#res').innerHTML = `<div class="cats">${CATS.map(k=>{ const n = all.filter(c=>c.cat===k.id).length;
@@ -3578,11 +3587,7 @@ function renderRecipes(){
         <a class="btn secondary block new-btn" href="#/nova">${ICON.plus}Nova receita</a>`;
       return;
     }
-    let list = all.filter(c=>isKind(c, RQ.meal));
-    if(q) list = list.filter(c=>plain(c.name).includes(q) || plain(c.desc).includes(q) || plain(CATN(c.cat)).includes(q) || c.ing.some(i=>plain(i.n).includes(q)));
-    if(RQ.fav) list = favs().filter(c=>list.includes(c));
-    if(RQ.now) list = list.filter(c=>{ const s = status(c); return s.ok || s.swapOnly });
-    MORE_F.filter(k=>RQ.t[k]).forEach(k=>{ list = list.filter(c=>hasTag(c,k)) });
+    if(RQ.now) list = list.filter(canMake);
     list = sortRecipes(list);
     $('#res').innerHTML = list.length ? `<p class="res-n"><span>${list.length} ${list.length===1 ? 'receita' : 'receitas'}</span>${sortBtn()}${anyF() || RQ.meal!=='all' ? '<button class="link" data-clear data-all>Limpar</button>' : ''}</p><ul class="cake-list">${list.map(c=>recRow(c)).join('')}</ul>`
       : `<div class="empty-card"><p>${RQ.now && !Object.keys(DB.pantry).length ? 'Marque o que você tem na Despensa para ver o que dá para fazer.' : RQ.now ? 'Nenhuma receita dá para fazer só com o que está na despensa, com esses filtros.' : 'Nenhuma receita com esses filtros.'}</p>${anyF() || RQ.meal!=='all' ? '<button class="btn secondary" data-clear>Limpar filtros</button>' : ''}</div>`;
@@ -3592,13 +3597,14 @@ function renderRecipes(){
   const onF = e=>{
     const b = e.target.closest('button'); if(!b) return;
     if(b.dataset.meal) RQ.meal = b.dataset.meal;
+    else if(b.dataset.f==='now' && !RQ.now && !hasPantry()){ pantryHint(); return }
     else if(b.dataset.f) RQ[b.dataset.f] = !RQ[b.dataset.f];
     else if(b.dataset.t) RQ.t[b.dataset.t] = !RQ.t[b.dataset.t];
     else if(b.dataset.clear!=null){ RQ.now = RQ.fav = false; RQ.t = {}; RQ.meal = 'all' }
     else return;
     chips(); results();
   };
-  ['#nowrow','#rmeal','#rflt','#res'].forEach(sel=>$(sel).onclick = onF);
+  ['#rmeal','#rflt','#res'].forEach(sel=>$(sel).onclick = onF);
 
 }
 function renderCategory(cat){
