@@ -3694,48 +3694,59 @@ document.addEventListener('click', e=>{
   e.preventDefault(); e.stopPropagation();
   const c = REC(b.dataset.favtog); if(c) askFav(c);
 }, true);
-function renderRecipes(){
-  document.title = 'Receitas';
-  const all = ALL();
+/* Filtros da aba Receitas: valem para a lista geral e para cada seção (estado em RQ) */
+const rqAny = () => RQ.fav || RQ.now || RQ.meal!=='all' || MORE_F.some(k=>RQ.t[k]);
+function rqApply(list, withNow=true){
+  list = list.filter(c=>isKind(c, RQ.meal));
+  if(RQ.fav) list = list.filter(c=>isFav(c.id));
+  MORE_F.filter(k=>RQ.t[k]).forEach(k=>{ list = list.filter(c=>hasTag(c,k)) });
+  return withNow && RQ.now ? list.filter(canMake) : list;
+}
+const nRec = n => `${n} ${n===1 ? 'receita' : 'receitas'}`;
+function renderRecipes(cat){
+  const all = ALL(), sec = cat==='minhas' ? {id:'minhas', n:'Minhas receitas'} : cat==='todas' ? {id:'todas', n:'Todas as receitas'} : cat ? CATS.find(k=>k.id===cat) : null;
+  if(cat && !sec && cat!=='favoritas') return (location.hash = '#/receitas'), undefined;
+  if(cat==='favoritas'){ RQ.fav = true; history.replaceState(null, '', '#/receitas/todas'); return renderRecipes('todas') }
+  const inSec = !sec ? all : sec.id==='minhas' ? customs() : sec.id==='todas' ? all : all.filter(c=>c.cat===sec.id);
+  document.title = sec ? sec.n : 'Receitas';
   $('#app').innerHTML = `<div class="wrap">
-    <header class="home-head"><div class="hh-row"><h1>Receitas</h1><a class="icon-btn" href="#/nova" aria-label="Nova receita">${ICON.plus}</a></div></header>
-    <label class="search">${ICON.search}<input id="rq" type="search" placeholder="Buscar receita ou ingrediente" value="${esc(RQ.q)}" autocomplete="off" enterkeyhint="search"></label>
+    ${sec ? `<header class="sub-head"><a class="back" href="#/receitas">${ICON.back}Receitas</a><h1>${sec.n}</h1></header>`
+      : `<header class="home-head"><div class="hh-row"><h1>Receitas</h1><a class="icon-btn" href="#/nova" aria-label="Nova receita">${ICON.plus}</a></div></header>
+    <label class="search">${ICON.search}<input id="rq" type="search" placeholder="Buscar receita ou ingrediente" value="${esc(RQ.q)}" autocomplete="off" enterkeyhint="search"></label>`}
     <div class="seg rmeal" id="rmeal" role="group" aria-label="Tipo"></div>
     <div class="fchips" id="rflt" role="group" aria-label="Filtros"></div>
     <div id="res"></div>
   </div>`;
-  const nMore = () => MORE_F.filter(k=>RQ.t[k]).length;
-  const anyF = () => RQ.fav || RQ.now || nMore() > 0;
   const chips = () => {
     $('#rmeal').innerHTML = `<button data-meal="all" aria-pressed="${RQ.meal==='all'}">Tudo</button>${KINDS.map(([k,l])=>`<button data-meal="${k}" aria-pressed="${RQ.meal===k}">${l}</button>`).join('')}`;
-    const fchips = nowChip(RQ.now, 'data-f') + (DB.favs.length || RQ.fav ? `<button class="fchip fv" data-f="fav" aria-pressed="${RQ.fav}">${RQ.fav ? ICON.heartOn : ICON.heart}Favoritas</button>` : '')
+    $('#rflt').innerHTML = nowChip(RQ.now, 'data-f') + (DB.favs.length || RQ.fav ? `<button class="fchip fv" data-f="fav" aria-pressed="${RQ.fav}">${RQ.fav ? ICON.heartOn : ICON.heart}Favoritas</button>` : '')
       + MORE_F.map(k=>`<button class="fchip" data-t="${k}" aria-pressed="${!!RQ.t[k]}">${ICON.ok}${TAGDEF.find(x=>x[0]===k)[2]}</button>`).join('');
-    $('#rflt').innerHTML = fchips; $('#rflt').hidden = !fchips;
   };
+  const clearB = (cls='link') => rqAny() ? `<button class="${cls}" data-clear>${cls==='link' ? 'Limpar' : 'Limpar filtros'}</button>` : '';
+  const emptyTxt = () => RQ.now && !hasPantry() ? 'Marque o que você tem na Despensa para ver o que dá para fazer.'
+    : RQ.now ? 'Nenhuma receita dá para fazer só com o que está na despensa, com esses filtros.' : 'Nenhuma receita com esses filtros.';
+  const listH = list => list.length
+    ? `<p class="res-n"><span>${nRec(list.length)}</span>${sortBtn()}${clearB()}</p><ul class="cake-list">${sortRecipes(list).map(c=>recRow(c)).join('')}</ul>`
+    : `<div class="empty-card"><p>${sec && !inSec.length ? 'Nenhuma receita aqui ainda.' : emptyTxt()}</p>${clearB('btn secondary')}</div>`;
   const results = () => {
-    const q = plain(RQ.q.trim());
-    const browse = !q && RQ.meal==='all' && !anyF();
-    let list = all.filter(c=>isKind(c, RQ.meal));
-    if(q) list = list.filter(c=>plain(c.name).includes(q) || plain(c.desc).includes(q) || plain(CATN(c.cat)).includes(q) || c.ing.some(i=>plain(i.n).includes(q)));
-    if(RQ.fav) list = favs().filter(c=>list.includes(c));
-    MORE_F.filter(k=>RQ.t[k]).forEach(k=>{ list = list.filter(c=>hasTag(c,k)) });
-    setNowN($('#rflt'), list);
-    if(browse){
-      const mine = customs();
-      $('#res').innerHTML = `<div class="cats">${CATS.map(k=>{ const n = all.filter(c=>c.cat===k.id).length;
-          const ic = REC(CAT_ICON[k.id]);
-          return `<a class="catc" href="#/receitas/${k.id}" style="--tone:${k.tone}"><span class="ci">${ic ? illus(ic, ic.tops[0]) : ''}</span><b>${k.n}</b><small>${n} ${n===1 ? 'receita' : 'receitas'}</small></a>` }).join('')}
-          ${mine.length ? `<a class="catc" href="#/receitas/minhas" style="--tone:#C9B79C"><span class="ci"><svg viewBox="0 0 64 64">${ILL.GENERIC('#C9B79C')}</svg></span><b>Minhas receitas</b><small>${mine.length} ${mine.length===1 ? 'receita' : 'receitas'}</small></a>` : ''}</div>
-        <a class="btn secondary block new-btn" href="#/nova">${ICON.plus}Nova receita</a>`;
-      return;
-    }
-    if(RQ.now) list = list.filter(canMake);
-    list = sortRecipes(list);
-    $('#res').innerHTML = list.length ? `<p class="res-n"><span>${list.length} ${list.length===1 ? 'receita' : 'receitas'}</span>${sortBtn()}${anyF() || RQ.meal!=='all' ? '<button class="link" data-clear data-all>Limpar</button>' : ''}</p><ul class="cake-list">${list.map(c=>recRow(c)).join('')}</ul>`
-      : `<div class="empty-card"><p>${RQ.now && !Object.keys(DB.pantry).length ? 'Marque o que você tem na Despensa para ver o que dá para fazer.' : RQ.now ? 'Nenhuma receita dá para fazer só com o que está na despensa, com esses filtros.' : 'Nenhuma receita com esses filtros.'}</p>${anyF() || RQ.meal!=='all' ? '<button class="btn secondary" data-clear>Limpar filtros</button>' : ''}</div>`;
+    const q = !sec && plain((RQ.q || '').trim());
+    let base = inSec;
+    if(q) base = base.filter(c=>plain(c.name).includes(q) || plain(c.desc).includes(q) || plain(CATN(c.cat)).includes(q) || c.ing.some(i=>plain(i.n).includes(q)));
+    setNowN($('#rflt'), rqApply(base, false));
+    const list = rqApply(base);
+    if(sec || q){ $('#res').innerHTML = listH(list) + (sec && sec.id!=='todas' ? `<a class="btn secondary block new-btn" href="#/nova">${ICON.plus}Nova receita</a>` : ''); return }
+    // Seções: só as que têm receita com os filtros; o número mostra quantas sobram
+    const f = rqAny(), mine = customs();
+    const card = (href, tone, icon, name, pool) => { const n = rqApply(pool).length;
+      return f && !n ? '' : `<a class="catc" href="${href}" style="--tone:${tone}"><span class="ci">${icon}</span><b>${name}</b><small>${f ? `${n} de ${pool.length}` : nRec(n)}</small></a>` };
+    const cards = CATS.map(k=>{ const ic = REC(CAT_ICON[k.id]); return card(`#/receitas/${k.id}`, k.tone, ic ? illus(ic, ic.tops[0]) : '', k.n, all.filter(c=>c.cat===k.id)) }).join('')
+      + (mine.length ? card('#/receitas/minhas', '#C9B79C', `<svg viewBox="0 0 64 64">${ILL.GENERIC('#C9B79C')}</svg>`, 'Minhas receitas', mine) : '');
+    $('#res').innerHTML = !f ? `<div class="cats">${cards}</div><a class="btn secondary block new-btn" href="#/nova">${ICON.plus}Nova receita</a>`
+      : list.length ? `<p class="res-n"><span>${nRec(list.length)}</span><a class="link" href="#/receitas/todas">Ver em lista</a>${clearB()}</p><div class="cats">${cards}</div>`
+      : `<div class="empty-card"><p>${emptyTxt()}</p>${clearB('btn secondary')}</div>`;
   };
   chips(); results();
-  $('#rq').oninput = e=>{ RQ.q = e.target.value; results() };
+  if(!sec) $('#rq').oninput = e=>{ RQ.q = e.target.value; results() };
   const onF = e=>{
     const b = e.target.closest('button'); if(!b) return;
     if(b.dataset.meal) RQ.meal = b.dataset.meal;
@@ -3744,22 +3755,12 @@ function renderRecipes(){
     else if(b.dataset.t) RQ.t[b.dataset.t] = !RQ.t[b.dataset.t];
     else if(b.dataset.clear!=null){ RQ.now = RQ.fav = false; RQ.t = {}; RQ.meal = 'all' }
     else return;
-    chips(); results();
+    const sl = $('#rflt').scrollLeft; chips(); $('#rflt').scrollLeft = sl; results();
   };
-  ['#rmeal','#rflt','#res'].forEach(sel=>$(sel).onclick = onF);
-
-}
-function renderCategory(cat){
-  const mine = cat==='minhas', fav = cat==='favoritas', list = mine ? customs() : fav ? favs() : ALL().filter(c=>c.cat===cat);
-  const name = mine ? 'Minhas receitas' : fav ? 'Favoritas' : CATN(cat);
-  document.title = name;
-  $('#app').innerHTML = `<div class="wrap">
-    <header class="sub-head"><a class="back" href="#/receitas">${ICON.back}Receitas</a><h1>${name}</h1></header>
-    ${list.length ? `<p class="res-n"><span>${list.length} ${list.length===1 ? 'receita' : 'receitas'}</span>${sortBtn()}</p><ul class="cake-list">${sortRecipes(list).map(c=>recRow(c)).join('')}</ul>` : '<p class="empty">Nenhuma receita aqui ainda.</p>'}
-    <a class="btn secondary block new-btn" href="#/nova">${ICON.plus}Nova receita</a>
-  </div>`;
   $('#app').onclick = null;
+  ['#rmeal','#rflt','#res'].forEach(sel=>$(sel).onclick = onF);
 }
+function renderCategory(cat){ return renderRecipes(cat) }
 
 /* =========================================================
    RECEITA
