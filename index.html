@@ -794,9 +794,26 @@ body.tabs-on .cta-bar{bottom:calc(var(--tb-h) + var(--tb-b) + 2px)}
 .seg button[aria-pressed=true],.seg button[aria-selected=true]{background:var(--tb-gota);color:var(--ink);box-shadow:0 3px 10px var(--tb-sombra),var(--gl-rim)}
 @media (prefers-color-scheme: dark){.seg button[aria-pressed=true],.seg button[aria-selected=true]{background:color-mix(in srgb,var(--surface) 70%,#fff 12%)}}
 @media (prefers-reduced-motion: reduce){.back,.hh-row .icon-btn,.cook-top>.icon-btn,.sh-done,.seg button{transition:none}}
+
+/* botões do topo presos (iOS 26): o título grande rola, voltar e ações ficam flutuando e o conteúdo passa por baixo do vidro */
+:root{--nav-x:max(20px,calc(50% - 260px));--nav-t:calc(var(--safe-t) + 6px)}
+.sub-head{padding-top:calc(var(--nav-t) + 44px)}
+.sub-head .back,.ch-nav .back{position:fixed;top:var(--nav-t);left:var(--nav-x);z-index:12}
+.ch .wrap{padding-top:44px}
+.ch-nav{min-height:0}
+.ch-acts{position:fixed;top:var(--nav-t);right:var(--nav-x);z-index:12}
+.hh-row .icon-btn{position:fixed;top:calc(var(--safe-t) + 14px);right:var(--nav-x);z-index:12}
+.hh-row h1{min-height:44px;display:flex;align-items:center;padding-top:0}
+/* borda de rolagem: um véu do fundo atrás dos botões, só depois de rolar */
+.nav-edge{position:fixed;left:0;right:0;top:0;z-index:11;height:calc(var(--safe-t) + 64px);pointer-events:none;opacity:0;transition:opacity .2s;
+  background:linear-gradient(to bottom,var(--bg) 0,color-mix(in srgb,var(--bg) 85%,transparent) calc(var(--safe-t) + 18px),transparent);
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);-webkit-mask:linear-gradient(#000 60%,transparent);mask:linear-gradient(#000 60%,transparent)}
+body.scrolled .nav-edge{opacity:1}
+body:has(#cook:not([hidden])) .nav-edge{display:none}
 </style>
 </head>
 <body>
+<div class="nav-edge" aria-hidden="true"></div>
 <div id="app"></div>
 <nav id="tabbar" class="tabbar" aria-label="Seções" hidden>
   <a href="#/" data-tab="hoje"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Hoje</a>
@@ -3370,6 +3387,7 @@ function updateCookbar(){
   if(run) tick();
 }
 function render(){
+  requestAnimationFrame(()=>document.body.classList.toggle('scrolled', scrollY > 4));
   const h = parts();
   if(!['nova','editar','versao'].includes(h[0])) ED = null;
   if(!h[0]) return renderToday(), 'hoje';
@@ -4772,6 +4790,7 @@ route();
     if (t && t.nodeType === 1 && t !== document.documentElement && t !== document.body) return t.scrollTop;
     return window.scrollY || document.documentElement.scrollTop || 0;
   }
+  addEventListener('scroll', ()=>document.body.classList.toggle('scrolled', scrollY > 4), {passive:true});
   document.addEventListener('scroll', function (e) {
     var t = e && e.target;
     if (t && t.nodeType === 1 && t.closest && t.closest('[role="dialog"], .sheet, .sheet-bg, .cook, .modal')) return;   // folhas por cima não mexem na barra
