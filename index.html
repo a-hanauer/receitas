@@ -646,7 +646,7 @@ body.cookbar-on .spacer{height:220px}
 .cook-acts+.uses,.cook-acts+.timer{margin-top:16px}
 .ver-btn{color:var(--muted)}
 .ver-btn svg{width:21px;height:21px}
-html,body{max-width:100%;overflow-x:hidden}
+html,body{max-width:100%;overflow-x:clip}
 .today-add{margin-top:2px}
 .cake-list+.today-add{border-top:0}
 .nstats{display:flex;gap:0;margin:2px 0 8px}
@@ -810,6 +810,50 @@ body.tabs-on .cta-bar{bottom:calc(var(--tb-h) + var(--tb-b) + 2px)}
   -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);-webkit-mask:linear-gradient(#000 60%,transparent);mask:linear-gradient(#000 60%,transparent)}
 body.scrolled .nav-edge{opacity:1}
 body:has(#cook:not([hidden])) .nav-edge{display:none}
+
+/* ===== Revisão de UI (11/11/2026) ===== */
+/* receita: ilustração grande no topo, fatos numa faixa só, porções junto dos ingredientes */
+.ch{padding-top:0}
+.ch .wrap{padding-top:0}
+.rhero{display:grid;place-items:end center;height:calc(var(--safe-t) + 196px);margin:0 -20px;padding-bottom:8px}
+.rhero svg{width:172px;height:172px}
+.ch-title{display:block;margin-top:16px}
+.ch .sels{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.ch .sels .sel{margin:0;font-size:13px;padding:2px 9px 3px}
+.rfacts{margin-top:12px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface)}
+.rf-row{display:flex;padding:10px 4px}
+.rf-row+.rf-row{border-top:1px solid var(--line)}
+.rf-row span{flex:1 1 0;min-width:0;padding:0 10px;border-left:1px solid var(--line)}
+.rf-row span:first-child{border-left:0}
+.rf-row b{display:block;font-size:17px;font-weight:650;letter-spacing:-.01em;white-space:nowrap}
+.rf-row small{display:block;overflow:hidden;color:var(--muted);font-size:12.5px;white-space:nowrap;text-overflow:ellipsis}
+.rf-cap{margin:6px 2px 0;color:var(--muted);font-size:12.5px}
+.ing-h{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}
+.stepper.pz{align-items:center;gap:2px}
+.stepper.pz button{width:36px;height:36px;border-radius:18px;font-size:18px}
+.stepper.pz .sv{min-width:78px;text-align:center;font-size:15px;font-weight:600}
+/* um só estado "ligado" para chips; visões trocam no controle segmentado */
+.chip[aria-pressed=true],.fchip[aria-pressed=true]:not(.now):not(.fv){background:var(--acc-soft);border-color:color-mix(in srgb,var(--acc) 28%,transparent);color:var(--acc);font-weight:650}
+.pseg{margin-top:10px}
+.pseg button{padding:0 4px;font-size:14px;white-space:nowrap}
+/* ações secundárias em pílula; links só para navegar */
+.tbtn.sm{height:30px;padding:0 11px;font-size:13.5px}
+.tbtn.danger{background:color-mix(in srgb,var(--danger) 10%,transparent);color:var(--danger)}
+.tbtn[aria-pressed=true]{background:var(--acc);color:var(--on-acc)}
+.plan-card .tbtn{flex:none;background:var(--surface);color:var(--ink)}
+.cal-new,.cal-new.td-add{display:inline-flex;width:auto;min-height:0;height:36px;margin-top:10px;padding:0 15px 0 12px;gap:6px;border:0;border-radius:18px;background:var(--acc-soft);font-size:14.5px;font-weight:600}
+.cal-new svg{width:12px;height:12px;margin:0}
+.cal-new:active{background:var(--acc-soft);opacity:.7}
+.td-st .link{flex:none;font-size:14px}
+.sh-links{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:0 2px}
+.cal-buy{display:flex;align-items:center;gap:8px;margin-top:14px;color:var(--acc);font-size:15px;font-weight:550;text-decoration:none}
+.cal-buy svg:first-child{width:18px;height:18px}
+.cal-buy .chev{width:7px;margin-left:-2px}
+/* despensa: seções presas ao rolar */
+.psec{position:sticky;top:calc(var(--safe-t) + var(--pt-h,118px));z-index:3;margin:0 -20px;padding:14px 20px 6px;background:var(--bg)}
+.ptools{top:var(--safe-t);z-index:12}
+.ptools::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:var(--safe-t);background:var(--bg)}
+.tabs{position:static}
 </style>
 </head>
 <body>
@@ -3158,6 +3202,7 @@ function status(c, cfg){
   return {miss, short, swaps, swapOnly, ok: !miss.length && !short.length, total:m.size};
 }
 function missNames(s){ return [...s.miss.map(x=>lowerFirst(pname(x))), ...s.short.map(x=>'mais ' + lowerFirst(pname(x.p)))] }
+function statusShort(s){ const n = s.miss.length + s.short.length; return s.ok || s.swapOnly || n <= 2 ? statusTxt(s) : `Faltam ${n} itens` }
 function statusTxt(s){
   if(s.ok) return 'Tem tudo em casa';
   if(s.swapOnly) return 'Dá com troca: ' + join(s.swaps.map(x=>SUBS[x].lbl));
@@ -3423,7 +3468,7 @@ addEventListener('hashchange', route);
 function planRow(p, noMeal){
   const c = REC(p.rid), s = status(c, cfgOf(c,p));
   return `<li><button class="cake-row" data-plan="${p.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}</b>
-    <span>${portionTxt(c,p)}</span><span class="${s.ok ? 'okt' : s.swapOnly ? 'swap' : 'miss'}">${esc(statusTxt(s))}</span></span>${ICON.chev}</button></li>`;
+    <span>${portionTxt(c,p)}</span><span class="${s.ok ? 'okt' : s.swapOnly ? 'swap' : 'miss'}">${esc(statusShort(s))}</span></span>${ICON.chev}</button></li>`;
 }
 function renderToday(){
   document.title = 'Receitas';
@@ -3447,7 +3492,7 @@ function renderToday(){
   const sug = hasPantry() ? ALL().filter(c=>canMake(c) && !todays.some(p=>p.rid===c.id))
     .sort((a,b)=>(isKind(b,want) - isKind(a,want)) || (status(b).ok - status(a).ok) || hash(a.id) - hash(b.id)).slice(0,8) : [];
   const mini = (p, plan=true) => { const c = REC(p.rid), s = st(p);
-    return `<button class="td-mini" ${plan ? `data-plan="${p.id}"` : ''}><span class="swatch sm" style="background:${bg(c)}" aria-hidden="true">${art(c)}</span><span class="txt"><b>${esc(c.name)}</b><small class="${s.ok ? 'okt' : s.swapOnly ? '' : 'miss'}">${tm(c,p)} · ${esc(statusTxt(s))}</small></span>${ICON.chev}</button>` };
+    return `<button class="td-mini" ${plan ? `data-plan="${p.id}"` : ''}><span class="swatch sm" style="background:${bg(c)}" aria-hidden="true">${art(c)}</span><span class="txt"><b>${esc(c.name)}</b><small class="${s.ok ? 'okt' : s.swapOnly ? '' : 'miss'}">${tm(c,p)} · ${esc(statusShort(s))}</small></span>${ICON.chev}</button>` };
   const today = cap(new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long'}));
 
   let heroH = '';
@@ -3457,7 +3502,7 @@ function renderToday(){
       <article class="td-hero"><button class="td-hb" data-plan="${hero.id}" aria-label="${esc(c.name)}: ajustar">
         <span class="art" style="background:${bg(c)}">${art(c)}${todays.length > 1 ? `<span class="td-tag">1 de ${todays.length} hoje</span>` : ''}</span>
         <span class="bd"><b>${esc(c.name)}</b><small>${tm(c,hero)} · ${portionTxt(c,hero)}${kc(c)}</small></span></button>
-        <div class="td-hf"><div class="td-st ${s.ok ? 'ok' : s.swapOnly ? '' : 'miss'}"><span>${esc(statusTxt(s))}</span>${s.ok || s.swapOnly ? '' : `<a class="tbtn" href="#/compras">${ICON.cart}Compras</a>`}</div>
+        <div class="td-hf"><div class="td-st ${s.ok ? 'ok' : s.swapOnly ? '' : 'miss'}"><span>${esc(statusShort(s))}</span>${s.ok || s.swapOnly ? '' : `<a class="link" href="#/compras">Ver compras</a>`}</div>
         <button class="btn primary block" data-cook="${hero.id}">${going ? `Continuar preparo` : 'Começar preparo'}</button></div></article>`;
   }
   const lateH = late.length ? `<section class="td-late"><p>Ficou para trás</p>${late.map(p=>`<div class="td-li">${mini(p)}<div class="td-acts"><button class="tbtn p" data-late="hoje" data-id="${p.id}">Fazer hoje</button><button class="tbtn" data-late="fiz" data-id="${p.id}">Já fiz</button><button class="tbtn" data-late="tirar" data-id="${p.id}">Tirar</button></div></div>`).join('')}</section>` : '';
@@ -3549,8 +3594,7 @@ function renderCalendar(){
   $('#app').innerHTML = `<div class="wrap">
     <header class="home-head"><div class="hh-row"><h1>Calendário</h1></div></header>
     <div class="seg" role="tablist"><button role="tab" data-view="week" aria-selected="${CAL.view==='week'}">Próximos 7 dias</button><button role="tab" data-view="month" aria-selected="${CAL.view==='month'}">Mês</button></div>
-    <div class="mkt"><span class="t"><b>Mercado</b><small>${nBuy ? `${nBuy} ${nBuy===1 ? 'item' : 'itens'}` : 'Nada'} para comprar, para as refeições ${marketTxt()}.</small></span>
-      <button class="tbtn" data-act="mkt">Planejar</button></div>
+    ${nBuy ? `<a class="cal-buy" href="#/compras">${ICON.cart}<span>${nBuy} ${nBuy===1 ? 'item' : 'itens'} para comprar</span>${ICON.chev}</a>` : ''}
     ${body}
   </div>`;
   if(CAL.focus){ const el = document.getElementById('d-' + CAL.focus); CAL.focus = null; if(el) setTimeout(()=>el.scrollIntoView({block:'start'}), 0) }
@@ -3578,7 +3622,7 @@ function openAddSheet(day, meal){
   const st = {kind:'all', q:''};
   const anyF = () => AQ.now || AQ.fav || MORE_F.some(k=>AQ.t[k]);
   const row = c => { const s = status(c), sl = selos(c);
-    return `<button class="pick" data-pick="${c.id}">${swatch(c,'sm')}<span class="txt"><b>${esc(c.name)}${isFav(c.id) ? `<i class="pk-fav">${ICON.heartOn}</i>` : ''}</b>${sl.length ? `<span class="sels-row">${sl.map(([k,l])=>`<i class="sel ${k}">${l}</i>`).join('')}</span>` : ''}<small class="${s.ok ? 'okt' : s.swapOnly ? '' : 'miss'}">${esc(statusTxt(s))}</small></span>${ICON.plus}</button>` };
+    return `<button class="pick" data-pick="${c.id}">${swatch(c,'sm')}<span class="txt"><b>${esc(c.name)}${isFav(c.id) ? `<i class="pk-fav">${ICON.heartOn}</i>` : ''}</b>${sl.length ? `<span class="sels-row">${sl.map(([k,l])=>`<i class="sel ${k}">${l}</i>`).join('')}</span>` : ''}<small class="${s.ok ? 'okt' : s.swapOnly ? '' : 'miss'}">${esc(statusShort(s))}</small></span>${ICON.plus}</button>` };
   const controls = el => {
     el.querySelector('#aflt').innerHTML = nowChip(AQ.now, 'data-af') + (DB.favs.length || AQ.fav ? `<button class="fchip fv" data-af="fav" aria-pressed="${AQ.fav}">${AQ.fav ? ICON.heartOn : ICON.heart}Favoritas</button>` : '')
       + MORE_F.map(k=>`<button class="fchip" data-at="${k}" aria-pressed="${!!AQ.t[k]}">${ICON.ok}${TAGDEF.find(x=>x[0]===k)[2]}</button>`).join('');
@@ -3591,7 +3635,7 @@ function openAddSheet(day, meal){
     setNowN(el, all);
     if(AQ.now) all = all.filter(canMake);
     all = RQ.sort==='pad' ? [...all].sort((a,b)=>(status(b).ok?1:0) - (status(a).ok?1:0)) : sortRecipes(all);
-    el.querySelector('#plist2').innerHTML = `<div class="res-n"><span>${all.length} ${all.length===1 ? 'receita' : 'receitas'}</span><label class="sort-btn">${ICON.sort}<span>${SORTS.find(x=>x[0]===RQ.sort)[1]}</span><select id="asort" aria-label="Ordenar por">${SORTS.map(([k,l])=>`<option value="${k}" ${RQ.sort===k ? 'selected' : ''}>${l}</option>`).join('')}</select></label>${anyF() ? '<button class="link" data-aclear>Limpar</button>' : ''}</div>`
+    el.querySelector('#plist2').innerHTML = `<div class="res-n"><span>${all.length} ${all.length===1 ? 'receita' : 'receitas'}</span><label class="sort-btn">${ICON.sort}<span>${SORTS.find(x=>x[0]===RQ.sort)[1]}</span><select id="asort" aria-label="Ordenar por">${SORTS.map(([k,l])=>`<option value="${k}" ${RQ.sort===k ? 'selected' : ''}>${l}</option>`).join('')}</select></label>${anyF() ? '<button class="tbtn sm" data-aclear>Limpar</button>' : ''}</div>`
       + `<div class="picks">${all.map(row).join('') || `<p class="empty">${AQ.now && !Object.keys(DB.pantry).length ? 'Marque o que tem em casa na Despensa para ver o que dá para fazer.' : 'Nenhuma receita com esses filtros.'}</p>`}</div>`;
     el.querySelector('#asort').onchange = e=>{ RQ.sort = e.target.value; DB.prefs.sort = RQ.sort; save(); list(el) };
   };
@@ -3640,7 +3684,7 @@ function openMarketSheet(){
       ${inR.length ? `<div class="picks">${inR.sort((a,b)=>(a.date||'9').localeCompare(b.date||'9') ).map(p=>{ const c = REC(p.rid);
         return `<div class="pick static">${swatch(c,'sm')}<span class="txt"><b>${esc(c.name)}</b><small>${[p.date ? dayLabel(p.date) : 'Sem data'].join(', ')}</small></span></div>` }).join('')}</div>`
         : '<p class="empty">Nenhuma receita planejada nesse período. Adicione pelo calendário.</p>'}
-      <a class="btn primary block" href="#/compras">Ver lista de compras</a>`;
+`;
   };
   openSheet(`<div class="sh-head"><h2>Planejar o mercado</h2><button class="sh-done" data-close>Pronto</button></div><div class="sh-body"></div>`, el=>{
     draw(el);
@@ -3660,6 +3704,9 @@ function openPlanSheet(c, planId){
   const d = pl ? Object.assign({}, pl) : {date:todayIso()};
   if(c.scale!=='forma') d.serves = d.serves || st.serves || c.serves;
   else { d.pan = d.pan || cc0.pan.id; d.top = d.top || st.top }
+  let dirty = false;
+  // receita já no cardápio: cada mudança é salva na hora, sem botão Salvar
+  const commit = () => { if(pl){ Object.assign(pl, d); save(); dirty = true } };
   const draw = el => {
     const s = status(c, cfgOf(c, d));
     el.querySelector('.sh-body').innerHTML = `
@@ -3670,30 +3717,29 @@ function openPlanSheet(c, planId){
             <span class="stepper"><button data-sv="-1" ${d.serves <= 1 ? 'disabled' : ''} aria-label="Menos uma porção">−</button><span class="sv num">${d.serves}</span><button data-sv="1" aria-label="Mais uma porção">+</button></span></div>`
         : `<div class="field"><label for="pl-pan">Forma</label><select id="pl-pan">${PANS.map(p=>`<option value="${p.id}" ${p.id===d.pan ? 'selected' : ''}>${p.n}</option>`).join('')}</select></div>
            <div class="field"><label for="pl-top">Cobertura</label><select id="pl-top">${TOPS.map(t=>`<option value="${t.id}" ${t.id===d.top ? 'selected' : ''}>${t.name}</option>`).join('')}</select></div>`}</div>
-      <p class="cap">${s.ok ? 'Você tem tudo em casa.' : `Vão para a lista de compras: ${esc(join(missNames(s)))}.`}</p>
-      <button class="btn primary block" data-pl="save">${pl ? 'Salvar' : 'Adicionar ao cardápio'}</button>
-      ${pl ? `<button class="btn secondary block" data-pl="cook">Começar preparo</button>
-        <a class="btn ghost block" href="#/r/${c.id}">Ver receita</a>
-        <button class="btn ghost block danger-t" data-pl="del">Tirar do cardápio</button>` : ''}`;
+      <p class="cap">${s.ok ? 'Você tem tudo em casa.' : `${pl ? 'Na lista de compras' : 'Vão para a lista de compras'}: ${esc(join(missNames(s)))}.`}</p>
+      ${pl ? `<button class="btn primary block" data-pl="cook">Começar preparo</button>
+        <div class="sh-links"><a class="link" href="#/r/${c.id}">Ver receita</a><button class="tbtn danger" data-pl="del">Tirar do cardápio</button></div>`
+        : `<button class="btn primary block" data-pl="save">Adicionar ao cardápio</button>`}`;
     const sp = el.querySelector('#pl-pan'), stp = el.querySelector('#pl-top');
-    if(sp) sp.onchange = ()=>{ d.pan = sp.value; draw(el) };
-    if(stp) stp.onchange = ()=>{ d.top = stp.value; draw(el) };
+    if(sp) sp.onchange = ()=>{ d.pan = sp.value; commit(); draw(el) };
+    if(stp) stp.onchange = ()=>{ d.top = stp.value; commit(); draw(el) };
   };
-  openSheet(`<div class="sh-head"><h2>${pl ? esc(c.name) : 'Vou fazer'}</h2><button class="sh-done" data-close>Fechar</button></div><div class="sh-body"></div>`, el=>{
+  openSheet(`<div class="sh-head"><h2>${pl ? esc(c.name) : 'Vou fazer'}</h2><button class="sh-done" data-close>${pl ? 'Pronto' : 'Fechar'}</button></div><div class="sh-body"></div>`, el=>{
     draw(el);
     el.addEventListener('click', e=>{
       const b = e.target.closest('button'); if(!b) return;
-      if(b.dataset.day!=null){ d.date = b.dataset.day || null; draw(el) }
-      else if(b.dataset.sv){ d.serves = Math.max(1, d.serves + +b.dataset.sv); draw(el) }
+      if(b.dataset.day!=null){ d.date = b.dataset.day || null; commit(); draw(el) }
+      else if(b.dataset.sv){ d.serves = Math.max(1, d.serves + +b.dataset.sv); commit(); draw(el) }
       else if(b.dataset.pl==='save'){
-        if(pl) Object.assign(pl, d); else DB.plan.push(Object.assign({id:uid(), rid:c.id}, d));
+        DB.plan.push(Object.assign({id:uid(), rid:c.id}, d));
         save(); closeSheet(true); refresh();
-        toast(pl ? 'Cardápio atualizado' : (status(c, cfgOf(c,d)).ok ? 'Adicionado ao cardápio' : 'Adicionado. O que falta foi para a lista de compras.'));
+        toast(status(c, cfgOf(c,d)).ok ? 'Adicionado ao cardápio' : 'Adicionado. O que falta foi para a lista de compras.');
       }
       else if(b.dataset.pl==='del'){ DB.plan = DB.plan.filter(x=>x.id!==pl.id); save(); closeSheet(true); refresh(); toast('Tirado do cardápio') }
-      else if(b.dataset.pl==='cook'){ Object.assign(pl, d); save(); closeSheet(true); startCook(c, pl.id) }
+      else if(b.dataset.pl==='cook'){ closeSheet(true); startCook(c, pl.id) }
     });
-  }, {label:'Vou fazer'});
+  }, {label:'Vou fazer', onClose:()=>{ if(dirty){ refresh(); toast('Cardápio atualizado') } }});
 }
 function startCook(c, planId){
   const st = S(c);
@@ -3740,7 +3786,7 @@ function recRow(c, sub){
   const f = isFav(c.id);
   return `<li class="rec-li"><a class="cake-row" href="#/r/${c.id}">${swatch(c)}<span class="txt"><b>${esc(c.name)}</b>
     <span>${sub || minTxt(totalMin(c, calc(c), topOf(c))) + (nutri(c) ? ` · ${nutri(c).kcal} kcal${c.scale==='forma' ? '/fatia' : ''}` : '') + (histMeta(c.id) ? ', feita ' + histMeta(c.id) : '')}</span>${sub || !selos(c).length ? '' : `<span class="sels-row">${selos(c).map(([k,l])=>`<i class="sel ${k}">${l}</i>`).join('')}</span>`}
-    <span class="${s.ok ? 'okt' : s.swapOnly ? 'swap' : 'miss'}">${esc(statusTxt(s))}</span></span>${ICON.chev}</a><button class="row-fav" data-favtog="${c.id}" aria-pressed="${f}" aria-label="${f ? 'Tirar ' + esc(c.name) + ' das favoritas' : 'Favoritar ' + esc(c.name)}">${f ? ICON.heartOn : ICON.heart}</button></li>`;
+    <span class="${s.ok ? 'okt' : s.swapOnly ? 'swap' : 'miss'}">${esc(statusShort(s))}</span></span>${ICON.chev}</a><button class="row-fav" data-favtog="${c.id}" aria-pressed="${f}" aria-label="${f ? 'Tirar ' + esc(c.name) + ' das favoritas' : 'Favoritar ' + esc(c.name)}">${f ? ICON.heartOn : ICON.heart}</button></li>`;
 }
 function askFav(c){
   if(!isFav(c.id)){ toggleFav(c); refresh(); return }
@@ -3783,7 +3829,7 @@ function renderRecipes(cat){
     $('#rflt').innerHTML = nowChip(RQ.now, 'data-f') + (DB.favs.length || RQ.fav ? `<button class="fchip fv" data-f="fav" aria-pressed="${RQ.fav}">${RQ.fav ? ICON.heartOn : ICON.heart}Favoritas</button>` : '')
       + MORE_F.map(k=>`<button class="fchip" data-t="${k}" aria-pressed="${!!RQ.t[k]}">${ICON.ok}${TAGDEF.find(x=>x[0]===k)[2]}</button>`).join('');
   };
-  const clearB = (cls='link') => rqAny() ? `<button class="${cls}" data-clear>${cls==='link' ? 'Limpar' : 'Limpar filtros'}</button>` : '';
+  const clearB = (cls='tbtn sm') => rqAny() ? `<button class="${cls}" data-clear>${cls==='tbtn sm' ? 'Limpar' : 'Limpar filtros'}</button>` : '';
   const emptyTxt = () => RQ.now && !hasPantry() ? 'Marque o que você tem na Despensa para ver o que dá para fazer.'
     : RQ.now ? 'Nenhuma receita dá para fazer só com o que está na despensa, com esses filtros.' : 'Nenhuma receita com esses filtros.';
   const listH = list => list.length
@@ -3891,13 +3937,15 @@ function renderRecipe(c){
   const steps = buildSteps(c, cc, top), plans = DB.plan.filter(p=>p.rid===c.id);
   const [backHref, backLbl] = backTarget(c);
   const s = status(c);
-  let facts;
-  if(c.scale==='forma') facts = `<div><small>Forno${cc.dial!==c.temp ? ', ajustado' : ''}</small><strong class="num">${cc.dial} °C</strong></div>
-      <div><small>Assar</small><strong class="num">${cc.time[0]}–${cc.time[1]} min</strong></div>
-      <div><small>Total</small><strong class="num">${minTxt(totalMin(c, cc, top))}</strong></div>`;
-  else facts = `<div><small>Tempo total</small><strong class="num">${minTxt(c.time)}</strong></div>
-      <div><small>Porções</small><strong class="num">${cc.serves}</strong></div>
-      ${c.oven ? `<div><small>Forno${cc.dial!==c.oven.temp ? ', ajustado' : ''}</small><strong class="num">${cc.dial} °C</strong></div>` : ''}`;
+  const nu = nutri(c), sl = nu ? selos(c) : [];
+  const cell = (l, v) => `<span><b class="num">${v}</b><small>${l}</small></span>`;
+  const nCells = wide => nu ? [cell('kcal', nu.kcal), cell('proteína', nu.p + ' g'), cell(wide ? 'carboidrato' : 'carbo', nu.c + ' g')] : [];
+  const fRows = c.scale==='forma'
+    ? [[cell('Forno' + (cc.dial!==c.temp ? ', ajustado' : ''), cc.dial + ' °C'), cell('Assar', `${cc.time[0]}–${cc.time[1]} min`), cell('Total', minTxt(totalMin(c, cc, top)))], nCells(true)]
+    : [[cell('Tempo', minTxt(c.time)), ...(c.oven ? [cell('Forno' + (cc.dial!==c.oven.temp ? ', ajust.' : ''), cc.dial + ' °C')] : []), ...nCells(false)]];
+  const facts = `${sl.length ? `<span class="sels">${sl.map(([k,l])=>`<i class="sel ${k}">${l}</i>`).join('')}</span>` : ''}
+    <div class="rfacts">${fRows.filter(r=>r.length).map(r=>`<div class="rf-row">${r.join('')}</div>`).join('')}</div>
+    ${nu ? `<p class="rf-cap">Valores estimados por ${nu.per}${c.scale==='forma' ? ' (forma 20×30 em 15 fatias)' : ''}.</p>` : ''}`;
   let cfgCard;
   if(c.scale==='forma'){
     let panSub = '';
@@ -3907,20 +3955,18 @@ function renderRecipe(c){
     cfgCard = `<div class="card cfg">
       <button class="cfg-row" data-act="pan"><span class="k">Forma</span><span class="v">${cc.pan.n}${panSub ? `<small>${esc(panSub)}</small>` : ''}</span>${ICON.chev}</button>${fitWarn}
       <button class="cfg-row" data-act="top"><span class="k">Cobertura</span><span class="v">${top.name}</span>${ICON.chev}</button></div>`;
-  } else {
-    cfgCard = `<div class="card cfg"><div class="set-row"><span class="t"><b>Porções</b><small>A receita base rende ${c.serves}.</small></span>
-      <span class="stepper"><button data-sv="-1" ${cc.serves <= 1 ? 'disabled' : ''} aria-label="Menos uma porção">−</button><span class="sv num">${cc.serves}</span><button data-sv="1" aria-label="Mais uma porção">+</button></span></div></div>`;
-  }
-  const planCard = plans.length ? `<div class="plan-card"><span><b>No cardápio:</b> ${plans.map(p=>p.date ? dayLabel(p.date) : 'sem data').join('; ')}</span><button class="link" data-act="editplan">Alterar</button></div>` : '';
+  } else cfgCard = '';
+  const pz = c.scale==='forma' ? '' : `<span class="stepper pz"><button data-sv="-1" ${cc.serves <= 1 ? 'disabled' : ''} aria-label="Menos uma porção">−</button><span class="sv num">${cc.serves} ${cc.serves===1 ? 'porção' : 'porções'}</span><button data-sv="1" aria-label="Mais uma porção">+</button></span>`;
+  const planCard = plans.length ? `<div class="plan-card"><span><b>No cardápio:</b> ${plans.map(p=>p.date ? dayLabel(p.date) : 'sem data').join('; ')}</span><button class="tbtn" data-act="editplan">Alterar</button></div>` : '';
 
   let body = '';
   if(st.tab==='ing'){
     body = `<p class="istat ${s.ok ? 'okt' : s.swapOnly ? '' : 'miss'}">${s.ok ? 'Você tem tudo em casa.' : esc(statusTxt(s)) + '.'}</p>
-      <div class="grp">${c.scale==='forma' ? 'Massa' : 'Ingredientes'}</div>${c.ing.map(i=>haveRow('m', i, cc.f, null)).join('')}
+      <div class="grp ing-h"><span>${c.scale==='forma' ? 'Massa' : 'Ingredientes'}</span>${pz}</div>${c.ing.map(i=>haveRow('m', i, cc.f, null)).join('')}
       ${top && top.ing.length ? `<div class="grp">Cobertura <small>${top.name}</small></div>${top.ing.map(i=>haveRow('c', i, cc.ft, top.id)).join('')}` : ''}
       <p class="cap">O status vem da sua despensa. ${plans.length ? 'O que falta já está na lista de compras.' : 'Ao tocar em Vou fazer, o que falta vai para a lista de compras.'}</p>`;
   } else if(st.tab==='prep'){
-    body = `${noteCall(st.note)}<ol class="steps">${steps.map((x,n)=>`<li><span class="n">${n+1}</span><span class="ph">${x.ph}</span><h3>${esc(x.t)}</h3>${(a=>a.length > 1 ? `<ol class="acts">${a.map(t=>`<li>${t}</li>`).join('')}</ol>` : `<p>${x.d}</p>`)(splitActs(x.d))}${x.timer ? `<span class="t">${x.bake ? 'Timer de forno' : 'Timer'}: ${durLabel(x.timer)}</span>` : ''}</li>`).join('')}</ol>
+    body = `${c.scale==='forma' ? '' : `<div class="grp ing-h"><span>Quantidades para</span>${pz}</div>`}${noteCall(st.note)}<ol class="steps">${steps.map((x,n)=>`<li><span class="n">${n+1}</span><span class="ph">${x.ph}</span><h3>${esc(x.t)}</h3>${(a=>a.length > 1 ? `<ol class="acts">${a.map(t=>`<li>${t}</li>`).join('')}</ol>` : `<p>${x.d}</p>`)(splitActs(x.d))}${x.timer ? `<span class="t">${x.bake ? 'Timer de forno' : 'Timer'}: ${durLabel(x.timer)}</span>` : ''}</li>`).join('')}</ol>
       ${c.tips && c.tips.length ? `<div class="tips"><h3>Para acertar</h3><ul>${c.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>` : ''}`;
   } else {
     const h = hist(c.id).slice().reverse();
@@ -3933,19 +3979,18 @@ function renderRecipe(c){
           <div class="h-top"><b>${new Date(e.at).toLocaleDateString('pt-BR',{day:'numeric',month:'short',year:'numeric'})}</b>${e.rating ? `<span class="mini-stars" aria-label="${e.rating} de 5">${'★'.repeat(e.rating)}<i>${'★'.repeat(5-e.rating)}</i></span>` : ''}</div>
           <p class="cap">${e.pan ? 'Forma ' + lowerFirst(PAN(e.pan).n) : `${e.serves || '?'} porções`}${e.top && e.top!=='nenhuma' ? ', ' + lowerFirst(TOP(e.top).name) : ''}${e.actual ? `, forno ${e.actual} min` : ''}</p>
           ${e.note ? `<p>${esc(e.note)}</p>` : ''}
-          <button class="link" data-del="${e.id}">${CONFIRM===e.id ? 'Toque de novo para apagar' : 'Apagar'}</button></div>`).join('')
+          <button class="tbtn sm" data-del="${e.id}">${CONFIRM===e.id ? 'Toque de novo para apagar' : 'Apagar'}</button></div>`).join('')
         : `<p class="empty">Ao concluir o preparo, registre como ficou. O que você fez aparece aqui.</p>`}`;
   }
   const resume = resumeIdx(c)!=null;
-  const cookBan = resume ? `<div class="plan-card"><span><b>Preparo em andamento:</b> passo ${st.cookAt+1} de ${steps.length}</span><button class="link" data-act="drop">Abandonar</button></div>` : '';
+  const cookBan = resume ? `<div class="plan-card"><span><b>Preparo em andamento:</b> passo ${st.cookAt+1} de ${steps.length}</span><button class="tbtn" data-act="drop">Abandonar</button></div>` : '';
   $('#app').innerHTML = `
   <header class="ch"><div class="wrap">
     <div class="ch-nav"><a class="back" href="${backHref}">${ICON.back}${esc(backLbl)}</a>
       <span class="ch-acts">${c.custom ? `<a class="icon-btn ver-btn" href="#/editar/${c.id}" aria-label="Editar receita" title="Editar receita">${ICON.edit}</a>` : `<a class="icon-btn ver-btn" href="#/versao/${c.id}" aria-label="Criar minha versão" title="Criar minha versão">${ICON.version}</a>`}<button class="icon-btn fav-btn" data-act="fav" aria-pressed="${isFav(c.id)}" aria-label="${isFav(c.id) ? 'Tirar das favoritas' : 'Favoritar'}">${isFav(c.id) ? ICON.heartOn : ICON.heart}</button></span></div>
-    <div class="ch-title">${swatch(c,'lg')}<div><h1>${esc(title(c))}</h1>${c.desc ? `<p>${esc(c.desc)}</p>` : ''}</div></div>
-    <div class="facts">${facts}</div>
-    ${(()=>{ const n = nutri(c); if(!n) return ''; const sl = selos(c);
-      return `<div class="nutri">${sl.length ? `<span class="sels">${sl.map(([k,l])=>`<i class="sel ${k}">${l}</i>`).join('')}</span>` : ''}<div class="nstats"><span><b class="num">${n.kcal}</b><small>kcal</small></span><span><b class="num">${n.p} g</b><small>proteína</small></span><span><b class="num">${n.c} g</b><small>carboidrato</small></span></div><p>Estimativa por ${n.per}${c.scale==='forma' ? ', com a forma 20×30 cortada em 15' : ''}, calculada pelos ingredientes.</p></div>` })()}
+    <div class="rhero" style="background:${tint(toneOf(c), .22)}" aria-hidden="true">${illus(c, c.scale==='forma' ? st.top : null)}</div>
+    <div class="ch-title"><h1>${esc(title(c))}</h1>${c.desc ? `<p>${esc(c.desc)}</p>` : ''}</div>
+    ${facts}
   </div></header>
   <main class="wrap">
     ${cfgCard}${cookBan}${planCard}
@@ -4043,7 +4088,7 @@ function shareText(txt){
 /* =========================================================
    DESPENSA (em casa + comprar)
    ========================================================= */
-const PQ = {q:'', f:'all', edit:null};
+const PQ = {q:'', f:'all', edit:null, from:false};
 function renderPantry(mode){
   const T = mode==='home' ? 'Despensa' : 'Compras';
   document.title = T;
@@ -4073,23 +4118,23 @@ function pantryHome(){
     return `<div class="prow">
       <button class="pbtn" role="checkbox" aria-checked="${!!h}" data-ph="${p}"><span class="box">${ICON.check}</span><span class="pn">${esc(C.n)}${PQ.f==='plan' && why ? `<span class="buy-from">Para ${esc(join(why.map(lowerFirst)))}</span>` : ''}</span></button>
       ${h && u ? `<button class="qbtn ${h.q > 0 ? '' : 'empty'}" data-pq="${p}" aria-label="Quantidade de ${esc(C.n.toLowerCase())}">${h.q > 0 ? qtyTxt(p, h.q) : 'Quantidade'}</button>` : ''}
-      ${C.noBuy ? '' : `<button class="cartbtn" data-cart="${p}" aria-pressed="${!!L}" aria-label="${L ? 'Na lista de compras' : 'Pôr na lista de compras'}: ${esc(C.n.toLowerCase())}">${ICON.cart}</button>`}
+      ${C.noBuy || (h && !L) ? '' : `<button class="cartbtn" data-cart="${p}" aria-pressed="${!!L}" aria-label="${L ? 'Na lista de compras' : 'Pôr na lista de compras'}: ${esc(C.n.toLowerCase())}">${ICON.cart}</button>`}
     </div>
     ${editing ? `<div class="pedit"><span class="amt"><input id="pq-in" inputmode="decimal" enterkeyhint="done" value="${h && h.q > 0 ? numTxt(h.q) : ''}" placeholder="—" aria-label="Quantidade"><span>${u}</span></span>
       <button class="tbtn" data-pqok="${p}">Salvar</button>${h && h.q > 0 ? `<button class="tbtn" data-pqclear="${p}">Sem quantidade</button>` : ''}
       ${C.hint ? `<small>${C.hint}</small>` : ''}</div>` : ''}`;
   };
   const shown = secs.filter(s=>s.ids.length);
-  const filters = [['all','Todos'],['have','Tenho'],['no','Não tenho'],['plan','Do cardápio']];
+  const filters = [['all','Todos'],['have','Tenho'],['no','Não tenho'],['plan','Cardápio']];
   $('#pbody').innerHTML = `
     <div class="ptools">
       <label class="search">${ICON.search}<input id="pq" type="search" placeholder="Buscar ingrediente" value="${esc(PQ.q)}" autocomplete="off"></label>
-      <div class="chiprow">${filters.map(([k,l])=>`<button class="chip" data-f="${k}" aria-pressed="${PQ.f===k}">${l}</button>`).join('')}</div>
-      ${!q && shown.length > 1 ? `<div class="jump" role="navigation" aria-label="Seções">${shown.map(s=>`<button data-jump="${s.k}">${s.l.split(',')[0]}</button>`).join('')}</div>` : ''}
+      <div class="seg pseg" role="group" aria-label="Mostrar">${filters.map(([k,l])=>`<button data-f="${k}" aria-pressed="${PQ.f===k}">${l}</button>`).join('')}</div>
     </div>
-    ${PQ.f==='all' && !q ? `<div class="prow-actions"><span class="cap" style="margin:0">Com a quantidade, o app desconta o que você usar.</span><button class="tbtn" data-act="basics">${BASICS.every(b=>DB.pantry[b]) ? 'Desmarcar básicos' : 'Marcar básicos'}</button></div>` : ''}
+    ${PQ.f==='all' && !q && !BASICS.every(b=>DB.pantry[b]) ? `<div class="prow-actions"><span class="cap" style="margin:0">Sal, óleo, açúcar e outros básicos de uma vez.</span><button class="tbtn" data-act="basics">Marcar básicos</button></div>` : ''}
     <div id="plist">${shown.length ? shown.map(s=>`<h3 class="psec" id="sec-${s.k}">${s.l}<span class="num">${s.have} de ${s.total}</span></h3>${s.ids.map(row).join('')}`).join('')
       : `<p class="empty" style="margin-top:16px">${PQ.f==='plan' ? 'Nenhuma receita no cardápio ainda.' : 'Nenhum ingrediente encontrado.'}</p>`}</div>`;
+  document.documentElement.style.setProperty('--pt-h', $('.ptools').offsetHeight + 'px');
   const inp = $('#pq');
   inp.oninput = ()=>{ PQ.q = inp.value; const pos = inp.selectionStart; pantryHome(); const n = $('#pq'); n.focus(); n.setSelectionRange(pos,pos) };
   const qin = $('#pq-in');
@@ -4120,8 +4165,9 @@ function pantryBuy(){
   const extras = DB.extras;
   $('#pbody').innerHTML = `
     <div class="mkt"><span class="t"><b>${DB.market.to ? cap(marketTxt(true)) : 'Para todo o cardápio'}</b><small>${nPlan ? `${nPlan} ${nPlan===1 ? 'receita' : 'receitas'}, descontando o que tem em casa. Ao marcar um item, ele vai para a despensa.` : nAll ? 'Nenhuma receita nesse período.' : 'Planeje receitas no calendário: o que faltar aparece aqui.'}</small></span><button class="tbtn" data-act="mkt">Período</button></div>
+    ${rows.length ? `<p class="res-n"><span>${rows.length} ${rows.length===1 ? 'item' : 'itens'}</span><button class="tbtn sm" data-act="from" aria-pressed="${PQ.from}">${PQ.from ? 'Ocultar receitas' : 'Mostrar receitas'}</button></p>` : ''}
     ${bySec.map(([l,arr])=>`<h3 class="grp">${l}</h3>${arr.map(r=>`<div class="prow"><button class="pbtn" role="checkbox" aria-checked="false" data-buy="${r.p}">
-        <span class="box">${ICON.check}</span><span class="pn">${esc(pname(r.p))}<span class="buy-from">${esc([r.note, r.from.length ? 'Para ' + join(r.from.map(lowerFirst)) + (r.manual ? ' e pedido por você' : '') : 'Adicionado por você'].filter(Boolean).join('. '))}</span></span>
+        <span class="box">${ICON.check}</span><span class="pn">${esc(pname(r.p))}${PQ.from ? `<span class="buy-from">${esc([r.note, r.from.length ? 'Para ' + join(r.from.map(lowerFirst)) + (r.manual ? ' e pedido por você' : '') : 'Adicionado por você'].filter(Boolean).join('. '))}</span>` : ''}</span>
         <span class="bq">${r.buy > 0 ? packTxt(r.p, r.buy) : ''}</span></button>${r.manual && !r.from.length ? `<button class="icon-btn sm" data-exdel="${r.manual}" aria-label="Tirar ${esc(pname(r.p).toLowerCase())} da lista">${ICON.close}</button>` : ''}</div>`).join('')}`).join('')}
     <h3 class="grp">Outros itens</h3>
     ${extras.filter(x=>!x.p).map(x=>`<div class="prow ${x.done ? 'done-row' : ''}"><button class="pbtn" role="checkbox" aria-checked="${x.done}" data-ex="${x.id}"><span class="box">${ICON.check}</span><span class="pn">${esc(x.n)}</span></button>
@@ -4151,6 +4197,7 @@ function pantryBuy(){
     if(b.dataset.ex){ const x = DB.extras.find(y=>y.id===b.dataset.ex); if(x) x.done = !x.done; return re() }
     if(b.dataset.exdel){ DB.extras = DB.extras.filter(y=>y.id!==b.dataset.exdel); return re() }
     if(b.dataset.act==='mkt'){ openMarketSheet(); return }
+    if(b.dataset.act==='from'){ PQ.from = !PQ.from; const y = scrollY; renderPantry('buy'); scrollTo(0,y); return }
     if(b.dataset.act==='clean'){ DB.bought = []; DB.extras = DB.extras.filter(x=>!x.done); return re() }
     if(b.dataset.act==='send'){
       const lines = []; bySec.forEach(([l,arr])=>{ lines.push('\n' + l); arr.forEach(r=>lines.push(`• ${pname(r.p)}${r.buy > 0 ? ': ' + packTxt(r.p, r.buy) : ''}`)) });
@@ -4541,7 +4588,7 @@ function drawCook(){
     <div class="cook-foot">
       <p class="cook-next">${nx ? `<span>A seguir</span>${esc(nx.t)}` : '<span>Último passo</span>Depois é só concluir'}</p>
       <div class="cook-nav">
-        <button class="prev" data-act="prev" ${idx===0 ? 'disabled' : ''}>${ICON.back}Voltar</button>
+        <button class="prev" data-act="prev" ${idx===0 ? 'disabled' : ''}>${ICON.back}Anterior</button>
         <button class="next" data-act="next">${last ? 'Concluir' : 'Próximo passo'}</button>
       </div>
     </div>`;
