@@ -2438,6 +2438,23 @@ R({id:'shakshuka-verde', cat:'ovos', meals:['cafe','janta'], name:'Shakshuka ver
     {t:'Ovos', d:'Abra 4 covas e quebre {ovos} nelas. Tampe e cozinhe em fogo baixo até a clara firmar.', timer:300},
     {t:'Sirva', d:'Cubra com {feta} e {cheiro} e sirva na frigideira, com {pao_fermentacao}.'}]});
 
+R({id:'omurice', cat:'ovos', meals:['almoco','janta'], name:'Omurice', desc:'Arroz de frango com ketchup, coberto por omelete macia e molho agridoce.', serves:2, time:30,
+  ing:[['manteiga',15,null,'para o arroz'],['cebola',.5,null,'bem picada'],['frango_peito',200,null,'em cubinhos de 1 cm'],['cogumelo',100,null,'?em fatias'],['sal',.5,'cc'],['pimenta',.25,'cc'],
+    ['ketchup',3,null,'para o arroz'],['shoyu',10,null,'para o arroz'],['sobra_arroz',350,null,'frio, de preferência do dia anterior'],
+    ['ketchup',3,null,'para o molho','ketchup2'],['shoyu',15,null,'para o molho','shoyu2'],['mel',10],['vinagre',5],['agua',60],['manteiga',10,null,'para o molho','manteiga2'],
+    ['ovos',4],['leite',30],['sal',1,'pitada',null,'sal2'],['manteiga',20,null,'para as omeletes','manteiga3'],['cheiro',1,null,'?picado, para finalizar']],
+  steps:[
+    {t:'Molho', d:'Numa panelinha, misture {ketchup2}, {shoyu2}, {mel}, {vinagre} e {agua}. Ferva em fogo baixo até engrossar um pouco e brilhar. Desligue e junte {manteiga2}.', timer:240},
+    {t:'Refogue', d:'Numa frigideira grande, derreta {manteiga} em fogo médio. Refogue {cebola} até ficar transparente. Junte {frango_peito}, {sal} e {pimenta} e doure. Junte {cogumelo} e cozinhe até secar.', timer:360},
+    {t:'Ketchup', d:'Abra um espaço no centro da frigideira e ponha {ketchup} e {shoyu}. Deixe ferver sozinho por 30 segundos, para perder a acidez, e só então misture ao frango.', timer:30},
+    {t:'Arroz', d:'Junte {sobra_arroz}, soltando os grumos com a espátula. Misture em fogo alto até o arroz ficar todo alaranjado e solto.', timer:180},
+    {t:'Molde', d:'Divida o arroz em duas porções. Aperte cada uma numa tigela pequena e desenforme no centro de cada prato, em formato oval.'},
+    {t:'Ovos', d:'Bata {ovos} com {leite} e {sal2}, sem fazer espuma. Vão ser duas omeletes, uma por vez.'},
+    {t:'Omelete', d:'Em frigideira antiaderente de 20 cm, derreta metade de {manteiga3} em fogo médio. Despeje metade dos ovos e mexa com a espátula em círculos largos por uns 20 segundos. Pare de mexer enquanto a superfície ainda estiver cremosa e deixe firmar só embaixo.', timer:60},
+    {t:'Cubra', d:'Deslize a omelete sobre o arroz, com o lado cremoso para baixo, e ajeite as bordas com um pano ou papel-toalha para abraçar o arroz. Repita com o resto dos ovos e da manteiga.'},
+    {t:'Finalize', d:'Regue com o molho e finalize com {cheiro}.'}],
+  tips:['Arroz frio de véspera é o que não empapa. Feito na hora, espalhe num prato e deixe esfriar antes.','O molho original leva molho inglês: se tiver, troque o shoyu do molho pela mesma quantidade.','Omelete no ponto é amarela, sem dourar. Se a frigideira estiver quente demais, tire do fogo por alguns segundos.','Quer o ketchup puro por cima, à moda de casa japonesa? Pule o molho e faça um zigue-zague de ketchup.']});
+
 R({id:'ovos-cocotte', cat:'ovos', meals:['cafe','lanche'], name:'Ovos em cocotte com espinafre', desc:'Em potinhos no forno: gema mole, creme e queijo.', serves:2, time:25,
   oven:{temp:190, bake:[12,14], pre:0},
   ing:[['manteiga',10],['espinafre',80],['sal',.5,'cc'],['creme',60],['ovos',4],['parmesao',20],['pimenta',.25,'cc']],
@@ -3518,6 +3535,17 @@ N['pessego-assado'] = `${plate(44,29)}${peach(21,38.500,-10,1.150)}${peach(42,41
 <ellipse cx="32" cy="47" rx="7.500" ry="4" fill="#E6DECE"/><ellipse cx="32" cy="46" rx="7.500" ry="4" fill="#FFFFFF"/><path d="M27.500 45.500c1.500-1.500 4.500-2 7-1" stroke="#EFE9DC" stroke-width="1.300" stroke-linecap="round" fill="none"/>
 ${gran([[29,45,1.500],[33,46.500,1.500],[35.500,44.500,1.300],[31,47.500,1.300],[21,38.500,1.300],[42.500,41,1.300],[24,36,1.100],[40,43.500,1.100]])}${dots([[30.500,45],[34,45.200],[22.500,39.500],[41,41.800]],'#F3DDB0',.7)}
 <path d="M14 46c2 2 5 3 8 2.800M44 49.500c3 0 5.500-1 7-3" stroke="#D99A2E" stroke-width="1.500" stroke-linecap="round" fill="none"/>${leaf(32,35,-20,.8)}${leaf(35.500,36.500,30,.6)}`;
+
+N['omurice'] = `${plate(44,29)}
+<path d="M9.500 43c0-4.500 4.500-8 11-9.500l22 9.500c-2 5-9 8-18 8-9.500 0-15-3.500-15-8Z" fill="#D9742E"/><path d="M11.500 42.500c0-3.800 4-6.800 9.500-8l20 8.500c-2 4.200-8 6.800-16 6.800-8 0-13.500-3-13.500-7.300Z" fill="#F0923E"/>
+${seeds([[14,43,20],[18,46,-30],[23,48.500,10],[29,49,40],[35,48,-20],[16,40,60],[20,43.500,0]],'#FBD9A8',1.300,.65)}${cube(17,45.500,.45,'#F3D9A6','#CFA868')}${cube(26,48,.45,'#F3D9A6','#CFA868')}${dots([[21,46.500],[31,48.500]],'#4E8B2F',.6)}
+<path d="M12 37.500c2-7.500 10.500-12.500 21.500-12 11 .5 20 5.500 21.500 12.500 1 4.500-3 8.500-9.500 9.500-4 .6-7.500-.5-11-2.500-4-2.300-8-5-13-5.500-4-.4-7.500-.500-9.500-2Z" fill="#D9A21E"/>
+<path d="M12 36c2-7.500 10.500-12.500 21.500-12 11 .5 20 5.500 21.500 12.500 1 4.500-3 8.500-9.500 9.500-4 .6-7.500-.5-11-2.500-4-2.300-8-5-13-5.500-4-.4-7.500-.5-9.500-2Z" fill="#F7CE48"/>
+<path d="M17.500 33.500c3-4.500 9-7 16-6.800" stroke="#FCE48A" stroke-width="2.200" stroke-linecap="round" fill="none"/><path d="M40 43.500c3.500 0 7-1.200 9.500-3.500" stroke="#E3B02E" stroke-width="1.300" stroke-linecap="round" fill="none"/>
+<path d="M22 34.500c2.500 3 4.500-3.500 7.500-.500s4.500-3.500 7.500-.5 4.500-3.500 7.500-.5 3.500-2 5-1" stroke="#9E2A16" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path d="M22 33.800c2.500 3 4.500-3.500 7.500-.5s4.500-3.500 7.500-.5 4.500-3.500 7.500-.5 3.500-2 5-1" stroke="#D9412B" stroke-width="2.400" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path d="M23.500 33.500c1.500 1.200 2.500-.8 3.800-1.800M38.500 32.800c1.500 1.200 2.500-.8 3.800-1.800" stroke="#F08A6A" stroke-width=".8" stroke-linecap="round" fill="none"/>
+${herbs([[30,38.500,20],[43,36.500,-30],[36,29,10],[25,30,40]])}${leaf(51.500,48.500,-20,.8)}${leaf(48,51,20,.6)}`;
 
 /* ===== Bolos: fatia em bloco, cobertura conforme a escolha ===== */
 const TOPC2 = {casquinha:['#5B3424','#4A2A1C'], brigadeiro:['#4A2A1C','#3A2014'], ganache:['#3A2014','#28150C'], 'calda-laranja':['#F7B34A','#E0902A'], 'glace-limao':['#FBF9F0','#E6E2D2'], 'calda-coco':['#FAF5E6','#E4DCC6'], 'acucar-canela':['#C78A4E','#A86B3C'], goiabada:['#B02E30','#8A2022']};
