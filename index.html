@@ -188,7 +188,7 @@ em{font-style:normal;color:var(--muted);font-weight:400}
 .note-call b{display:block;font-size:13px;font-weight:650}
 .note-call p{margin:2px 0 0;color:var(--ink);font-size:16px;white-space:pre-line}
 .steps{margin:18px 0 0;padding:0;list-style:none}
-.steps li{display:grid;grid-template-columns:30px 1fr;gap:4px 10px;padding:14px 0;border-bottom:1px solid var(--line)}
+.steps>li{display:grid;grid-template-columns:30px 1fr;gap:4px 10px;padding:14px 0;border-bottom:1px solid var(--line)}
 .steps .n{padding-top:1px;color:var(--muted);font-size:15px;font-weight:650;font-variant-numeric:tabular-nums}
 .steps .ph{grid-column:2;color:var(--muted);font-size:13px}
 .steps h3{grid-column:2;margin:0;font-size:17px;font-weight:600}
@@ -633,7 +633,7 @@ body.cookbar-on .spacer{height:220px}
 .pk-fav svg{display:block;width:100%;height:100%}
 .pick .sels-row{margin:3px 0 1px}
 .acts{grid-column:2;margin:4px 0 0;padding-left:20px;color:var(--ink2);font-size:16px}
-.acts li{margin:3px 0;padding-left:2px}
+.acts li{display:list-item;margin:3px 0;padding:0 0 0 2px;border:0}
 .acts li::marker{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
 .cook-acts{margin:0;padding:0;list-style:none}
 .cook-acts li+li{margin-top:2px}
