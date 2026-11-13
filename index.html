@@ -872,9 +872,11 @@ body:has(#cook:not([hidden])) .nav-edge{display:none}
 .buy-n + .mkt,.buy-empty + .mkt{margin-top:8px}
 .buy-sep{height:1px;margin:22px -20px 0;background:var(--line)}
 .st-g{margin-top:8px}
+.st-lk{flex:none;display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 11px;border-radius:15px;background:var(--acc-soft);color:var(--acc);font-size:13.5px;font-weight:550;white-space:nowrap}
+.st-lk svg{width:13px;height:13px}
 .st-ed{display:flex;align-items:center;gap:8px;min-height:50px;border-bottom:1px solid var(--line)}
 .st-ed input{flex:1;min-width:0;padding:10px 0;border:0;background:none;color:var(--ink);font-size:16px}
-.st-ed select{flex:none;height:30px;padding:0 24px 0 11px;border:0;border-radius:15px;color:var(--ink2);font-size:13.5px;font-weight:550;appearance:none;-webkit-appearance:none;
+.st-ed select{flex:none;max-width:46%;height:30px;padding:0 24px 0 11px;border:0;border-radius:15px;color:var(--ink2);font-size:13.5px;font-weight:550;appearance:none;-webkit-appearance:none;
   background:color-mix(in srgb,var(--ink) 7%,transparent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238A877F' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 9px center/9px 6px}
 </style>
 </head>
@@ -3631,6 +3633,7 @@ function normalize(){
   DB.plan = DB.plan || []; DB.extras = DB.extras || []; DB.bought = DB.bought || []; DB.favs = DB.favs || [];
   DB.market = Object.assign({to:null, undated:true}, DB.market || {});
   if(!Array.isArray(DB.staples)) DB.staples = STAPLES0.map(([n,g],i)=>({id:'s' + i, n, g, c:0}));
+  DB.staples.forEach(st=>{ const p = Object.keys(CAT).find(k=>!CAT[k].skip && !CAT[k].noBuy && plain(CAT[k].n)===plain(st.n)); if(p){ st.p = p; st.g = CAT[p].sec } });
   if(!DB.pantry){
     DB.pantry = {};
     const old = DB.prefs.pantry || [], oq = DB.prefs.qty || {};
@@ -4893,25 +4896,40 @@ function pantryHome(){
   };
 }
 /* ---------- Compras: lista geral (receitas + itens de casa) ---------- */
-const houseG = x => HOUSE.some(h=>h[0]===x.g) ? x.g : 'out';
-const stapleOn = st => DB.extras.some(x=>x.sid===st.id && !x.done);
-function addStaple(st){ if(stapleOn(st)) return false; DB.extras.push({id:uid(), n:st.n, g:st.g, sid:st.id, done:false}); st.c = (st.c || 0) + 1; return true }
+/* grupos da lista geral: os corredores das receitas + os de casa */
+const GROUPS = () => [...SECS, ...HOUSE];
+const GSHORT = {hort:'Hortifrúti', lat:'Laticínios', carn:'Carnes', mer:'Mercearia', tem:'Temperos', limp:'Limpeza', hig:'Higiene', out:'Outros'};
+const gName = k => (GROUPS().find(g=>g[0]===k) || HOUSE[2])[1];
+const catByName = n => CAT_ORDER.find(k=>!CAT[k].skip && !CAT[k].noBuy && plain(CAT[k].n)===plain(n));
+const groupOf = x => x.p && CAT[x.p] ? CAT[x.p].sec : (GROUPS().some(g=>g[0]===x.g) ? x.g : 'out');
+// item frequente ligado a um ingrediente do catálogo: entra pelo corredor dele e vai para a despensa ao comprar
+const linkStaple = st => { const p = catByName(st.n); if(p){ st.p = p; st.g = CAT[p].sec } else delete st.p; return st };
+const stapleOn = (st, inList) => st.p ? !!(inList ? inList.has(st.p) : manualOf(st.p)) : DB.extras.some(x=>x.sid===st.id && !x.done);
+function addStaple(st){
+  if(st.p){ if(!manualOf(st.p)) toggleBuy(st.p) }
+  else { if(stapleOn(st)) return false; DB.extras.push({id:uid(), n:st.n, g:groupOf(st), sid:st.id, done:false}) }
+  st.c = (st.c || 0) + 1; return true;
+}
+const newStaple = (n, g) => linkStaple({id:'s' + uid(), n, g, c:0});
 function openStaplesSheet(){
   let ng = 'limp';
   const draw = el => {
     el.querySelector('.sh-body').innerHTML = `
-      <p class="cap" style="margin-top:0">O que você compra sempre. Na lista de Compras, um toque põe o item na lista; depois de comprado, ele volta para cá.</p>
+      <p class="cap" style="margin-top:0">O que você compra sempre, de qualquer seção. Na lista de Compras, um toque põe o item na lista; depois de comprado, ele volta para cá. Ingredientes do app entram no corredor deles e vão para a despensa ao comprar.</p>
       <form class="add-row" id="stf"><input id="stn" placeholder="Novo item frequente" autocomplete="off" enterkeyhint="done" aria-label="Novo item frequente"><button class="tbtn" type="submit">Adicionar</button></form>
-      <div class="chiprow st-g" role="group" aria-label="Grupo do novo item">${HOUSE.map(([k,l])=>`<button class="chip sm" data-ng="${k}" aria-pressed="${ng===k}">${l}</button>`).join('')}</div>
-      ${HOUSE.map(([k,l])=>{ const arr = DB.staples.filter(s=>houseG(s)===k); return arr.length ? `<p class="sh-sub">${l}</p>${arr.map(s=>`<div class="st-ed"><input data-sn="${s.id}" value="${esc(s.n)}" aria-label="Nome" autocomplete="off" enterkeyhint="done">
-          <select data-sg="${s.id}" aria-label="Grupo de ${esc(s.n)}">${HOUSE.map(([kk,ll])=>`<option value="${kk}" ${kk===k ? 'selected' : ''}>${ll}</option>`).join('')}</select>
+      <div class="chiprow st-g" role="group" aria-label="Seção do novo item">${GROUPS().map(([k])=>`<button class="chip sm" data-ng="${k}" aria-pressed="${ng===k}">${GSHORT[k]}</button>`).join('')}</div>
+      ${GROUPS().map(([k,l])=>{ const arr = DB.staples.filter(s=>groupOf(s)===k); return arr.length ? `<p class="sh-sub">${l}</p>${arr.map(s=>`<div class="st-ed"><input data-sn="${s.id}" value="${esc(s.n)}" aria-label="Nome" autocomplete="off" enterkeyhint="done">
+          ${s.p ? `<span class="st-lk" title="Ingrediente do app">${ICON.pantry}${GSHORT[k]}</span>`
+            : `<select data-sg="${s.id}" aria-label="Seção de ${esc(s.n)}">${GROUPS().map(([kk])=>`<option value="${kk}" ${kk===k ? 'selected' : ''}>${GSHORT[kk]}</option>`).join('')}</select>`}
           <button class="icon-btn sm" data-sdel="${s.id}" aria-label="Remover ${esc(s.n)}">${ICON.close}</button></div>`).join('')}` : '' }).join('')}
       ${DB.staples.length ? '' : '<p class="empty">Nenhum item frequente ainda.</p>'}`;
     el.querySelector('#stf').onsubmit = e=>{ e.preventDefault(); const n = el.querySelector('#stn').value.trim(); if(!n) return;
       if(DB.staples.some(s=>plain(s.n)===plain(n))){ toast('Esse item já está nos frequentes'); return }
-      DB.staples.push({id:'s' + uid(), n, g:ng, c:0}); save(); draw(el); el.querySelector('#stn').focus() };
+      const s = newStaple(n, ng); DB.staples.push(s); save(); draw(el);
+      if(s.p && s.g!==ng) toast(`${CAT[s.p].n} é ingrediente do app: fica em ${gName(s.g)}`);
+      el.querySelector('#stn').focus() };
     el.querySelectorAll('[data-sn]').forEach(i=>i.onchange = ()=>{ const s = DB.staples.find(x=>x.id===i.dataset.sn), n = i.value.trim(); if(!s) return; if(!n){ i.value = s.n; return }
-      s.n = n; DB.extras.forEach(x=>{ if(x.sid===s.id) x.n = n }); save() });
+      s.n = n; linkStaple(s); DB.extras.forEach(x=>{ if(x.sid===s.id){ x.n = n; x.g = groupOf(s) } }); save(); draw(el) });
     el.querySelectorAll('[data-sg]').forEach(i=>i.onchange = ()=>{ const s = DB.staples.find(x=>x.id===i.dataset.sg); if(!s) return; s.g = i.value; DB.extras.forEach(x=>{ if(x.sid===s.id) x.g = s.g }); save(); draw(el) });
   };
   openSheet(`<div class="sh-head"><h2>Itens frequentes</h2><button class="sh-done" data-close>Pronto</button></div><div class="sh-body"></div>`, el=>{
@@ -4925,26 +4943,27 @@ function openStaplesSheet(){
 }
 function pantryBuy(){
   const {rows} = shopData();
-  const bySec = SECS.map(([k,l])=>[l, rows.filter(r=>CAT[r.p].sec===k)]).filter(x=>x[1].length);
+  const inList = new Set(rows.map(r=>r.p));
   const nPlan = DB.plan.filter(p=>REC(p.rid) && inMarket(p)).length, nAll = DB.plan.filter(p=>REC(p.rid)).length;
   const free = DB.extras.filter(x=>!x.p), todo = free.filter(x=>!x.done), done = free.filter(x=>x.done);
-  const byHouse = HOUSE.map(([k,l])=>[l, todo.filter(x=>houseG(x)===k)]).filter(x=>x[1].length);
-  const fq = DB.staples.filter(s=>!stapleOn(s)).map((s,i)=>[s,i]).sort((a,b)=>((b[0].c || 0) - (a[0].c || 0)) || a[1] - b[1]).map(x=>x[0]);
-  const total = rows.length + todo.length;
+  const secs = GROUPS().map(([k,l])=>({k, l, r:rows.filter(r=>CAT[r.p].sec===k), x:todo.filter(x=>groupOf(x)===k)})).filter(s=>s.r.length || s.x.length);
+  const fq = DB.staples.filter(s=>!stapleOn(s, inList)).map((s,i)=>[s,i]).sort((a,b)=>((b[0].c || 0) - (a[0].c || 0)) || a[1] - b[1]).map(x=>x[0]);
+  const total = rows.length + todo.length, recRows = rows.filter(r=>r.from.length).length;
+  const fromTxt = r => [r.note, r.from.length ? 'Para ' + join(r.from.map(lowerFirst)) + (r.manual ? ' e pedido por você' : '') : 'Adicionado por você'].filter(Boolean).join('. ');
   $('#pbody').innerHTML = `
     <form class="add-row buy-add" id="exf"><input id="exn" placeholder="Adicionar item" autocomplete="off" enterkeyhint="done" aria-label="Adicionar item à lista"><button class="tbtn" type="submit" aria-label="Adicionar">${ICON.plus}</button></form>
     <div class="fq-h"><b>Frequentes</b><button class="tbtn sm" data-act="staples">Editar</button></div>
     ${fq.length ? `<div class="fchips fq-row" role="group" aria-label="Itens frequentes">${fq.map(s=>`<button class="fchip fq" data-fq="${s.id}">${ICON.plus}${esc(s.n)}</button>`).join('')}</div>`
       : `<p class="cap fq-none">${DB.staples.length ? 'Todos os frequentes já estão na lista.' : 'Nenhum item frequente. Toque em Editar para cadastrar.'}</p>`}
-    ${total ? `<p class="res-n buy-n"><span>${total} ${total===1 ? 'item' : 'itens'} para comprar</span>${rows.length ? `<button class="tbtn sm" data-act="from" aria-pressed="${PQ.from}">${PQ.from ? 'Ocultar receitas' : 'Mostrar receitas'}</button>` : ''}</p>`
+    ${total ? `<p class="res-n buy-n"><span>${total} ${total===1 ? 'item' : 'itens'} para comprar</span>${recRows ? `<button class="tbtn sm" data-act="from" aria-pressed="${PQ.from}">${PQ.from ? 'Ocultar receitas' : 'Mostrar receitas'}</button>` : ''}</p>`
       : `<p class="empty buy-empty">Lista vazia. Toque num item frequente, digite um item ou planeje receitas no Calendário.</p>`}
-    ${rows.length || nAll ? `<div class="mkt"><span class="t"><b>Das receitas</b><small>${DB.market.to ? cap(marketTxt(true)) : 'Todo o cardápio'}${nPlan ? `, ${nPlan} ${nPlan===1 ? 'receita' : 'receitas'}. Ao marcar, o item vai para a despensa.` : ': nenhuma receita nesse período.'}</small></span><button class="tbtn" data-act="mkt">Período</button></div>` : ''}
-    ${bySec.map(([l,arr])=>`<h3 class="grp">${l}</h3>${arr.map(r=>`<div class="prow"><button class="pbtn" role="checkbox" aria-checked="false" data-buy="${r.p}">
-        <span class="box">${ICON.check}</span><span class="pn">${esc(pname(r.p))}${PQ.from ? `<span class="buy-from">${esc([r.note, r.from.length ? 'Para ' + join(r.from.map(lowerFirst)) + (r.manual ? ' e pedido por você' : '') : 'Adicionado por você'].filter(Boolean).join('. '))}</span>` : ''}</span>
-        <span class="bq">${r.buy > 0 ? packTxt(r.p, r.buy) : ''}</span></button>${r.manual && !r.from.length ? `<button class="icon-btn sm" data-exdel="${r.manual}" aria-label="Tirar ${esc(pname(r.p).toLowerCase())} da lista">${ICON.close}</button>` : ''}</div>`).join('')}`).join('')}
-    ${byHouse.length && rows.length ? '<div class="buy-sep" aria-hidden="true"></div>' : ''}
-    ${byHouse.map(([l,arr])=>`<h3 class="grp">${l}</h3>${arr.map(x=>`<div class="prow"><button class="pbtn" role="checkbox" aria-checked="false" data-ex="${x.id}"><span class="box">${ICON.check}</span><span class="pn">${esc(x.n)}</span></button>
-      <button class="icon-btn sm" data-exdel="${x.id}" aria-label="Tirar ${esc(x.n)} da lista">${ICON.close}</button></div>`).join('')}`).join('')}
+    ${recRows || nAll ? `<div class="mkt"><span class="t"><b>Das receitas</b><small>${DB.market.to ? cap(marketTxt(true)) : 'Todo o cardápio'}${nPlan ? `, ${nPlan} ${nPlan===1 ? 'receita' : 'receitas'}. Ingredientes marcados vão para a despensa.` : ': nenhuma receita nesse período.'}</small></span><button class="tbtn" data-act="mkt">Período</button></div>` : ''}
+    ${secs.map(s=>`<h3 class="grp">${s.l}</h3>
+      ${s.r.map(r=>`<div class="prow"><button class="pbtn" role="checkbox" aria-checked="false" data-buy="${r.p}">
+        <span class="box">${ICON.check}</span><span class="pn">${esc(pname(r.p))}${PQ.from && r.from.length ? `<span class="buy-from">${esc(fromTxt(r))}</span>` : ''}</span>
+        <span class="bq">${r.buy > 0 ? packTxt(r.p, r.buy) : ''}</span></button>${r.manual && !r.from.length ? `<button class="icon-btn sm" data-exdel="${r.manual}" aria-label="Tirar ${esc(pname(r.p).toLowerCase())} da lista">${ICON.close}</button>` : ''}</div>`).join('')}
+      ${s.x.map(x=>`<div class="prow"><button class="pbtn" role="checkbox" aria-checked="false" data-ex="${x.id}"><span class="box">${ICON.check}</span><span class="pn">${esc(x.n)}</span></button>
+        <button class="icon-btn sm" data-exdel="${x.id}" aria-label="Tirar ${esc(x.n)} da lista">${ICON.close}</button></div>`).join('')}`).join('')}
     ${DB.bought.length || done.length ? `<h3 class="grp">Comprados <small>toque para desfazer</small></h3>
       ${DB.bought.map((x,i)=>`<div class="prow done-row"><button class="pbtn" role="checkbox" aria-checked="true" data-undo="${i}"><span class="box">${ICON.check}</span><span class="pn">${esc(pname(x.p))}<span class="buy-from">Já na despensa</span></span><span class="bq">${x.add ? packTxt(x.p, x.add) : ''}</span></button></div>`).join('')}
       ${done.map(x=>`<div class="prow done-row"><button class="pbtn" role="checkbox" aria-checked="true" data-ex="${x.id}"><span class="box">${ICON.check}</span><span class="pn">${esc(x.n)}</span></button></div>`).join('')}` : ''}
@@ -4953,13 +4972,13 @@ function pantryBuy(){
       ${DB.bought.length || done.length ? '<button class="btn ghost block" data-act="clean">Limpar comprados</button>' : ''}
     </div>`;
   const re = () => { save(); const y = scrollY, sl = ($('.fq-row') || {}).scrollLeft || 0; renderPantry('buy'); scrollTo(0,y); const r = $('.fq-row'); if(r) r.scrollLeft = sl; setTabbar('compras') };
+  const offerStaple = (n, attach) => { if(DB.staples.some(s=>plain(s.n)===plain(n))) return;
+    toast(`${n} na lista`, {label:'Tornar frequente', fn:()=>{ const s = newStaple(n, 'out'); s.c = 1; DB.staples.push(s); attach(s); re(); toast(`${s.n} agora é frequente, em ${gName(groupOf(s))}`) }}) };
   $('#exf').onsubmit = e=>{ e.preventDefault(); const n = $('#exn').value.trim(); if(!n) return;
-    const p = CAT_ORDER.find(k=>!CAT[k].skip && !CAT[k].noBuy && plain(CAT[k].n)===plain(n));
-    const st = !p && DB.staples.find(s=>plain(s.n)===plain(n));
-    if(p){ if(!manualOf(p)) toggleBuy(p) }
-    else if(st) addStaple(st);
-    else { const x = {id:uid(), n, g:'out', done:false}; DB.extras.push(x);
-      toast(`${n} na lista`, {label:'Tornar frequente', fn:()=>{ const s = {id:'s' + uid(), n, g:'out', c:1}; DB.staples.push(s); const y = DB.extras.find(z=>z.id===x.id); if(y) y.sid = s.id; re(); toast(`${n} agora é frequente`) }}) }
+    const p = catByName(n), st = DB.staples.find(s=>plain(s.n)===plain(n));
+    if(st) addStaple(st);
+    else if(p){ const added = !manualOf(p) && !inList.has(p); if(added) toggleBuy(p); offerStaple(CAT[p].n, ()=>{}) }
+    else { const x = {id:uid(), n, g:'out', done:false}; DB.extras.push(x); offerStaple(n, s=>{ const y = DB.extras.find(z=>z.id===x.id); if(y){ y.sid = s.id; y.g = groupOf(s) } }) }
     re(); $('#exn').focus() };
   $('#pbody').onclick = e=>{
     const b = e.target.closest('button'); if(!b) return;
@@ -4979,8 +4998,7 @@ function pantryBuy(){
     if(b.dataset.act==='from'){ PQ.from = !PQ.from; const y = scrollY; renderPantry('buy'); scrollTo(0,y); return }
     if(b.dataset.act==='clean'){ DB.bought = []; DB.extras = DB.extras.filter(x=>!x.done); return re() }
     if(b.dataset.act==='send'){
-      const lines = []; bySec.forEach(([l,arr])=>{ lines.push('\n' + l); arr.forEach(r=>lines.push(`• ${pname(r.p)}${r.buy > 0 ? ': ' + packTxt(r.p, r.buy) : ''}`)) });
-      byHouse.forEach(([l,arr])=>{ lines.push('\n' + l); arr.forEach(x=>lines.push('• ' + x.n)) });
+      const lines = []; secs.forEach(s=>{ lines.push('\n' + s.l); s.r.forEach(r=>lines.push(`• ${pname(r.p)}${r.buy > 0 ? ': ' + packTxt(r.p, r.buy) : ''}`)); s.x.forEach(x=>lines.push('• ' + x.n)) });
       shareText('Lista de compras\n' + lines.join('\n'));
     }
   };
