@@ -867,6 +867,10 @@ body:has(#cook:not([hidden])) .nav-edge{display:none}
 .fchip.fq svg{display:block;width:11px;height:11px;color:var(--acc)}
 .fchip.fq:active{background:var(--acc-soft)}
 .fq-none{margin:8px 0 0}
+.fq-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.fchip.fq.cat{border-style:dashed}
+.fchip.fq.new{background:var(--acc-soft);border-color:transparent;color:var(--acc);font-weight:650}
+.fchip.fq.new svg{color:var(--acc)}
 .buy-n{margin-top:22px}
 .buy-empty{margin-top:22px}
 .buy-n + .mkt,.buy-empty + .mkt{margin-top:8px}
@@ -4825,7 +4829,7 @@ function shareText(txt){
 /* =========================================================
    DESPENSA (em casa + comprar)
    ========================================================= */
-const PQ = {q:'', f:'all', edit:null, from:false};
+const PQ = {q:'', f:'all', edit:null, from:false, bq:''};
 function renderPantry(mode){
   const T = mode==='home' ? 'Despensa' : 'Compras';
   document.title = T;
@@ -4952,9 +4956,7 @@ function pantryBuy(){
   const fromTxt = r => [r.note, r.from.length ? 'Para ' + join(r.from.map(lowerFirst)) + (r.manual ? ' e pedido por você' : '') : 'Adicionado por você'].filter(Boolean).join('. ');
   $('#pbody').innerHTML = `
     <form class="add-row buy-add" id="exf"><input id="exn" placeholder="Adicionar item" autocomplete="off" enterkeyhint="done" aria-label="Adicionar item à lista"><button class="tbtn" type="submit" aria-label="Adicionar">${ICON.plus}</button></form>
-    <div class="fq-h"><b>Frequentes</b><button class="tbtn sm" data-act="staples">Editar</button></div>
-    ${fq.length ? `<div class="fchips fq-row" role="group" aria-label="Itens frequentes">${fq.map(s=>`<button class="fchip fq" data-fq="${s.id}">${ICON.plus}${esc(s.n)}</button>`).join('')}</div>`
-      : `<p class="cap fq-none">${DB.staples.length ? 'Todos os frequentes já estão na lista.' : 'Nenhum item frequente. Toque em Editar para cadastrar.'}</p>`}
+    <div id="fqbox"></div>
     ${total ? `<p class="res-n buy-n"><span>${total} ${total===1 ? 'item' : 'itens'} para comprar</span>${recRows ? `<button class="tbtn sm" data-act="from" aria-pressed="${PQ.from}">${PQ.from ? 'Ocultar receitas' : 'Mostrar receitas'}</button>` : ''}</p>`
       : `<p class="empty buy-empty">Lista vazia. Toque num item frequente, digite um item ou planeje receitas no Calendário.</p>`}
     ${recRows || nAll ? `<div class="mkt"><span class="t"><b>Das receitas</b><small>${DB.market.to ? cap(marketTxt(true)) : 'Todo o cardápio'}${nPlan ? `, ${nPlan} ${nPlan===1 ? 'receita' : 'receitas'}. Ingredientes marcados vão para a despensa.` : ': nenhuma receita nesse período.'}</small></span><button class="tbtn" data-act="mkt">Período</button></div>` : ''}
@@ -4971,18 +4973,45 @@ function pantryBuy(){
       ${total ? '<button class="btn primary block" data-act="send">Enviar lista</button>' : ''}
       ${DB.bought.length || done.length ? '<button class="btn ghost block" data-act="clean">Limpar comprados</button>' : ''}
     </div>`;
-  const re = () => { save(); const y = scrollY, sl = ($('.fq-row') || {}).scrollLeft || 0; renderPantry('buy'); scrollTo(0,y); const r = $('.fq-row'); if(r) r.scrollLeft = sl; setTabbar('compras') };
+  // input + frequentes: digitar filtra os frequentes e sugere ingredientes do app que ainda não estão na lista
+  const linked = new Set(DB.staples.map(st=>st.p).filter(Boolean));
+  const fqBox = q => {
+    const t = plain(q.trim()), box = $('#fqbox'); if(!box) return;
+    if(!t){
+      box.innerHTML = `<div class="fq-h"><b>Frequentes</b><button class="tbtn sm" data-act="staples">Editar</button></div>
+      ${fq.length ? `<div class="fchips fq-row" role="group" aria-label="Itens frequentes">${fq.map(st=>`<button class="fchip fq" data-fq="${st.id}">${ICON.plus}${esc(st.n)}</button>`).join('')}</div>`
+        : `<p class="cap fq-none">${DB.staples.length ? 'Todos os frequentes já estão na lista.' : 'Nenhum item frequente. Toque em Editar para cadastrar.'}</p>`}`;
+      return;
+    }
+    const STOP = new Set(['de','da','do','das','dos','e','ou','com','para','em','a','o']);
+    const rank = n => { const w = plain(n); return w.startsWith(t) ? 0 : w.split(/[\s-]+/).some(x=>!STOP.has(x) && x.startsWith(t)) ? 1 : t.length >= 3 && w.includes(t) ? 2 : 9 };
+    const sf = fq.map(st=>[rank(st.n), st]).filter(x=>x[0] < 9).sort((a,b)=>a[0] - b[0] || a[1].n.localeCompare(b[1].n, 'pt-BR')).map(x=>x[1]);
+    const cf = CAT_ORDER.filter(k=>!CAT[k].skip && !CAT[k].noBuy && !linked.has(k) && !inList.has(k) && !manualOf(k)).map(k=>[rank(CAT[k].n), k]).filter(x=>x[0] < 9)
+      .sort((a,b)=>a[0] - b[0] || CAT[a[1]].n.localeCompare(CAT[b[1]].n, 'pt-BR')).slice(0, 8).map(x=>x[1]);
+    const exact = DB.staples.some(st=>plain(st.n)===t) || CAT_ORDER.some(k=>plain(CAT[k].n)===t);
+    box.innerHTML = `<div class="fq-h"><b>Sugestões</b></div><div class="fq-wrap" role="group" aria-label="Sugestões">
+      ${sf.map(st=>`<button class="fchip fq" data-fq="${st.id}">${ICON.plus}${esc(st.n)}</button>`).join('')}
+      ${cf.map(k=>`<button class="fchip fq cat" data-cat="${k}">${ICON.plus}${esc(CAT[k].n)}</button>`).join('')}
+      ${exact ? '' : `<button class="fchip fq new" data-new>${ICON.plus}Adicionar “${esc(q.trim())}”</button>`}</div>`;
+  };
+  const inp = $('#exn');
+  fqBox(PQ.bq || ''); if(PQ.bq){ inp.value = PQ.bq }
+  inp.oninput = () => { PQ.bq = inp.value; fqBox(inp.value) };
+  const re = (keep) => { if(!keep) PQ.bq = ''; save(); const y = scrollY, sl = ($('.fq-row') || {}).scrollLeft || 0; renderPantry('buy'); scrollTo(0,y); const r = $('.fq-row'); if(r) r.scrollLeft = sl; setTabbar('compras') };
   const offerStaple = (n, attach) => { if(DB.staples.some(s=>plain(s.n)===plain(n))) return;
     toast(`${n} na lista`, {label:'Tornar frequente', fn:()=>{ const s = newStaple(n, 'out'); s.c = 1; DB.staples.push(s); attach(s); re(); toast(`${s.n} agora é frequente, em ${gName(groupOf(s))}`) }}) };
-  $('#exf').onsubmit = e=>{ e.preventDefault(); const n = $('#exn').value.trim(); if(!n) return;
+  $('#exf').onsubmit = e=>{ e.preventDefault(); const n = cap($('#exn').value.trim()); if(!n) return;
     const p = catByName(n), st = DB.staples.find(s=>plain(s.n)===plain(n));
     if(st) addStaple(st);
     else if(p){ const added = !manualOf(p) && !inList.has(p); if(added) toggleBuy(p); offerStaple(CAT[p].n, ()=>{}) }
     else { const x = {id:uid(), n, g:'out', done:false}; DB.extras.push(x); offerStaple(n, s=>{ const y = DB.extras.find(z=>z.id===x.id); if(y){ y.sid = s.id; y.g = groupOf(s) } }) }
     re(); $('#exn').focus() };
+  const pick = fn => { fn(); const typing = !!PQ.bq; re(); if(typing) $('#exn').focus() };
   $('#pbody').onclick = e=>{
     const b = e.target.closest('button'); if(!b) return;
-    if(b.dataset.fq){ const st = DB.staples.find(s=>s.id===b.dataset.fq); if(st) addStaple(st); return re() }
+    if(b.dataset.fq){ const st = DB.staples.find(s=>s.id===b.dataset.fq); return pick(()=>{ if(st) addStaple(st) }) }
+    if(b.dataset.cat){ const k = b.dataset.cat; return pick(()=>{ if(!manualOf(k)) toggleBuy(k); setTimeout(()=>offerStaple(CAT[k].n, ()=>{}), 0) }) }
+    if(b.dataset.new!=null){ $('#exf').requestSubmit(); return }
     if(b.dataset.buy){
       const p = b.dataset.buy, r = rows.find(x=>x.p===p), prev = DB.pantry[p] ? Object.assign({}, DB.pantry[p]) : null;
       const add = r && r.buy > 0 ? buyAmount(p, r.buy) : null;
